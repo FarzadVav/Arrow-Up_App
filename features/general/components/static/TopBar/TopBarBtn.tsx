@@ -37,14 +37,12 @@ function TopBarBtn({
     onClick?.(ev);
   };
 
-  const computedRender =
-    render ?? (href ? <Link href={href} /> : undefined);
-  const computedNativeButton =
-    nativeButton ?? (href ? false : undefined);
+  const computedRender = render ?? (href ? <Link href={href} /> : undefined);
+  const computedNativeButton = nativeButton ?? (href ? false : undefined);
 
   return (
     <Button
-      square
+      size={"square"}
       variant={"ghost"}
       render={computedRender}
       nativeButton={computedNativeButton}
@@ -55,8 +53,7 @@ function TopBarBtn({
         position === "right" && "right-0",
         className,
       )}
-      {...p}
-    >
+      {...p}>
       {backIcon ? (
         <ChevronLeftIcon
           className={position === "left" ? "" : "-scale-x-100"}

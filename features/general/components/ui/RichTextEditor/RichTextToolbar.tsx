@@ -49,13 +49,12 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className,
       )}
       role="toolbar"
-      aria-label={t("editor.toolbar")}
-    >
+      aria-label={t("editor.toolbar")}>
       {/* H1 */}
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 1 }).run();
@@ -63,8 +62,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isH1Active)}
         title={t("editor.h1")}
         aria-label={t("editor.h1")}
-        aria-pressed={isH1Active}
-      >
+        aria-pressed={isH1Active}>
         <Heading1Icon />
       </Button>
 
@@ -72,7 +70,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 2 }).run();
@@ -80,8 +78,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isH2Active)}
         title={t("editor.h2")}
         aria-label={t("editor.h2")}
-        aria-pressed={isH2Active}
-      >
+        aria-pressed={isH2Active}>
         <Heading2Icon />
       </Button>
 
@@ -89,7 +86,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleHeading({ level: 3 }).run();
@@ -97,8 +94,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isH3Active)}
         title={t("editor.h3")}
         aria-label={t("editor.h3")}
-        aria-pressed={isH3Active}
-      >
+        aria-pressed={isH3Active}>
         <Heading3Icon />
       </Button>
 
@@ -106,7 +102,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().setParagraph().run();
@@ -114,8 +110,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isParagraphActive)}
         title={t("editor.paragraph")}
         aria-label={t("editor.paragraph")}
-        aria-pressed={isParagraphActive}
-      >
+        aria-pressed={isParagraphActive}>
         <PilcrowIcon />
       </Button>
 
@@ -123,7 +118,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBold().run();
@@ -131,8 +126,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isBoldActive)}
         title={t("editor.bold")}
         aria-label={t("editor.bold")}
-        aria-pressed={isBoldActive}
-      >
+        aria-pressed={isBoldActive}>
         <BoldIcon />
       </Button>
 
@@ -140,7 +134,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleBulletList().run();
@@ -148,8 +142,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isBulletListActive)}
         title={t("editor.bulletList")}
         aria-label={t("editor.bulletList")}
-        aria-pressed={isBulletListActive}
-      >
+        aria-pressed={isBulletListActive}>
         <ListIcon />
       </Button>
 
@@ -157,7 +150,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
       <Button
         type="button"
         variant="ghost"
-        square
+        size={"square"}
         onMouseDown={(e) => {
           e.preventDefault();
           editor.chain().focus().toggleOrderedList().run();
@@ -165,8 +158,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
         className={chipClasses(isOrderedListActive)}
         title={t("editor.numberList")}
         aria-label={t("editor.numberList")}
-        aria-pressed={isOrderedListActive}
-      >
+        aria-pressed={isOrderedListActive}>
         <ListOrderedIcon />
       </Button>
     </div>

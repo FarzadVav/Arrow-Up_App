@@ -107,8 +107,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <p
                 className={`mt-2 font-medium ${
                   todo.isDone ? "text-foreground" : "sub-text"
-                }`}
-              >
+                }`}>
                 {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
               </p>
             </div>
@@ -143,7 +142,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
             <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-foreground">
-                  {todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")}
+                  {todo.isDone
+                    ? t("todos.markAsIncomplete")
+                    : t("todos.markAsCompleted")}
                 </span>
                 <span className="sub-text text-xs">
                   {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
@@ -154,7 +155,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
                 disabled={isToggling}
                 onCheckedChange={() => toggleFormRef.current?.requestSubmit()}
                 aria-label={
-                  todo.isDone ? t("todos.markAsIncomplete") : t("todos.markAsCompleted")
+                  todo.isDone
+                    ? t("todos.markAsIncomplete")
+                    : t("todos.markAsCompleted")
                 }
               />
             </label>
@@ -169,11 +172,10 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <Button
                 type="submit"
                 variant="card"
-                square
+                size={"square"}
                 disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                aria-label={t("common.delete")}
-              >
+                aria-label={t("common.delete")}>
                 <Trash2Icon className="size-4" />
               </Button>
             }

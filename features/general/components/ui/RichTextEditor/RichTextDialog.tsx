@@ -77,13 +77,9 @@ export function RichTextDialog({
   return (
     <BaseUIDialog.Root open={open} onOpenChange={onOpenChange}>
       <BaseUIDialog.Portal>
-        <BaseUIDialog.Backdrop
-          className="fixed inset-0 z-big-overlay bg-background/80 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0"
-        />
+        <BaseUIDialog.Backdrop className="fixed inset-0 z-big-overlay bg-background/80 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
 
-        <BaseUIDialog.Popup
-          className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95"
-        >
+        <BaseUIDialog.Popup className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95">
           <div className="mx-auto max-w-3xl flex flex-col h-full overflow-hidden">
             {/* Header with Title and Undo/Redo in a justify-between flex */}
             <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 sm:px-6 backdrop-blur-md">
@@ -95,7 +91,7 @@ export function RichTextDialog({
                 <Button
                   type="button"
                   variant="ghost"
-                  square
+                  size={"square"}
                   disabled={!canUndo}
                   onMouseDown={(e) => {
                     e.preventDefault();
@@ -103,15 +99,14 @@ export function RichTextDialog({
                   }}
                   className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
                   title={t("editor.undo")}
-                  aria-label={t("editor.undo")}
-                >
+                  aria-label={t("editor.undo")}>
                   <Undo2Icon />
                 </Button>
 
                 <Button
                   type="button"
                   variant="ghost"
-                  square
+                  size={"square"}
                   disabled={!canRedo}
                   onMouseDown={(e) => {
                     e.preventDefault();
@@ -119,8 +114,7 @@ export function RichTextDialog({
                   }}
                   className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
                   title={t("editor.redo")}
-                  aria-label={t("editor.redo")}
-                >
+                  aria-label={t("editor.redo")}>
                   <Redo2Icon />
                 </Button>
               </div>
@@ -142,8 +136,7 @@ export function RichTextDialog({
                 type="button"
                 variant="card"
                 onClick={handleCancelAndClose}
-                className="h-9 px-4 text-sm font-medium"
-              >
+                className="h-9 px-4 text-sm font-medium">
                 <span>{t("common.close")}</span>
               </Button>
 
@@ -151,8 +144,7 @@ export function RichTextDialog({
                 type="button"
                 variant="primary"
                 onClick={handleSaveAndClose}
-                className="h-9 px-5 text-sm font-semibold"
-              >
+                className="h-9 px-5 text-sm font-semibold">
                 <span>{t("common.done")}</span>
               </Button>
             </footer>

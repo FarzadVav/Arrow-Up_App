@@ -13,7 +13,10 @@ export interface FrameworkTagCardProps {
   onRequestDelete: (id: number) => void;
 }
 
-export function FrameworkTagCard({ tag, onRequestDelete }: FrameworkTagCardProps) {
+export function FrameworkTagCard({
+  tag,
+  onRequestDelete,
+}: FrameworkTagCardProps) {
   const { t, formatDate } = useLocale();
   const areaSlug = tag.lifeAreaId ?? UNSET_LIFE_AREA_SLUG;
 
@@ -38,21 +41,19 @@ export function FrameworkTagCard({ tag, onRequestDelete }: FrameworkTagCardProps
             <Link href={`/framework/${areaSlug}/tags/new?editId=${tag.id}`} />
           }
           variant="card"
-          square
+          size={"square"}
           className="size-10 justify-center"
-          aria-label={t("common.edit")}
-        >
+          aria-label={t("common.edit")}>
           <PencilIcon className="size-4 text-foreground/70" />
         </Button>
 
         <Button
           type="button"
           variant="card"
-          square
+          size={"square"}
           className="size-10 justify-center text-foreground/70 hover:text-foreground"
           aria-label={t("common.delete")}
-          onClick={() => onRequestDelete(tag.id)}
-        >
+          onClick={() => onRequestDelete(tag.id)}>
           <Trash2Icon className="size-4 text-destructive" />
         </Button>
       </div>

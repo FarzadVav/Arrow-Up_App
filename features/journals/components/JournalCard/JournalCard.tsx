@@ -73,13 +73,19 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       editHref={`/journals/new?editId=${journal.id}`}
       content={
         <div className="space-y-4">
-          <div className={cn("grid gap-2", journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3")}>
+          <div
+            className={cn(
+              "grid gap-2",
+              journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3",
+            )}>
             <div className="rounded-container bg-background p-3">
               <div className="flex items-center gap-2 sub-text">
                 <FileTextIcon className="size-4" />
                 <span>{t("common.category")}</span>
               </div>
-              <p className="mt-2 font-medium">{journal.type || t("common.general")}</p>
+              <p className="mt-2 font-medium">
+                {journal.type || t("common.general")}
+              </p>
             </div>
 
             {journal.tag && (
@@ -97,7 +103,9 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
                 <CalendarDaysIcon className="size-4" />
                 <span>{t("common.date")}</span>
               </div>
-              <p className="mt-2 font-medium">{formatDate(journal.createdAt)}</p>
+              <p className="mt-2 font-medium">
+                {formatDate(journal.createdAt)}
+              </p>
             </div>
 
             <div className="rounded-container bg-background p-3">
@@ -105,7 +113,9 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
                 <ClockIcon className="size-4" />
                 <span>{t("common.time")}</span>
               </div>
-              <p className="mt-2 font-medium">{formatTime(journal.createdAt)}</p>
+              <p className="mt-2 font-medium">
+                {formatTime(journal.createdAt)}
+              </p>
             </div>
           </div>
 
@@ -131,11 +141,10 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               <Button
                 type="submit"
                 variant="card"
-                square
+                size={"square"}
                 disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                aria-label={t("common.delete")}
-              >
+                aria-label={t("common.delete")}>
                 <Trash2Icon className="size-4" />
               </Button>
             }

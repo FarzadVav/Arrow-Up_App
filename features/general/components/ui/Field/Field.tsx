@@ -1,5 +1,9 @@
 "use client";
 
+import { cn } from "cn";
+import { type } from "arktype";
+import { Field as BaseUIField, type Form } from "@base-ui/react";
+import { cva, type VariantProps } from "class-variance-authority";
 import {
   ComponentProps,
   forwardRef,
@@ -9,10 +13,6 @@ import {
   ChangeEventHandler,
   FocusEventHandler,
 } from "react";
-import { Field as BaseUIField, type Form } from "@base-ui/react";
-import { type } from "arktype";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "cn";
 
 type ArkTypeErrorProblem = {
   message?: string;
@@ -64,7 +64,10 @@ export function createArkTypeValidator(schema: unknown, name?: string) {
       const emptyRes = fieldValidator(value === "" ? "" : undefined);
       if (emptyRes instanceof type.errors) {
         return Array.from(emptyRes).map(
-          (p) => (p as ArkTypeErrorProblem).message || (p as ArkTypeErrorProblem).summary || String(p),
+          (p) =>
+            (p as ArkTypeErrorProblem).message ||
+            (p as ArkTypeErrorProblem).summary ||
+            String(p),
         );
       }
       return null;
@@ -87,7 +90,10 @@ export function createArkTypeValidator(schema: unknown, name?: string) {
 
     if (res instanceof type.errors) {
       return Array.from(res).map(
-        (p) => (p as ArkTypeErrorProblem).message || (p as ArkTypeErrorProblem).summary || String(p),
+        (p) =>
+          (p as ArkTypeErrorProblem).message ||
+          (p as ArkTypeErrorProblem).summary ||
+          String(p),
       );
     }
 
@@ -97,24 +103,23 @@ export function createArkTypeValidator(schema: unknown, name?: string) {
 
 const fieldInputVariants = cva(
   [
-    "w-full text-sm text-foreground placeholder:text-foreground/40",
-    "border border-foreground/20 bg-transparent transition-colors",
-    "outline-none focus:border-foreground/50 focus:ring-2 focus:ring-foreground/15",
+    "w-full border-2 bg-transparent placeholder:text-foreground/50 transition-all",
     "disabled:pointer-events-none disabled:opacity-50",
     "select-text cursor-text",
   ],
   {
     variants: {
       multiline: {
-        true: "rounded-container p-3 resize-none min-h-[72px] leading-relaxed",
-        false: "h-10 rounded-full px-3",
+        true: "rounded-component p-sm resize-none min-h-[calc(var(--spacing)*20)] focus:rounded-container",
+        false:
+          "h-10 rounded-component px-sm focus:rounded-[calc(var(--spacing)*10)]",
       },
       hasStartAdornment: {
-        true: "ps-9",
+        true: "ps-12",
         false: "",
       },
       hasEndAdornment: {
-        true: "pe-9",
+        true: "pe-12",
         false: "",
       },
     },
@@ -126,20 +131,17 @@ const fieldInputVariants = cva(
   },
 );
 
-const fieldLabelVariants = cva(
-  "block font-bold text-foreground select-none",
-  {
-    variants: {
-      size: {
-        sm: "text-xs mb-1",
-        md: "text-sm mb-1.5",
-      },
-    },
-    defaultVariants: {
-      size: "md",
+const fieldLabelVariants = cva("block font-bold text-foreground select-none", {
+  variants: {
+    size: {
+      sm: "text-xs mb-1",
+      md: "text-sm mb-1.5",
     },
   },
-);
+  defaultVariants: {
+    size: "md",
+  },
+});
 
 const fieldErrorVariants = cva(
   "sub-text text-red-300 text-xs mt-1 block leading-normal [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-0.5",
@@ -166,14 +168,7 @@ export type FieldRootProps = ComponentProps<typeof BaseUIField.Root> & {
 
 const FieldRoot = forwardRef<HTMLDivElement, FieldRootProps>(
   (
-    {
-      name,
-      schema,
-      validate,
-      validationMode = "onBlur",
-      className,
-      ...props
-    },
+    { name, schema, validate, validationMode = "onBlur", className, ...props },
     ref,
   ) => {
     const arkValidator = useMemo(() => {
@@ -338,8 +333,7 @@ const FieldError = forwardRef<HTMLDivElement, FieldErrorProps>(
           ref={ref}
           match={match ?? true}
           className={cn(fieldErrorVariants({ variant }), className)}
-          {...props}
-        >
+          {...props}>
           {customContent}
         </BaseUIField.Error>
       );
@@ -405,11 +399,12 @@ const FieldFormError = forwardRef<HTMLDivElement, FieldFormErrorProps>(
           "p-3 text-xs rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
           className,
         )}
-        {...props}
-      >
+        {...props}>
         {children ??
           (messages.length === 1 ? (
-            <p className="sub-text text-red-300 leading-normal">{messages[0]}</p>
+            <p className="sub-text text-red-300 leading-normal">
+              {messages[0]}
+            </p>
           ) : (
             <ul className="list-disc list-inside space-y-0.5 sub-text text-red-300 leading-normal">
               {messages.map((msg, i) => (
@@ -553,8 +548,7 @@ const LocalField = forwardRef<
           disabled={disabled}
           dirty={dirty}
           touched={touched}
-          className={className}
-        >
+          className={className}>
           {children}
         </FieldRoot>
       );
@@ -633,7 +627,7 @@ const LocalField = forwardRef<
           )}
 
           {endAdornment ? (
-            <div className="h-[calc(100%-(--spacing(3)))] absolute inset-e-1.5 top-1/2 -translate-y-1/2 flex items-center z-10">
+            <div className="h-[calc(100%-(--spacing(3)))] absolute inset-e-1.5 top-1/2 -translate-y-1/2 flex items-center z-10 scale-85">
               {endAdornment}
             </div>
           ) : null}

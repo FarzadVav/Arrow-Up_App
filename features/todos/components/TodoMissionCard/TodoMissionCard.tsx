@@ -17,10 +17,7 @@ import {
 } from "lucide-react";
 
 import { Todo, TodoAction, TodoDiscipline } from "../../types";
-import {
-  deleteTodoMutation,
-  toggleActionMutation,
-} from "../../mutations";
+import { deleteTodoMutation, toggleActionMutation } from "../../mutations";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
@@ -73,8 +70,7 @@ function MissionActionRow({
         disabled={isToggling}
         className={`h-auto w-full justify-start rounded-container bg-background p-3 text-left whitespace-normal transition-opacity hover:bg-background cursor-pointer [&_svg]:size-auto ${
           action.isDone ? "opacity-60" : ""
-        }`}
-      >
+        }`}>
         <div className="shrink-0">
           {action.isDone ? (
             <div className="flex size-5 items-center justify-center rounded-container bg-foreground">
@@ -89,14 +85,17 @@ function MissionActionRow({
           <p
             className={`font-medium text-sm ${
               action.isDone ? "line-through sub-text" : ""
-            }`}
-          >
+            }`}>
             {action.title}
           </p>
 
           <div className="mt-1 flex items-center gap-1.5 sub-text text-xs">
             <CalendarIcon className="size-3" />
-            <span>{action.deadline ? formatDate(action.deadline) : t("common.notSet")}</span>
+            <span>
+              {action.deadline
+                ? formatDate(action.deadline)
+                : t("common.notSet")}
+            </span>
           </div>
         </div>
       </Button>
@@ -104,11 +103,7 @@ function MissionActionRow({
   );
 }
 
-function MissionDisciplineRow({
-  discipline,
-}: {
-  discipline: TodoDiscipline;
-}) {
+function MissionDisciplineRow({ discipline }: { discipline: TodoDiscipline }) {
   return (
     <div className="flex items-center gap-3 rounded-container bg-background p-3">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
@@ -304,11 +299,10 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <Button
                 type="submit"
                 variant="card"
-                square
+                size={"square"}
                 disabled={isDeleting}
                 className="size-10 justify-center text-foreground/70 hover:text-foreground"
-                aria-label={t("common.delete")}
-              >
+                aria-label={t("common.delete")}>
                 <Trash2Icon className="size-4" />
               </Button>
             }

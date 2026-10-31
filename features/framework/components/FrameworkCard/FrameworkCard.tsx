@@ -65,7 +65,6 @@ export function FrameworkCard({
             />
           )}
 
-
           {/* Recent History summary */}
           {framework.history && framework.history.length > 0 && (
             <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-2.5">
@@ -74,7 +73,8 @@ export function FrameworkCard({
                   {t("framework.historyTitle")}
                 </h4>
                 <span className="text-xs sub-text">
-                  {completedCount} / {framework.history.length} {t("common.done")}
+                  {completedCount} / {framework.history.length}{" "}
+                  {t("common.done")}
                 </span>
               </div>
 
@@ -89,8 +89,7 @@ export function FrameworkCard({
                         entry.isDone
                           ? "bg-foreground/10 text-foreground"
                           : "bg-destructive/10 text-destructive line-through"
-                      }`}
-                    >
+                      }`}>
                       <CalendarDaysIcon className="size-3" />
                       <span>{formatDate(entry.date)}</span>
                     </span>
@@ -104,10 +103,9 @@ export function FrameworkCard({
         <Button
           type="button"
           variant="card"
-          square
+          size={"square"}
           aria-label={t("common.delete")}
-          onClick={() => onRequestDelete(framework.id)}
-        >
+          onClick={() => onRequestDelete(framework.id)}>
           <Trash2Icon className="size-4 text-destructive" />
         </Button>
       }

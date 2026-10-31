@@ -6,12 +6,7 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
-import {
-  EditIcon,
-  LoaderIcon,
-  PlusIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { EditIcon, LoaderIcon, PlusIcon, Trash2Icon } from "lucide-react";
 
 import { TODO_TYPES } from "@/features/todos/constants";
 import {
@@ -40,10 +35,7 @@ import TimePickerDialog from "@/features/general/components/ui/TimePickerDialog"
 import DayPickerDialog from "@/features/general/components/ui/DayPickerDialog";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
-import {
-  parseDate,
-  serializeDate,
-} from "@/features/general/lib/utils";
+import { parseDate, serializeDate } from "@/features/general/lib/utils";
 
 function TypeSelect({
   value,
@@ -168,7 +160,9 @@ export function TodoForm() {
   const typeParam = searchParams.get("type") || searchParams.get("category");
   const isEditMode = Boolean(editId);
 
-  const { todo, isLoading: isTodoLoading } = useTodo(editId ? Number(editId) : null);
+  const { todo, isLoading: isTodoLoading } = useTodo(
+    editId ? Number(editId) : null,
+  );
 
   const resolveDefaultType = (param: string | null): TodoType => {
     const lower = param?.toLowerCase();
@@ -275,13 +269,17 @@ export function TodoForm() {
         if (todo.type === "Daily") {
           const isTimeOnly =
             Boolean(todo.deadline) &&
-            todo.deadline!.includes(":") && !todo.deadline!.includes("-");
-          setDailyTime(isTimeOnly ? todo.deadline! : (todo.deadline || null));
+            todo.deadline!.includes(":") &&
+            !todo.deadline!.includes("-");
+          setDailyTime(isTimeOnly ? todo.deadline! : todo.deadline || null);
         } else {
           setTargetDate(
             todo.deadline
-              ? parseDate(todo.deadline) ?? (todo.type === "Mission" ? new Date() : null)
-              : (todo.type === "Mission" ? new Date() : null),
+              ? (parseDate(todo.deadline) ??
+                  (todo.type === "Mission" ? new Date() : null))
+              : todo.type === "Mission"
+                ? new Date()
+                : null,
           );
         }
       });
@@ -309,7 +307,9 @@ export function TodoForm() {
   const saveAction = () => {
     if (!actionDraft.title.trim()) return;
 
-    const actionDeadline = actionDraft.deadline ? serializeDate(actionDraft.deadline) : null;
+    const actionDeadline = actionDraft.deadline
+      ? serializeDate(actionDraft.deadline)
+      : null;
 
     if (actionDraft.id !== null) {
       setActions((prev) =>
@@ -366,9 +366,7 @@ export function TodoForm() {
     if (disciplineDraft.id !== null) {
       setDisciplines((prev) =>
         prev.map((d) =>
-          d.id === disciplineDraft.id
-            ? { ...d, title: nextTitle }
-            : d,
+          d.id === disciplineDraft.id ? { ...d, title: nextTitle } : d,
         ),
       );
     } else {
@@ -407,8 +405,7 @@ export function TodoForm() {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
-            className="text-foreground/70 hover:text-foreground"
-          >
+            className="text-foreground/70 hover:text-foreground">
             <Trash2Icon className="size-5" />
           </TopBar.Btn>
         ) : (
@@ -428,8 +425,7 @@ export function TodoForm() {
           className="w-full space-y-6"
           aria-label={isEditMode ? t("todos.edit") : t("todos.new")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {/* Hidden fields to pass composite state to Server Action */}
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="type" value={type} />
@@ -437,7 +433,11 @@ export function TodoForm() {
           <Field
             type="hidden"
             name="deadline"
-            value={type === "Daily" ? (dailyTime || "") : (serializeDate(targetDate) || "")}
+            value={
+              type === "Daily"
+                ? dailyTime || ""
+                : serializeDate(targetDate) || ""
+            }
           />
           <Field type="hidden" name="isDone" value={String(isDone)} />
           {type === "Mission" && (
@@ -474,8 +474,7 @@ export function TodoForm() {
 
           <Field.Root
             name="description"
-            schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}
-          >
+            schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}>
             <Field.Label className="mb-1 font-bold">
               {t("common.description")}
             </Field.Label>
@@ -506,7 +505,9 @@ export function TodoForm() {
           <Field.Root name="deadline">
             <Field.Label className="mb-1 font-bold">
               {t("common.deadline")}
-              {type === "Mission" && <span className="text-red-500 ms-1">*</span>}
+              {type === "Mission" && (
+                <span className="text-red-500 ms-1">*</span>
+              )}
             </Field.Label>
 
             {type === "Daily" ? (
@@ -546,8 +547,7 @@ export function TodoForm() {
                   variant="outline"
                   onClick={openNewAction}
                   disabled={pending}
-                  className="w-full justify-center gap-1.5 rounded-component"
-                >
+                  className="w-full justify-center gap-1.5 rounded-component">
                   <PlusIcon className="size-4" />
                   <span>{t("missions.newAction")}</span>
                 </Button>
@@ -557,14 +557,15 @@ export function TodoForm() {
                     {actions.map((act) => (
                       <div
                         key={act.id}
-                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
-                      >
+                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {act.title}
                           </p>
                           <p className="sub-text text-xs">
-                            {act.deadline ? formatDate(act.deadline) : t("common.notSet")}
+                            {act.deadline
+                              ? formatDate(act.deadline)
+                              : t("common.notSet")}
                           </p>
                         </div>
 
@@ -572,21 +573,19 @@ export function TodoForm() {
                           <Button
                             type="button"
                             variant="ghost"
-                            square
+                            size={"square"}
                             className="size-8"
                             onClick={() => openEditAction(act)}
-                            disabled={pending}
-                          >
+                            disabled={pending}>
                             <EditIcon className="size-3.5" />
                           </Button>
                           <Button
                             type="button"
                             variant="ghost"
-                            square
+                            size={"square"}
                             className="size-8"
                             onClick={() => deleteAction(act.id)}
-                            disabled={pending}
-                          >
+                            disabled={pending}>
                             <Trash2Icon className="size-3.5" />
                           </Button>
                         </div>
@@ -612,8 +611,7 @@ export function TodoForm() {
                   variant="outline"
                   onClick={openNewDiscipline}
                   disabled={pending}
-                  className="w-full justify-center gap-1.5 rounded-component"
-                >
+                  className="w-full justify-center gap-1.5 rounded-component">
                   <PlusIcon className="size-4" />
                   <span>{t("missions.newDiscipline")}</span>
                 </Button>
@@ -623,31 +621,30 @@ export function TodoForm() {
                     {disciplines.map((d) => (
                       <div
                         key={d.id}
-                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3"
-                      >
+                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3">
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium">{d.title}</p>
+                          <p className="truncate text-sm font-medium">
+                            {d.title}
+                          </p>
                         </div>
 
                         <div className="flex shrink-0 items-center gap-1">
                           <Button
                             type="button"
                             variant="ghost"
-                            square
+                            size={"square"}
                             className="size-8"
                             onClick={() => openEditDiscipline(d)}
-                            disabled={pending}
-                          >
+                            disabled={pending}>
                             <EditIcon className="size-3.5" />
                           </Button>
                           <Button
                             type="button"
                             variant="ghost"
-                            square
+                            size={"square"}
                             className="size-8"
                             onClick={() => deleteDiscipline(d.id)}
-                            disabled={pending}
-                          >
+                            disabled={pending}>
                             <Trash2Icon className="size-3.5" />
                           </Button>
                         </div>
@@ -658,7 +655,9 @@ export function TodoForm() {
               </Field.Root>
 
               {/* Action Dialog */}
-              <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
+              <Dialog
+                open={actionDialogOpen}
+                onOpenChange={setActionDialogOpen}>
                 <div className="p-1 space-y-4">
                   <div>
                     <Dialog.Title className="font-bold">
@@ -685,9 +684,7 @@ export function TodoForm() {
                   />
 
                   <Field.Root name="actionDeadline">
-                    <Field.Label size="sm">
-                      {t("common.deadline")}
-                    </Field.Label>
+                    <Field.Label size="sm">{t("common.deadline")}</Field.Label>
                     <DayPickerDialog
                       value={actionDraft.deadline}
                       allowClear
@@ -709,8 +706,7 @@ export function TodoForm() {
                       type="button"
                       variant="primary"
                       onClick={saveAction}
-                      disabled={actionDraft.title.trim().length < 2}
-                    >
+                      disabled={actionDraft.title.trim().length < 2}>
                       {actionDraft.id !== null
                         ? t("common.save")
                         : t("common.add")}
@@ -722,8 +718,7 @@ export function TodoForm() {
               {/* Discipline Dialog */}
               <Dialog
                 open={disciplineDialogOpen}
-                onOpenChange={setDisciplineDialogOpen}
-              >
+                onOpenChange={setDisciplineDialogOpen}>
                 <div className="p-1 space-y-4">
                   <div>
                     <Dialog.Title className="font-bold">
@@ -766,8 +761,7 @@ export function TodoForm() {
                       type="button"
                       variant="primary"
                       onClick={saveDiscipline}
-                      disabled={disciplineDraft.title.trim().length < 3}
-                    >
+                      disabled={disciplineDraft.title.trim().length < 3}>
                       {disciplineDraft.id !== null
                         ? t("common.save")
                         : t("common.add")}
@@ -780,7 +774,16 @@ export function TodoForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "description", "type", "deadline", "lifeAreaId", "difficulty", "actions", "disciplines"]}
+            knownFields={[
+              "title",
+              "description",
+              "type",
+              "deadline",
+              "lifeAreaId",
+              "difficulty",
+              "actions",
+              "disciplines",
+            ]}
           />
 
           <PageActionBtn submit disabled={pending} form="todo-form" />

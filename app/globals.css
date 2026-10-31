@@ -12,6 +12,11 @@
   --font-geist: var(--font-geist);
   --font-vazirmatn: var(--font-vazirmatn);
 
+  --spacing-app-width: calc(var(--spacing) * 160) /* 40rem = 640px */;
+  --spacing-xs: calc(var(--spacing) * 1.5) /* 0.375rem = 6px */;
+  --spacing-sm: calc(var(--spacing) * 3) /* 0.75rem = 12px */;
+  --spacing-md: calc(var(--spacing) * 6) /* 1.5rem = 24px */;
+
   --radius-*: initial;
   --radius-component: calc(var(--spacing) * 2); /* 12px */
   --radius-container: calc(var(--spacing) * 4); /* 24px */
@@ -73,12 +78,15 @@
   textarea {
     @apply resize-none;
   }
+
+  svg {
+    @apply size-4;
+  }
 }
 
 .root {
   isolation: isolate;
 }
-
 
 @utility title {
   @apply text-lg font-bold;
@@ -90,6 +98,20 @@
 
 @utility sub-text {
   @apply text-sm muted-text;
+}
+
+@utility card {
+  --card-spacing: var(--spacing-sm);
+
+  @apply w-full flex gap-(--card-spacing) rounded-container bg-card p-(--card-spacing);
+}
+
+@utility card-lg {
+  --card-spacing: var(--spacing-md);
+}
+
+@utility actions-footer {
+  @apply w-full flex items-center gap-xs *:flex-1;
 }
 
 @utility glass {

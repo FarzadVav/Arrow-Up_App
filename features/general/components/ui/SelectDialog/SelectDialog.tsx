@@ -215,7 +215,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           <Dialog.Close
             render={
               <Button
-                square
+                size={"square"}
                 type="button"
                 variant="ghost"
                 aria-label={t("common.close")}>
@@ -257,8 +257,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         {multiple && items.length > 2 && (
           <div className="flex items-center justify-between text-xs px-1 text-foreground/70">
             <span>
-              {stagedValues.length} / {items.length}{" "}
-              {t("common.selected")}
+              {stagedValues.length} / {items.length} {t("common.selected")}
             </span>
             <div className="flex items-center gap-2">
               <Button

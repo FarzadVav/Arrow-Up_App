@@ -48,11 +48,10 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
           <Button
             type="button"
             variant="card"
-            square
+            size={"square"}
             disabled={isDeleting}
             aria-label={t("common.delete")}
-            onClick={() => setDeleteDialogOpen(true)}
-          >
+            onClick={() => setDeleteDialogOpen(true)}>
             <Trash2Icon className="size-4" />
           </Button>
         }

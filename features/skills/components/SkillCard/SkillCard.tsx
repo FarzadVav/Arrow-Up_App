@@ -58,10 +58,9 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
         <Button
           type="button"
           variant="card"
-          square
+          size={"square"}
           aria-label={t("common.delete")}
-          onClick={() => onRequestDelete(skill.id)}
-        >
+          onClick={() => onRequestDelete(skill.id)}>
           <Trash2Icon className="size-4 text-destructive" />
         </Button>
       }

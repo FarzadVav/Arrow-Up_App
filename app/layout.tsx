@@ -65,8 +65,7 @@ export default async function RootLayout({
       lang={locale}
       suppressHydrationWarning
       dir={locale === "fa" ? "rtl" : "ltr"}
-      className={cn("antialiased", geist.variable, vazirmatn.variable)}
-    >
+      className={cn("antialiased", geist.variable, vazirmatn.variable)}>
       <head>
         <link
           rel="shortcut icon"
@@ -76,7 +75,7 @@ export default async function RootLayout({
 
         <PwaScript />
       </head>
-      <body className="max-w-160 mx-auto">
+      <body className="max-w-app-width mx-auto">
         <ThemeProvider>
           <LocaleProvider locale={locale} dictionary={dictionary}>
             <PwaManager />

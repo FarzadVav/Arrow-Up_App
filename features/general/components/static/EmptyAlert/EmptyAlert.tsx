@@ -33,8 +33,7 @@ export function EmptyAlert({
         "w-full flex gap-3 p-6 rounded-container border-2 border-dashed border-foreground/15 flex-col justify-center items-center text-center",
         className,
       )}
-      {...props}
-    >
+      {...props}>
       {icon ? (
         <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center shrink-0 text-foreground/40 mb-0.5">
           {icon}
@@ -42,13 +41,21 @@ export function EmptyAlert({
       ) : null}
 
       {alert ? (
-        <p className={cn("title text-sm sm:text-base font-semibold text-foreground/80", alertClassName)}>
+        <p
+          className={cn(
+            "title text-sm sm:text-base font-semibold text-foreground/80",
+            alertClassName,
+          )}>
           {alert}
         </p>
       ) : null}
 
       {description ? (
-        <p className={cn("sub-text max-w-xs leading-relaxed text-xs", descriptionClassName)}>
+        <p
+          className={cn(
+            "sub-text max-w-xs leading-relaxed text-xs",
+            descriptionClassName,
+          )}>
           {description}
         </p>
       ) : null}
@@ -59,7 +66,7 @@ export function EmptyAlert({
         action
       ) : href ? (
         <Button
-          square
+          size={"square"}
           variant={"primary"}
           nativeButton={false}
           render={

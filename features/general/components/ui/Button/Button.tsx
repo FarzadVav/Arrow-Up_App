@@ -7,38 +7,32 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 const buttonVariants = cva(
   [
-    "relative h-10 shrink-0 rounded-full px-3 [&_svg]:size-4",
-    "inline-flex items-center justify-center gap-2",
-    "whitespace-nowrap outline-none select-none",
-    "disabled:pointer-events-none disabled:opacity-50",
+    "relative h-10 shrink-0 rounded-component px-sm",
+    "inline-flex items-center justify-center gap-xs",
+    "transition-all disabled:pointer-events-none disabled:opacity-50",
+    "whitespace-nowrap outline-none",
+    "active:rounded-[calc(var(--spacing)*10)] focus-visible:rounded-[calc(var(--spacing)*10)] focus-visible:active:rounded-component active:scale-x-98 origin-center",
   ],
   {
     variants: {
       variant: {
-        primary: [
-          "bg-foreground",
-          "text-background",
-          "hover:bg-foreground/90",
-          "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-        ],
-        ghost: [
-          "hover:bg-foreground/5",
-          "focus-visible:ring-1 focus-visible:bg-foreground/5",
-        ],
-        outline: ["border hover:bg-foreground/5"],
+        primary: ["bg-foreground", "text-background", "hover:bg-foreground/90"],
+        ghost: ["hover:bg-foreground/5", "focus-visible:ring-2"],
+        outline: ["border-2 hover:bg-foreground/5"],
         card: [
           "bg-card [.bg-card_&]:bg-card-thick [.card_&]:bg-card-thick",
           "hover:bg-card/90 [.bg-card_&]:hover:bg-card-thick/90 [.card_&]:hover:bg-card-thick/90",
         ],
       },
-      square: {
-        true: "w-10 px-0",
-        false: "",
+      size: {
+        default: "",
+        square: "w-10 px-0",
+        full: "w-full",
       },
     },
     defaultVariants: {
       variant: "primary",
-      square: false,
+      size: "default",
     },
   },
 );
@@ -47,7 +41,7 @@ type ButtonProps = ComponentProps<typeof BaseUIButton> &
   VariantProps<typeof buttonVariants>;
 
 function Button({
-  square,
+  size,
   variant,
   className,
   type = "button",
@@ -59,7 +53,7 @@ function Button({
       className={cn(
         buttonVariants({
           variant,
-          square,
+          size,
         }),
         className,
       )}

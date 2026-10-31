@@ -20,9 +20,8 @@ export function LoginForm() {
     <Form
       action={formAction}
       errors={state?.errors}
-      className="w-full space-y-3"
-      aria-label={t("login.formLabel")}
-    >
+      className="space-y-sm"
+      aria-label={t("login.formLabel")}>
       <Field
         required
         minLength={3}
@@ -45,30 +44,27 @@ export function LoginForm() {
         placeholder={t("login.passwordPlaceholder")}
         endAdornment={
           <Button
-            square
             type="button"
             tabIndex={-1}
             variant="ghost"
+            size={"square"}
             className="h-full w-auto aspect-square"
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label={
-              showPassword
-                ? t("login.hidePassword")
-                : t("login.showPassword")
-            }
-          >
+              showPassword ? t("login.hidePassword") : t("login.showPassword")
+            }>
             {showPassword ? <EyeOffIcon /> : <EyeIcon />}
           </Button>
         }
       />
 
       <Field.FormError
-        message={state?.message}
         errors={state?.errors}
+        message={state?.message}
         knownFields={["username", "password"]}
       />
 
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" size={"full"} disabled={pending}>
         {pending ? t("login.pending") : t("login.submit")}
       </Button>
     </Form>
