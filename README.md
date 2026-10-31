@@ -4,11 +4,19 @@
 
 # Clean Code
 
-- Helps (Remove the uselesses and optimize the requires)
+- Login
+- Profile
+- Life Areas
+- Todos
+- Framework
+- Skills
+- Journals
+- Folders, Features, Components, Hooks, Mutations, Queries, Repositories, Lib, Files
+- Code-Splitting, TSX/HTML and Styling Designs
+- States, Hooks, Fetches, Form Actions, Forms, Re-Renders
+- DB, ORM, Repositories, Queries, Mutations, Business Logics
 - PWA (and the offline page)
-- Feature, Folder and File Structure, Code-Splitting, TSX/HTML and Styling Designs
-- States, Hooks, Fetches, Actions, Forms, Re-Renders
-- DB, ORM, Repositories, Queries, Mutations
+- Helps (Remove the uselesses and optimize the requires)
 
 ---
 
