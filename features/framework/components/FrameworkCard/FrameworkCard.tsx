@@ -38,21 +38,21 @@ export function FrameworkCard({
       description={stripHtml(framework.description)}
       icon={
         <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
-          <Repeat2Icon className="size-4 text-foreground" />
+          <Repeat2Icon />
         </div>
       }
       editHref={`/framework/new?editId=${framework.id}`}
       content={
         <div className="space-y-4">
-          <div className="flex items-center gap-sm flex-wrap sub-text text-xs">
+          <div className="flex items-center gap-sm flex-wrap sub-text">
             <span className="flex items-center gap-xs">
-              <CompassIcon className="size-3 text-foreground/60" />
+              <CompassIcon />
               <span>{framework.lifeArea?.title ?? t("common.notSet")}</span>
             </span>
 
             {framework.tag && (
               <span className="flex items-center gap-xs">
-                <TagIcon className="size-3 text-foreground/60" />
+                <TagIcon />
                 <span>{framework.tag}</span>
               </span>
             )}
@@ -61,18 +61,18 @@ export function FrameworkCard({
           {framework.description && (
             <RichTextResult
               content={framework.description}
-              containerClassName="rounded-container bg-background/60 p-4 border border-foreground/10"
+              containerClassName="rounded-container bg-background/60 p-4"
             />
           )}
 
           {/* Recent History summary */}
           {framework.history && framework.history.length > 0 && (
-            <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-sm">
+            <div className="rounded-container bg-card p-4 space-y-sm">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-foreground">
+                <h4 className="text-xs font-bold">
                   {t("framework.historyTitle")}
                 </h4>
-                <span className="text-xs sub-text">
+                <span className="sub-text">
                   {completedCount} / {framework.history.length}{" "}
                   {t("common.done")}
                 </span>
@@ -87,10 +87,10 @@ export function FrameworkCard({
                       key={entry.id}
                       className={`inline-flex items-center gap-1 px-xs py-1 rounded-md text-xs font-medium ${
                         entry.isDone
-                          ? "bg-foreground/10 text-foreground"
+                          ? "bg-foreground/10"
                           : "bg-destructive/10 text-destructive line-through"
                       }`}>
-                      <CalendarDaysIcon className="size-3" />
+                      <CalendarDaysIcon />
                       <span>{formatDate(entry.date)}</span>
                     </span>
                   ))}
@@ -106,7 +106,7 @@ export function FrameworkCard({
           size={"square"}
           aria-label={t("common.delete")}
           onClick={() => onRequestDelete(framework.id)}>
-          <Trash2Icon className="size-4 text-destructive" />
+          <Trash2Icon className="text-destructive" />
         </Button>
       }
     />

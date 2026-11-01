@@ -84,10 +84,10 @@ export default function HelpDialog({
           {/* Header */}
           <div className="flex items-center gap-3.5">
             <div className="size-11 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
-              <CircleHelp className="size-6 text-foreground" />
+              <CircleHelp />
             </div>
             <div className="flex flex-col">
-              <Dialog.Title className="title text-foreground">
+              <Dialog.Title className="title">
                 {title}
               </Dialog.Title>
               <Dialog.Description className="sub-text">
@@ -98,37 +98,37 @@ export default function HelpDialog({
 
           {/* Help Tips */}
           <div className="space-y-sm py-1 text-sm">
-            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
-              <Lightbulb className="size-4.5 text-foreground shrink-0 mt-0.5" />
+            <div className="flex items-start gap-sm rounded-container bg-background/50 p-sm">
+              <Lightbulb className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-foreground text-xs">
+                <span className="font-semibold text-xs">
                   {tip1Title}
                 </span>
-                <span className="sub-text text-xs leading-relaxed">
+                <span className="sub-text leading-relaxed">
                   {tip1Desc}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
-              <CheckCircle2 className="size-4.5 text-foreground shrink-0 mt-0.5" />
+            <div className="flex items-start gap-sm rounded-container bg-background/50 p-sm">
+              <CheckCircle2 className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-foreground text-xs">
+                <span className="font-semibold text-xs">
                   {tip2Title}
                 </span>
-                <span className="sub-text text-xs leading-relaxed">
+                <span className="sub-text leading-relaxed">
                   {tip2Desc}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
-              <Sparkles className="size-4.5 text-foreground shrink-0 mt-0.5" />
+            <div className="flex items-start gap-sm rounded-container bg-background/50 p-sm">
+              <Sparkles className="shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-foreground text-xs">
+                <span className="font-semibold text-xs">
                   {tip3Title}
                 </span>
-                <span className="sub-text text-xs leading-relaxed">
+                <span className="sub-text leading-relaxed">
                   {tip3Desc}
                 </span>
               </div>

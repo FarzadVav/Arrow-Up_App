@@ -18,8 +18,6 @@ export class User extends BaseEntity {
   @Property({ type: 'string', hidden: true })
   password!: string;
 
-  @Property({ type: 'string', nullable: true })
-  name?: string;
 
   @Property({ type: 'string', nullable: true })
   email?: string;

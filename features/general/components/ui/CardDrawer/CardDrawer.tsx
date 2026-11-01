@@ -49,7 +49,7 @@ export function CardDrawer({
           title={title}
           description={description}
           date={date ?? dateTime}
-          className={cn("cursor-pointer", cardClassName)}
+          className={cardClassName}
         />
       }
     >

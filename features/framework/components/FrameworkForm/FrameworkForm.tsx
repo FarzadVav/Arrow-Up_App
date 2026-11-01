@@ -62,7 +62,7 @@ function LifeAreaSelect({
         placeholder={t("lifeAreas.selectLifeArea")}
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+      <Field.Error className="sub-text mt-0.5" />
     </Field.Root>
   );
 }
@@ -101,7 +101,7 @@ function TagSelect({
         placeholder={t("framework.selectTag")}
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+      <Field.Error className="sub-text mt-0.5" />
     </Field.Root>
   );
 }
@@ -185,9 +185,9 @@ export function FrameworkForm() {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
-            className="text-foreground/70 hover:text-foreground"
+
           >
-            <Trash2Icon className="size-5" />
+            <Trash2Icon />
           </TopBar.Btn>
         ) : (
           <HelpDialog position="right" />
@@ -256,7 +256,7 @@ export function FrameworkForm() {
               title={t("common.description")}
             />
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error className="sub-text mt-0.5" />
           </Field.Root>
 
           <Field.FormError
@@ -272,7 +272,7 @@ export function FrameworkForm() {
         <div className="p-1 space-y-4">
           <div>
             <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("framework.deleteConfirm")}
             </Dialog.Description>
           </div>

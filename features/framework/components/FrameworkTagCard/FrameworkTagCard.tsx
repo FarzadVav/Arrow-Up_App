@@ -28,7 +28,7 @@ export function FrameworkTagCard({
           description={tag.createdAt ? formatDate(tag.createdAt) : undefined}
           icon={
             <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
-              <TagIcon className="size-4 text-foreground" />
+              <TagIcon />
             </div>
           }
         />
@@ -44,17 +44,17 @@ export function FrameworkTagCard({
           size={"square"}
           className="size-10 justify-center"
           aria-label={t("common.edit")}>
-          <PencilIcon className="size-4 text-foreground/70" />
+          <PencilIcon />
         </Button>
 
         <Button
           type="button"
           variant="card"
           size={"square"}
-          className="size-10 justify-center text-foreground/70 hover:text-foreground"
+          className="size-10 justify-center"
           aria-label={t("common.delete")}
           onClick={() => onRequestDelete(tag.id)}>
-          <Trash2Icon className="size-4 text-destructive" />
+          <Trash2Icon className="text-destructive" />
         </Button>
       </div>
     </div>

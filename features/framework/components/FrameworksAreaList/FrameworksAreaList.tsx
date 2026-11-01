@@ -47,8 +47,8 @@ export function FrameworksAreaList() {
     <Link key={key} href={href} className="block">
       <CardView
         icon={
-          <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center shrink-0 text-foreground">
-            <Icon className="size-5" />
+          <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center shrink-0">
+            <Icon />
           </div>
         }
         title={title}

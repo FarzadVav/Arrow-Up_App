@@ -24,7 +24,7 @@ export default async function SkillsPage() {
           <SkillsAreaList />
         </Suspense>
 
-        <p className="sub-text w-full text-center text-xs">
+        <p className="sub-text w-full text-center">
           {t("skills.subtitle")}
         </p>
 

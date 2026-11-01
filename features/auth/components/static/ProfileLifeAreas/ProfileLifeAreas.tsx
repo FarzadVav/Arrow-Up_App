@@ -63,7 +63,7 @@ export function ProfileLifeAreas() {
             <div className="pt-1">
               <CardDrawer
                 title={t("lifeAreas.notActiveTitle")}
-                icon={<ArchiveIcon className="size-4 text-foreground/70" />}
+                icon={<ArchiveIcon />}
                 description={`${notActiveLifeAreas.length}`}
                 content={
                   <div className="space-y-sm">

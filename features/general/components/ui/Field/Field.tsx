@@ -103,7 +103,7 @@ export function createArkTypeValidator(schema: unknown, name?: string) {
 
 const fieldInputVariants = cva(
   [
-    "w-full border-2 bg-transparent placeholder:text-foreground/50 transition-all",
+    "w-full border-2 bg-transparent transition-all",
     "disabled:pointer-events-none disabled:opacity-50",
     "select-text cursor-text",
   ],
@@ -131,7 +131,7 @@ const fieldInputVariants = cva(
   },
 );
 
-const fieldLabelVariants = cva("block font-bold text-foreground select-none", {
+const fieldLabelVariants = cva("block font-bold select-none", {
   variants: {
     size: {
       sm: "text-xs mb-1",
@@ -144,7 +144,7 @@ const fieldLabelVariants = cva("block font-bold text-foreground select-none", {
 });
 
 const fieldErrorVariants = cva(
-  "sub-text text-red-300 text-xs mt-1 block leading-normal [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-0.5",
+  "sub-text text-red-300 mt-1 block leading-normal [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-0.5",
   {
     variants: {
       variant: {
@@ -301,7 +301,7 @@ const FieldDescription = forwardRef<HTMLDivElement, FieldDescriptionProps>(
     return (
       <BaseUIField.Description
         ref={ref}
-        className={cn("sub-text text-xs mt-1", className)}
+        className={cn("sub-text mt-1", className)}
         {...props}
       />
     );
@@ -396,7 +396,7 @@ const FieldFormError = forwardRef<HTMLDivElement, FieldFormErrorProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "p-sm text-xs rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
+          "p-sm rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
           className,
         )}
         {...props}>
@@ -588,7 +588,7 @@ const LocalField = forwardRef<
             (startAdornment || endAdornment) && "flex items-center",
           )}>
           {startAdornment ? (
-            <div className="absolute inset-s-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10 text-foreground/50">
+            <div className="absolute inset-s-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
               {startAdornment}
             </div>
           ) : null}

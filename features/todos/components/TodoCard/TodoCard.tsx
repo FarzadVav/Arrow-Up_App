@@ -57,9 +57,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       date={
         <span className="flex items-center gap-1">
           {isDaily ? (
-            <ClockIcon className="size-3" />
+            <ClockIcon />
           ) : (
-            <CalendarDaysIcon className="size-3" />
+            <CalendarDaysIcon />
           )}
           <span>{formatDeadline(todo.deadline, isDaily)}</span>
         </span>
@@ -67,9 +67,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       icon={
         <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
           {todo.isDone ? (
-            <CheckIcon className="size-4 text-foreground" />
+            <CheckIcon />
           ) : (
-            <CircleIcon className="size-4 text-foreground/40" />
+            <CircleIcon />
           )}
         </div>
       }
@@ -79,7 +79,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
           <div className="grid grid-cols-3 gap-2">
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <TagIcon className="size-4" />
+                <TagIcon />
                 <span>{t("common.type")}</span>
               </div>
               <p className="mt-2 font-medium">{todo.type}</p>
@@ -88,9 +88,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 {isDaily ? (
-                  <ClockIcon className="size-4" />
+                  <ClockIcon />
                 ) : (
-                  <CalendarDaysIcon className="size-4" />
+                  <CalendarDaysIcon />
                 )}
                 <span>{t("common.deadline")}</span>
               </div>
@@ -101,12 +101,12 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <CheckIcon className="size-4" />
+                <CheckIcon />
                 <span>{t("common.status")}</span>
               </div>
               <p
                 className={`mt-2 font-medium ${
-                  todo.isDone ? "text-foreground" : "sub-text"
+                  todo.isDone ? "" : "sub-text"
                 }`}>
                 {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
               </p>
@@ -114,7 +114,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
             <div className="col-span-3 rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <CompassIcon className="size-4" />
+                <CompassIcon />
                 <span>{t("lifeAreas.title")}</span>
               </div>
               <p className="mt-2 font-medium">
@@ -126,7 +126,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
           {todo.description && (
             <section className="space-y-2">
               <div className="flex items-center gap-2 sub-text">
-                <FileTextIcon className="size-4" />
+                <FileTextIcon />
                 <span className="font-bold">{t("common.description")}</span>
               </div>
 
@@ -139,14 +139,14 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
           <form ref={toggleFormRef} action={toggleAction}>
             <Field type="hidden" name="id" value={todo.id} />
-            <label className="rounded-container bg-background p-sm flex items-center justify-between cursor-pointer select-none">
+            <label className="rounded-container bg-background p-sm flex items-center justify-between select-none">
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-foreground">
+                <span className="text-sm font-medium">
                   {todo.isDone
                     ? t("todos.markAsIncomplete")
                     : t("todos.markAsCompleted")}
                 </span>
-                <span className="sub-text text-xs">
+                <span className="sub-text">
                   {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
                 </span>
               </div>
@@ -174,9 +174,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
                 variant="card"
                 size={"square"}
                 disabled={isDeleting}
-                className="size-10 justify-center text-foreground/70 hover:text-foreground"
+                className="size-10 justify-center"
                 aria-label={t("common.delete")}>
-                <Trash2Icon className="size-4" />
+                <Trash2Icon />
               </Button>
             }
           />

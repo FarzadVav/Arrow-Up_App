@@ -70,7 +70,7 @@ function TypeSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+      <Field.Error className="sub-text mt-0.5" />
     </Field.Root>
   );
 }
@@ -107,7 +107,7 @@ function DifficultySelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+      <Field.Error className="sub-text mt-0.5" />
     </Field.Root>
   );
 }
@@ -147,7 +147,7 @@ function LifeAreaSelect({
         placeholder={t("lifeAreas.selectLifeArea")}
       />
 
-      <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+      <Field.Error className="sub-text mt-0.5" />
     </Field.Root>
   );
 }
@@ -405,8 +405,8 @@ export function TodoForm() {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
-            className="text-foreground/70 hover:text-foreground">
-            <Trash2Icon className="size-5" />
+>
+            <Trash2Icon />
           </TopBar.Btn>
         ) : (
           <HelpDialog position="right" />
@@ -487,7 +487,7 @@ export function TodoForm() {
               title={t("common.description")}
             />
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error className="sub-text mt-0.5" />
           </Field.Root>
 
           <TypeSelect
@@ -524,7 +524,7 @@ export function TodoForm() {
               />
             )}
 
-            <Field.Error className="sub-text mt-0.5 text-foreground text-xs" />
+            <Field.Error className="sub-text mt-0.5" />
           </Field.Root>
 
           {type === "Mission" && (
@@ -537,7 +537,7 @@ export function TodoForm() {
                   <Field.Label className="font-bold">
                     {t("missions.actionsLabel")}
                   </Field.Label>
-                  <span className="sub-text text-xs">
+                  <span className="sub-text">
                     {actions.length} {t("missions.actionsLabel")}
                   </span>
                 </div>
@@ -548,7 +548,7 @@ export function TodoForm() {
                   onClick={openNewAction}
                   disabled={pending}
                   className="w-full justify-center gap-xs rounded-component">
-                  <PlusIcon className="size-4" />
+                  <PlusIcon />
                   <span>{t("missions.newAction")}</span>
                 </Button>
 
@@ -557,12 +557,12 @@ export function TodoForm() {
                     {actions.map((act) => (
                       <div
                         key={act.id}
-                        className="flex items-center justify-between gap-sm rounded-component bg-card p-sm">
+                        className="card items-center justify-between">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {act.title}
                           </p>
-                          <p className="sub-text text-xs">
+                          <p className="sub-text">
                             {act.deadline
                               ? formatDate(act.deadline)
                               : t("common.notSet")}
@@ -577,7 +577,7 @@ export function TodoForm() {
                             className="size-8"
                             onClick={() => openEditAction(act)}
                             disabled={pending}>
-                            <EditIcon className="size-3.5" />
+                            <EditIcon />
                           </Button>
                           <Button
                             type="button"
@@ -586,7 +586,7 @@ export function TodoForm() {
                             className="size-8"
                             onClick={() => deleteAction(act.id)}
                             disabled={pending}>
-                            <Trash2Icon className="size-3.5" />
+                            <Trash2Icon />
                           </Button>
                         </div>
                       </div>
@@ -601,7 +601,7 @@ export function TodoForm() {
                   <Field.Label className="font-bold">
                     {t("missions.disciplines")}
                   </Field.Label>
-                  <span className="sub-text text-xs">
+                  <span className="sub-text">
                     {disciplines.length} {t("missions.disciplines")}
                   </span>
                 </div>
@@ -612,7 +612,7 @@ export function TodoForm() {
                   onClick={openNewDiscipline}
                   disabled={pending}
                   className="w-full justify-center gap-xs rounded-component">
-                  <PlusIcon className="size-4" />
+                  <PlusIcon />
                   <span>{t("missions.newDiscipline")}</span>
                 </Button>
 
@@ -621,7 +621,7 @@ export function TodoForm() {
                     {disciplines.map((d) => (
                       <div
                         key={d.id}
-                        className="flex items-center justify-between gap-sm rounded-component bg-card p-sm">
+                        className="card items-center justify-between">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {d.title}
@@ -636,7 +636,7 @@ export function TodoForm() {
                             className="size-8"
                             onClick={() => openEditDiscipline(d)}
                             disabled={pending}>
-                            <EditIcon className="size-3.5" />
+                            <EditIcon />
                           </Button>
                           <Button
                             type="button"
@@ -645,7 +645,7 @@ export function TodoForm() {
                             className="size-8"
                             onClick={() => deleteDiscipline(d.id)}
                             disabled={pending}>
-                            <Trash2Icon className="size-3.5" />
+                            <Trash2Icon />
                           </Button>
                         </div>
                       </div>
@@ -665,7 +665,7 @@ export function TodoForm() {
                         ? t("missions.editAction")
                         : t("missions.newAction")}
                     </Dialog.Title>
-                    <Dialog.Description className="sub-text text-xs mt-1">
+                    <Dialog.Description className="sub-text mt-1">
                       {t("missions.createActionDesc")}
                     </Dialog.Description>
                   </div>
@@ -726,7 +726,7 @@ export function TodoForm() {
                         ? t("missions.editDiscipline")
                         : t("missions.newDiscipline")}
                     </Dialog.Title>
-                    <Dialog.Description className="sub-text text-xs mt-1">
+                    <Dialog.Description className="sub-text mt-1">
                       {disciplineDraft.id !== null
                         ? t("missions.editDisciplineDesc")
                         : t("missions.createDisciplineDesc")}
@@ -797,7 +797,7 @@ export function TodoForm() {
             <Dialog.Title className="font-bold">
               {t("common.delete")}
             </Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("common.deleteConfirm")}
             </Dialog.Description>
           </div>

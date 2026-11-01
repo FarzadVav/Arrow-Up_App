@@ -57,12 +57,12 @@ async function UserProfilePage() {
         <ProfileStats />
 
         <div className="w-full space-y-sm">
-          <div className="flex items-center justify-between gap-sm p-sm rounded-container bg-card">
+          <div className="card items-center justify-between">
             <span className="font-bold">{t("profile.language")}</span>
             <LocaleSwitcher />
           </div>
 
-          <div className="flex items-center justify-between gap-sm p-sm rounded-container bg-card">
+          <div className="card items-center justify-between">
             <span className="font-bold">{t("profile.colorScheme")}</span>
             <ThemeSwitcher />
           </div>

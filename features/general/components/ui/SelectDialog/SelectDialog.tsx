@@ -208,7 +208,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           </Button>
         }>
         <div className="flex items-center justify-between">
-          <Dialog.Title className="text-sm sm:text-base font-bold text-foreground truncate">
+          <Dialog.Title className="text-sm sm:text-base font-bold truncate">
             {title || placeholder || t("common.select")}
           </Dialog.Title>
 
@@ -238,7 +238,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
             inputClassName="ps-9 pe-8 text-sm"
             placeholder={t("common.search")}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startAdornment={<SearchIcon className="size-4" />}
+            startAdornment={<SearchIcon />}
             endAdornment={
               searchQuery ? (
                 <Button
@@ -246,7 +246,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   variant="ghost"
                   onClick={() => setSearchQuery("")}
                   aria-label={t("common.clear")}
-                  className="h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent cursor-pointer [&_svg]:size-3.5">
+                  className="h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent">
                   <XIcon />
                 </Button>
               ) : null
@@ -255,7 +255,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         )}
 
         {multiple && items.length > 2 && (
-          <div className="flex items-center justify-between text-xs px-1 text-foreground/70">
+          <div className="flex items-center justify-between text-xs px-1">
             <span>
               {stagedValues.length} / {items.length} {t("common.selected")}
             </span>
@@ -268,7 +268,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                     items.filter((i) => !i.disabled).map((i) => i.value),
                   )
                 }
-                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent cursor-pointer">
+                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent">
                 {t("common.all")}
               </Button>
               <span>·</span>
@@ -276,7 +276,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                 type="button"
                 variant="ghost"
                 onClick={() => setStagedValues([])}
-                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent cursor-pointer">
+                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent">
                 {t("common.clear")}
               </Button>
             </div>

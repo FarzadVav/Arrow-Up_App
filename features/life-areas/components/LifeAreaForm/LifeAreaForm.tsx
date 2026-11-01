@@ -98,8 +98,8 @@ export function LifeAreaForm() {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
-            className="text-foreground/70 hover:text-foreground">
-            <Trash2Icon className="size-5" />
+>
+            <Trash2Icon />
           </TopBar.Btn>
         ) : (
           <HelpDialog position="right" />
@@ -135,12 +135,12 @@ export function LifeAreaForm() {
             schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
           />
 
-          <label className="rounded-container bg-card p-sm flex items-center justify-between cursor-pointer select-none">
+          <label className="card items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-foreground">
+              <span className="text-sm font-medium">
                 {t("lifeAreas.activeStatus")}
               </span>
-              <span className="sub-text text-xs">
+              <span className="sub-text">
                 {active ? t("lifeAreas.activeDesc") : t("lifeAreas.inactiveDesc")}
               </span>
             </div>
@@ -183,7 +183,7 @@ export function LifeAreaForm() {
             <Dialog.Title className="font-bold">
               {t("lifeAreas.deleteConfirm")}
             </Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("lifeAreas.deleteDesc", { title: area?.title || "" })}
             </Dialog.Description>
           </div>

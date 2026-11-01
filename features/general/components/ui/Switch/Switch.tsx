@@ -7,10 +7,9 @@ import { cn } from "cn";
 
 const switchTrackVariants = cva(
   [
-    "group inline-flex shrink-0 cursor-pointer items-center rounded-container transition-colors duration-200 ease-in-out select-none",
-    "border border-foreground/20 bg-card-thick",
-    "data-checked:bg-foreground data-checked:border-foreground",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "group inline-flex shrink-0 items-center rounded-container transition-colors duration-200 ease-in-out select-none",
+    "bg-card-thick",
+    "data-checked:bg-foreground",
     "disabled:cursor-not-allowed disabled:opacity-50",
   ],
   {

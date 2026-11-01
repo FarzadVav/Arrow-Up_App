@@ -123,7 +123,7 @@ function TodosTabs() {
                     ? t("todos.noMissions")
                     : t("todos.noTodos")
                 }
-                alertClassName="sub-text font-normal"
+                alertClassName="sub-text"
                 href={newTodoHref}
               />
             ) : (

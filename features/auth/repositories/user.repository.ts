@@ -92,7 +92,6 @@ export class UserRepository extends EntityRepository<User> {
     const user = this.create({
       username: data.username.trim(),
       password: data.password,
-      name: data.name?.trim(),
       email: data.email?.trim().toLowerCase(),
       locale: data.locale ?? 'fa',
       colorScheme: data.colorScheme ?? 'system',

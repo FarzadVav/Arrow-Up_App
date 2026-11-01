@@ -54,7 +54,7 @@ export function RichTextEditor({
     editorProps: {
       attributes: {
         class:
-          "tiptap-content min-h-full outline-none select-text cursor-text text-base leading-relaxed",
+          "tiptap-content min-h-full select-text cursor-text text-base leading-relaxed",
       },
     },
     onUpdate: ({ editor: currentEditor }) => {

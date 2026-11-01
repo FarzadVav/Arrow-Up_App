@@ -77,7 +77,7 @@ function LocalDayPickerDialog({
       variant="outline"
       className={`${className} ${showIcon ? "gap-2" : ""}`}
     >
-      {showIcon && <CalendarDaysIcon className="size-4 opacity-70" />}
+      {showIcon && <CalendarDaysIcon className="opacity-70" />}
       <span>
         {resolvedLabel}: {formatDateValue(value)}
       </span>
@@ -96,7 +96,7 @@ function LocalDayPickerDialog({
           <div className="mb-2 text-center">
             <Dialog.Title className="font-bold">{title}</Dialog.Title>
             {description ? (
-              <Dialog.Description className="sub-text text-sm">
+              <Dialog.Description className="sub-text">
                 {description}
               </Dialog.Description>
             ) : null}

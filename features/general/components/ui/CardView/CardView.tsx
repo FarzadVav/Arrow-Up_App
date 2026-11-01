@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const cardViewVariants = cva(
-  "w-full flex gap-sm p-sm rounded-container text-foreground transition-all select-none",
+  "w-full flex gap-sm p-sm rounded-container transition-all select-none",
   {
     variants: {
       variant: {
@@ -46,7 +46,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
   ) => {
     const cardDate = date ?? dateTime;
     const isInteractive =
-      Boolean(props.onClick) || className?.includes("cursor-pointer");
+      Boolean(props.onClick);
 
     return (
       <div
@@ -54,7 +54,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         className={cn(
           cardViewVariants({ variant }),
           description || cardDate ? "items-start" : "items-center",
-          isInteractive && "cursor-pointer hover:opacity-90 active:scale-[0.99]",
+          isInteractive && "hover:opacity-90 active:scale-[0.99]",
           className,
         )}
         {...props}
@@ -62,7 +62,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         {icon && (
           <div
             className={cn(
-              "shrink-0 flex items-center justify-center text-foreground",
+              "shrink-0 flex items-center justify-center",
               (description || cardDate) && "mt-0.5",
             )}
           >
@@ -71,18 +71,18 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         )}
 
         <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <div className="font-bold text-sm truncate text-foreground leading-snug">
+          <div className="font-bold text-sm truncate leading-snug">
             {title}
           </div>
 
           {description && (
-            <div className="sub-text text-xs line-clamp-2 mt-0.5 leading-relaxed">
+            <div className="sub-text line-clamp-2 mt-0.5 leading-relaxed">
               {description}
             </div>
           )}
 
           {cardDate && (
-            <div className="sub-text text-xs text-foreground/60 mt-1 flex items-center gap-xs">
+            <div className="sub-text mt-1 flex items-center gap-xs">
               {cardDate}
             </div>
           )}

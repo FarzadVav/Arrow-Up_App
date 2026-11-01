@@ -82,9 +82,9 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
-            className="text-foreground/70 hover:text-foreground"
+
           >
-            <Trash2Icon className="size-5" />
+            <Trash2Icon />
           </TopBar.Btn>
         )}
       </TopBar>
@@ -116,7 +116,7 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
             schema={isEditMode ? UpdateFrameworkTagSchema : CreateFrameworkTagSchema}
           />
 
-          <div className="sub-text text-xs">
+          <div className="sub-text">
             {t("common.tag")} · {areaTitle}
           </div>
 
@@ -134,7 +134,7 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
         <div className="p-1 space-y-4">
           <div>
             <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("framework.deleteTagConfirm")}
             </Dialog.Description>
           </div>

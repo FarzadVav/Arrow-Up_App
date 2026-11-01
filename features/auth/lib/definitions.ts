@@ -16,7 +16,6 @@ export type SessionPayload = typeof SessionPayloadSchema.infer;
 export const AuthUserSchema = type({
   id: 'number',
   username: 'string',
-  'name?': 'string | null',
   'email?': 'string | null',
   locale: 'string',
   colorScheme: 'string',
@@ -39,7 +38,6 @@ export type LoginInput = typeof LoginInputSchema.infer;
 export const CreateUserDataSchema = type({
   username: 'string >= 3',
   password: 'string >= 6',
-  'name?': 'string',
   'email?': 'string',
   'locale?': 'string',
   'colorScheme?': 'string',
@@ -50,7 +48,6 @@ export type CreateUserData = typeof CreateUserDataSchema.infer;
  * ArkType schema for updating an existing user record.
  */
 export const UpdateUserDataSchema = type({
-  'name?': 'string',
   'email?': 'string',
   'locale?': 'string',
   'colorScheme?': 'string',

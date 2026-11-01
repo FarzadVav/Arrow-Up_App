@@ -131,8 +131,8 @@ export default function Wheel({
             <div
               className={`wheel__slide transition-colors ${
                 isCentered
-                  ? "font-bold text-foreground opacity-100"
-                  : "text-foreground/40 opacity-70"
+                  ? "font-bold opacity-100"
+                  : "opacity-70"
               }`}
               style={style}
               key={idx}

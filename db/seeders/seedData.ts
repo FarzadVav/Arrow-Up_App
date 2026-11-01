@@ -4,7 +4,6 @@ export const SEED_USER = {
   id: 1,
   username: 'admin',
   password: 'password123',
-  name: 'Farhad Vahdati',
   email: 'admin@lifeos.local',
   locale: 'fa',
   colorScheme: 'system',

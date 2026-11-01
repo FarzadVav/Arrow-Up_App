@@ -77,7 +77,7 @@ export default function JournalCategoryView({
         id: "tags-page",
         label: t("common.tags"),
         href: `/journals/${categoryName.toLowerCase()}/tags`,
-        icon: <TagIcon className="size-3.5" />,
+        icon: <TagIcon />,
       },
     ];
   }, [allTagNames, categoryName, t]);
@@ -109,8 +109,8 @@ export default function JournalCategoryView({
           headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
-            <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
-              <span className="font-semibold text-foreground">{title}</span>
+            <div className="w-full flex items-center justify-between pb-1 text-xs">
+              <span className="font-semibold">{title}</span>
               <span>
                 {filteredJournals.length} {t("profile.total")}
               </span>

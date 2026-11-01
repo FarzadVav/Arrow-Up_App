@@ -21,20 +21,20 @@ export function RichTextResult({
   return (
     <div
       className={cn(
-        "rounded-container bg-background p-sm",
+        "rounded-component bg-background p-sm",
         containerClassName,
       )}
     >
       {hasContent ? (
         <div
           className={cn(
-            "tiptap-content text-sm leading-relaxed text-foreground select-text",
+            "tiptap-content select-text",
             className,
           )}
           dangerouslySetInnerHTML={{ __html: toEditorHtml(content) }}
         />
       ) : placeholder ? (
-        <p className="sub-text text-sm italic">{placeholder}</p>
+        <p className="sub-text">{placeholder}</p>
       ) : null}
     </div>
   );

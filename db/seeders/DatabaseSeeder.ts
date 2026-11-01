@@ -24,7 +24,6 @@ export class DatabaseSeeder extends Seeder {
       user = em.create(User, {
         username: SEED_USER.username,
         password: SEED_USER.password,
-        name: SEED_USER.name,
         email: SEED_USER.email,
         locale: SEED_USER.locale,
         colorScheme: SEED_USER.colorScheme,

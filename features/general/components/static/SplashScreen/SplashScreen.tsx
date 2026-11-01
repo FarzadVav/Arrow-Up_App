@@ -56,12 +56,12 @@ function SplashScreen({ children }: PropsWithChildren) {
                 unoptimized
                 alt="Arrow Up"
                 src="/logo.png"
-                className="rounded-full shadow-2xl border border-foreground/10"
+                className="rounded-full shadow-2xl"
               />
             </motion.div>
             <motion.p
               transition={{ delay: 0.15, duration: 0.45, ease: "easeOut" }}
-              className="text-3xl font-bold tracking-tight text-foreground z-front"
+              className="text-3xl font-bold tracking-tight z-front"
               initial={{ scale: 0.85, translateY: "20%", opacity: 0 }}
               animate={{ scale: 1, translateY: 0, opacity: 1 }}
             >

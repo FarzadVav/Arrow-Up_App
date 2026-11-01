@@ -52,7 +52,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
             disabled={isDeleting}
             aria-label={t("common.delete")}
             onClick={() => setDeleteDialogOpen(true)}>
-            <Trash2Icon className="size-4" />
+            <Trash2Icon />
           </Button>
         }
       />
@@ -63,7 +63,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
             <Dialog.Title className="font-bold">
               {t("lifeAreas.deleteConfirm")}
             </Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("lifeAreas.deleteDesc")?.replace("{title}", lifeArea.title)}
             </Dialog.Description>
           </div>
@@ -87,7 +87,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
                 className="bg-red-600 text-white hover:bg-red-700">
                 {isDeleting ? (
                   <span className="flex items-center gap-xs">
-                    <LoaderIcon className="size-4 animate-spin" />
+                    <LoaderIcon className="animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>
                 ) : (

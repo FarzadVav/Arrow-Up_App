@@ -29,7 +29,7 @@ async function JournalsPage() {
           <JournalsCategoryList />
         </Suspense>
 
-        <p className="sub-text w-full text-center text-xs">
+        <p className="sub-text w-full text-center">
           {t("journals.subtitle")}
         </p>
 

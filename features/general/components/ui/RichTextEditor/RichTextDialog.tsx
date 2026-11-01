@@ -79,11 +79,11 @@ export function RichTextDialog({
       <BaseUIDialog.Portal>
         <BaseUIDialog.Backdrop className="fixed inset-0 z-big-overlay bg-background/80 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
 
-        <BaseUIDialog.Popup className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95">
+        <BaseUIDialog.Popup className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95">
           <div className="mx-auto max-w-3xl flex flex-col h-full overflow-hidden">
             {/* Header with Title and Undo/Redo in a justify-between flex */}
-            <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 sm:px-md backdrop-blur-md">
-              <BaseUIDialog.Title className="text-base font-bold text-foreground">
+            <header className="flex h-14 shrink-0 items-center justify-between bg-card/40 px-4 sm:px-md backdrop-blur-md">
+              <BaseUIDialog.Title className="text-base font-bold">
                 {title || t("editor.fullscreen") || t("common.content")}
               </BaseUIDialog.Title>
 
@@ -97,7 +97,7 @@ export function RichTextDialog({
                     e.preventDefault();
                     editor?.chain().focus().undo().run();
                   }}
-                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
+                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors hover:bg-card-thick disabled:opacity-30"
                   title={t("editor.undo")}
                   aria-label={t("editor.undo")}>
                   <Undo2Icon />
@@ -112,7 +112,7 @@ export function RichTextDialog({
                     e.preventDefault();
                     editor?.chain().focus().redo().run();
                   }}
-                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors [&_svg]:size-4 hover:bg-card-thick disabled:opacity-30 cursor-pointer"
+                  className="size-8 rounded-component p-0 flex items-center justify-center transition-colors hover:bg-card-thick disabled:opacity-30"
                   title={t("editor.redo")}
                   aria-label={t("editor.redo")}>
                   <Redo2Icon />
@@ -131,7 +131,7 @@ export function RichTextDialog({
             />
 
             {/* Footer with Close and Done actions */}
-            <footer className="flex h-14 shrink-0 items-center justify-end gap-sm border-t bg-card/40 px-4 sm:px-md backdrop-blur-md [&>button]:w-1/2">
+            <footer className="flex h-14 shrink-0 items-center justify-end gap-sm bg-card/40 px-4 sm:px-md backdrop-blur-md [&>button]:w-1/2">
               <Button
                 type="button"
                 variant="card"

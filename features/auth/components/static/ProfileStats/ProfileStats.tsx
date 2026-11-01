@@ -30,7 +30,7 @@ function ProfileStats() {
   const stats = [
     {
       label: t("todos.title"),
-      icon: <CheckSquareIcon className="size-5 text-foreground" />,
+      icon: <CheckSquareIcon />,
       details: [
         {
           label: t("todos.today"),
@@ -44,7 +44,7 @@ function ProfileStats() {
     },
     {
       label: t("missions.title"),
-      icon: <RocketIcon className="size-5 text-foreground" />,
+      icon: <RocketIcon />,
       details: [
         { label: t("profile.total"), value: missionTodos.length },
         {
@@ -55,7 +55,7 @@ function ProfileStats() {
     },
     {
       label: t("journals.title"),
-      icon: <BookOpenIcon className="size-5 text-foreground" />,
+      icon: <BookOpenIcon />,
       details: [{ label: t("profile.total"), value: totalJournals }],
     },
   ];

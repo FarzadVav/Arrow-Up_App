@@ -36,16 +36,16 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
 
   const chipClasses = (active: boolean) =>
     cn(
-      "size-8 rounded-component p-0 flex items-center justify-center transition-colors cursor-pointer [&_svg]:size-4",
+      "size-8 rounded-component p-0 flex items-center justify-center transition-colors",
       active
         ? "bg-foreground text-background hover:bg-foreground/90 hover:text-background"
-        : "bg-card-thick/80 text-foreground/80 hover:bg-card-thick hover:text-foreground",
+        : "bg-card-thick/80 hover:bg-card-thick ",
     );
 
   return (
     <div
       className={cn(
-        "sticky top-0 z-20 shrink-0 flex flex-wrap items-center gap-xs border-b bg-card/90 px-sm py-2 backdrop-blur-md",
+        "sticky top-0 z-20 shrink-0 flex flex-wrap items-center gap-xs bg-card/90 px-sm py-2 backdrop-blur-md",
         className,
       )}
       role="toolbar"

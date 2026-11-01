@@ -86,13 +86,13 @@ export default function PwaManager() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-container bg-card border border-foreground/20 shadow-2xl flex items-center justify-between gap-sm"
+          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-container bg-card shadow-2xl flex items-center justify-between gap-sm"
         >
           <div className="flex items-center gap-sm">
-            <Sparkles className="size-5 text-foreground shrink-0" />
+            <Sparkles className="shrink-0" />
             <div className="text-xs">
-              <p className="font-semibold text-foreground">{t("pwa.updateAvailable")}</p>
-              <p className="text-foreground/70">{t("pwa.freshVersion")}</p>
+              <p className="font-semibold">{t("pwa.updateAvailable")}</p>
+              <p>{t("pwa.freshVersion")}</p>
             </div>
           </div>
           <Button

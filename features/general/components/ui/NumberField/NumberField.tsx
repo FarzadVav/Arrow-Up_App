@@ -98,7 +98,7 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
             <label
               htmlFor={id}
               className={cn(
-                "cursor-ew-resize text-sm font-medium text-foreground",
+                "cursor-ew-resize text-sm font-medium",
                 labelClassName,
               )}
             >
@@ -112,8 +112,7 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
         ) : (
           <BaseUINumberField.Group
             className={cn(
-              "inline-flex items-center rounded-component border border-foreground/20 bg-card overflow-hidden transition-colors",
-              "focus-within:ring-2 focus-within:ring-foreground/20 focus-within:border-foreground/50",
+              "inline-flex items-center rounded-component bg-card overflow-hidden transition-colors",
               currentSize.group,
               groupClassName,
             )}
@@ -121,22 +120,21 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
             {showSteppers && (
               <BaseUINumberField.Decrement
                 className={cn(
-                  "flex shrink-0 items-center justify-center bg-card-thick/50 text-foreground transition-colors select-none cursor-pointer",
+                  "flex shrink-0 items-center justify-center bg-card-thick/50 transition-colors select-none",
                   "hover:not-data-disabled:bg-card-thick active:not-data-disabled:bg-foreground/10",
                   "disabled:opacity-40 disabled:cursor-not-allowed data-disabled:opacity-40 data-disabled:cursor-not-allowed",
-                  "border-r border-foreground/15 outline-none focus-visible:ring-1 focus-visible:ring-foreground",
                   currentSize.button,
                   stepperClassName,
                   decrementClassName,
                 )}
               >
-                {decrementIcon ?? <MinusIcon className={currentSize.icon} />}
+                {decrementIcon ?? <MinusIcon />}
               </BaseUINumberField.Decrement>
             )}
 
             <BaseUINumberField.Input
               className={cn(
-                "bg-transparent text-center font-medium text-foreground tabular-nums outline-none border-0 select-text",
+                "bg-transparent text-center font-medium tabular-nums select-text",
                 currentSize.input,
                 inputClassName,
               )}
@@ -146,16 +144,15 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
             {showSteppers && (
               <BaseUINumberField.Increment
                 className={cn(
-                  "flex shrink-0 items-center justify-center bg-card-thick/50 text-foreground transition-colors select-none cursor-pointer",
+                  "flex shrink-0 items-center justify-center bg-card-thick/50 transition-colors select-none",
                   "hover:not-data-disabled:bg-card-thick active:not-data-disabled:bg-foreground/10",
                   "disabled:opacity-40 disabled:cursor-not-allowed data-disabled:opacity-40 data-disabled:cursor-not-allowed",
-                  "border-l border-foreground/15 outline-none focus-visible:ring-1 focus-visible:ring-foreground",
                   currentSize.button,
                   stepperClassName,
                   incrementClassName,
                 )}
               >
-                {incrementIcon ?? <PlusIcon className={currentSize.icon} />}
+                {incrementIcon ?? <PlusIcon />}
               </BaseUINumberField.Increment>
             )}
           </BaseUINumberField.Group>

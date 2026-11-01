@@ -13,15 +13,14 @@ function ProfileAccount() {
       className="w-full"
       icon={
         <div className="size-12 rounded-full bg-card-thick flex items-center justify-center">
-          <span className="title font-bold">
-            {currentUser ? (currentUser.name || currentUser.username)[0] : "*"}
+          <span className="title">
+            {currentUser ? currentUser.username[0] : "*"}
           </span>
         </div>
       }
       title={
         <span>
-          {currentUser?.name || currentUser?.username || "..."}
-          {currentUser?.name ? ` (${currentUser.username})` : null}
+          {currentUser?.username || "..."}
         </span>
       }
       description={t("profile.joinedAt", {

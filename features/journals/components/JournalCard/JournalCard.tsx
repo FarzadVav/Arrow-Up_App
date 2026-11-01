@@ -46,19 +46,19 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       date={
         <div className="flex items-center gap-xs flex-wrap">
           <span className="flex items-center gap-1">
-            <CalendarDaysIcon className="size-3.5" />
+            <CalendarDaysIcon />
             {formatDate(journal.createdAt)}
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
-            <ClockIcon className="size-3.5" />
+            <ClockIcon />
             {formatTime(journal.createdAt)}
           </span>
           {journal.tag && (
             <>
               <span>•</span>
-              <span className="flex items-center gap-1 text-foreground/80 font-medium">
-                <TagIcon className="size-3" />
+              <span className="flex items-center gap-1 font-medium">
+                <TagIcon />
                 {journal.tag}
               </span>
             </>
@@ -67,7 +67,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       }
       icon={
         <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
-          <FileTextIcon className="size-4 text-foreground" />
+          <FileTextIcon />
         </div>
       }
       editHref={`/journals/new?editId=${journal.id}`}
@@ -80,7 +80,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             )}>
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <FileTextIcon className="size-4" />
+                <FileTextIcon />
                 <span>{t("common.category")}</span>
               </div>
               <p className="mt-2 font-medium">
@@ -91,7 +91,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             {journal.tag && (
               <div className="rounded-container bg-background p-sm">
                 <div className="flex items-center gap-2 sub-text">
-                  <TagIcon className="size-4" />
+                  <TagIcon />
                   <span>{t("common.tag")}</span>
                 </div>
                 <p className="mt-2 font-medium">{journal.tag}</p>
@@ -100,7 +100,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
 
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <CalendarDaysIcon className="size-4" />
+                <CalendarDaysIcon />
                 <span>{t("common.date")}</span>
               </div>
               <p className="mt-2 font-medium">
@@ -110,7 +110,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
 
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                <ClockIcon className="size-4" />
+                <ClockIcon />
                 <span>{t("common.time")}</span>
               </div>
               <p className="mt-2 font-medium">
@@ -121,7 +121,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
 
           <section className="space-y-2">
             <div className="flex items-center gap-2 sub-text">
-              <FileTextIcon className="size-4" />
+              <FileTextIcon />
               <span className="font-bold">{t("common.content")}</span>
             </div>
 
@@ -143,9 +143,9 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
                 variant="card"
                 size={"square"}
                 disabled={isDeleting}
-                className="size-10 justify-center text-foreground/70 hover:text-foreground"
+                className="size-10 justify-center"
                 aria-label={t("common.delete")}>
-                <Trash2Icon className="size-4" />
+                <Trash2Icon />
               </Button>
             }
           />

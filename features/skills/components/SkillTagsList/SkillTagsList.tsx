@@ -63,8 +63,8 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
-          <span className="font-semibold text-foreground">{areaTitle}</span>
+        <div className="w-full flex items-center justify-between pb-1 text-xs">
+          <span className="font-semibold">{areaTitle}</span>
           <span>
             {tags.length} {t("profile.total")}
           </span>
@@ -108,7 +108,7 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
         <div className="p-1 space-y-4">
           <div>
             <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("skills.deleteTagConfirm")}
             </Dialog.Description>
           </div>
@@ -131,7 +131,7 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
               >
                 {isDeleting ? (
                   <span className="flex items-center gap-xs">
-                    <LoaderIcon className="size-4 animate-spin" />
+                    <LoaderIcon className="animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>
                 ) : (

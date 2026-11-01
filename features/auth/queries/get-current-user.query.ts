@@ -19,7 +19,6 @@ export async function getCurrentUserQuery(): Promise<AuthUser | null> {
     return {
       id: record.id,
       username: record.username,
-      name: record.name ?? null,
       email: record.email ?? null,
       locale: record.locale,
       colorScheme: record.colorScheme,

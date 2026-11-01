@@ -61,7 +61,7 @@ function JournalsTabs() {
                     ? t("journals.noJournalsInCategory")
                     : t("journals.noJournals")
                 }
-                alertClassName="sub-text font-normal"
+                alertClassName="sub-text"
                 href={
                   activeTab !== "all"
                     ? `/journals/new?category=${encodeURIComponent(activeTab)}`

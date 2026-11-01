@@ -96,7 +96,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
         id: "tags-page",
         label: t("common.tags"),
         href: `/framework/${areaSlug}/tags`,
-        icon: <TagIcon className="size-3.5" />,
+        icon: <TagIcon />,
       },
     ],
     [areaFrameworks.length, areaSlug, tags, t],
@@ -139,8 +139,8 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
           headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
-            <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
-              <span className="font-semibold text-foreground">{title}</span>
+            <div className="w-full flex items-center justify-between pb-1 text-xs">
+              <span className="font-semibold">{title}</span>
               <span>
                 {filteredFrameworks.length} {t("profile.total")}
               </span>
@@ -186,7 +186,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
         </SlideTabs>
 
         {isArchivedArea ? (
-          <p className="sub-text w-full text-center text-xs">
+          <p className="sub-text w-full text-center">
             {t("lifeAreas.inactiveDesc")}
           </p>
         ) : (
@@ -203,7 +203,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
             <Dialog.Title className="title">
               {t("framework.deleteConfirm")}
             </Dialog.Title>
-            <Dialog.Description className="sub-text text-xs mt-1">
+            <Dialog.Description className="sub-text mt-1">
               {t("framework.deleteDesc", {
                 title: targetFramework?.title || "",
               })}
@@ -229,7 +229,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               >
                 {isDeleting ? (
                   <span className="flex items-center gap-xs">
-                    <LoaderIcon className="size-4 animate-spin" />
+                    <LoaderIcon className="animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>
                 ) : (

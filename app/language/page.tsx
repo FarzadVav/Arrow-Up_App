@@ -23,7 +23,7 @@ async function LanguagePage() {
               type="submit"
               variant="ghost"
               className={`h-auto w-full justify-start rounded-container bg-card p-sm text-left font-bold hover:bg-card-thick ${
-                locale === option.value ? "border border-foreground/40" : ""
+                locale === option.value ? "" : ""
               }`}
             >
               {option.label}

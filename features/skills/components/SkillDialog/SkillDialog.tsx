@@ -97,7 +97,7 @@ export function SkillDialog({
           <Dialog.Title className="title">
             {isEdit ? t("skills.edit") : t("skills.new")}
           </Dialog.Title>
-          <Dialog.Description className="sub-text text-xs mt-1">
+          <Dialog.Description className="sub-text mt-1">
             {t("skills.subtitle")}
           </Dialog.Description>
         </div>
@@ -133,7 +133,7 @@ export function SkillDialog({
           <label className="block font-bold text-xs mb-xs">
             {t("skills.contentLabel")}
           </label>
-          <div className="rounded-container border border-foreground/15 p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
+          <div className="rounded-container p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
             <RichTextEditor
               value={content}
               onChange={setContent}
@@ -150,7 +150,7 @@ export function SkillDialog({
           knownFields={["title", "content", "lifeAreaId"]}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
+        <div className="flex items-center justify-end gap-2 pt-2">
           <Dialog.Close
             render={
               <Button type="button" variant="ghost" disabled={isSubmitting}>
@@ -161,7 +161,7 @@ export function SkillDialog({
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="flex items-center gap-xs">
-                <LoaderIcon className="size-4 animate-spin" />
+                <LoaderIcon className="animate-spin" />
                 <span>{t("common.loading")}</span>
               </span>
             ) : (

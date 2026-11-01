@@ -70,8 +70,7 @@
     @apply inline-block;
   }
 
-  input:focus,
-  textarea:focus {
+  *:focus {
     @apply outline-none;
   }
 
@@ -103,7 +102,7 @@
 @utility card {
   --card-spacing: var(--spacing-sm);
 
-  @apply w-full flex gap-(--card-spacing) rounded-container bg-card p-(--card-spacing);
+  @apply w-full flex gap-(--card-spacing) rounded-component focus-visible:rounded-container bg-card p-(--card-spacing);
 }
 
 @utility card-lg {

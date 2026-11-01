@@ -29,7 +29,7 @@ function LogoutBtn({ children, ...p }: ButtonProps) {
     >
       <div className="flex w-full max-w-xs flex-col gap-5 p-1">
         <div className="flex flex-col gap-1">
-          <Dialog.Title className="title text-foreground">
+          <Dialog.Title className="title">
             {t("profile.logoutTitle")}
           </Dialog.Title>
           <Dialog.Description className="sub-text">

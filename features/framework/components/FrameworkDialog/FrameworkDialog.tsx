@@ -95,7 +95,7 @@ export function FrameworkDialog({
           <Dialog.Title className="title">
             {isEdit ? t("framework.edit") : t("framework.new")}
           </Dialog.Title>
-          <Dialog.Description className="sub-text text-xs mt-1">
+          <Dialog.Description className="sub-text mt-1">
             {t("framework.subtitle")}
           </Dialog.Description>
         </div>
@@ -146,7 +146,7 @@ export function FrameworkDialog({
           knownFields={["title", "description", "lifeAreaId"]}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-foreground/10">
+        <div className="flex items-center justify-end gap-2 pt-2">
           <Dialog.Close
             render={
               <Button type="button" variant="ghost" disabled={isSubmitting}>
@@ -157,7 +157,7 @@ export function FrameworkDialog({
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
               <span className="flex items-center gap-xs">
-                <LoaderIcon className="size-4 animate-spin" />
+                <LoaderIcon className="animate-spin" />
                 <span>{t("common.loading")}</span>
               </span>
             ) : (

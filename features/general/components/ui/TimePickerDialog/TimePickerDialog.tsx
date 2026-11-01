@@ -74,7 +74,7 @@ function LocalTimePickerDialog({
       variant="outline"
       className={`${className} ${showIcon ? "gap-2" : ""}`}
     >
-      {showIcon && <ClockIcon className="size-4 opacity-70" />}
+      {showIcon && <ClockIcon className="opacity-70" />}
       <span>
         {resolvedLabel}: {displayTime}
       </span>
@@ -92,7 +92,7 @@ function LocalTimePickerDialog({
         <div>
           <Dialog.Title className="font-bold">{resolvedTitle}</Dialog.Title>
           {resolvedDescription ? (
-            <Dialog.Description className="sub-text mt-1 text-sm">
+            <Dialog.Description className="sub-text mt-1">
               {resolvedDescription}
             </Dialog.Description>
           ) : null}

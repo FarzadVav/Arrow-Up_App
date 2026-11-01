@@ -10,14 +10,14 @@ const buttonVariants = cva(
     "relative h-10 shrink-0 rounded-component px-sm",
     "inline-flex items-center justify-center gap-xs",
     "transition-all disabled:pointer-events-none disabled:opacity-50",
-    "whitespace-nowrap outline-none",
+    "whitespace-nowrap",
     "active:rounded-[calc(var(--spacing)*10)] focus-visible:rounded-[calc(var(--spacing)*10)] focus-visible:active:rounded-component active:scale-x-98 origin-center",
   ],
   {
     variants: {
       variant: {
         primary: ["bg-foreground", "text-background", "hover:bg-foreground/90"],
-        ghost: ["hover:bg-foreground/5", "focus-visible:ring-2"],
+        ghost: ["hover:bg-foreground/5"],
         outline: ["border-2 hover:bg-foreground/5"],
         card: [
           "bg-card [.bg-card_&]:bg-card-thick [.card_&]:bg-card-thick",
