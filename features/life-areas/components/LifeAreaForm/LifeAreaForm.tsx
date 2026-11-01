@@ -6,6 +6,7 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
+import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "@/features/life-areas/types";
 import { Trash2Icon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -25,6 +26,40 @@ import PageWrapper from "@/features/general/components/static/PageWrapper/PageWr
 import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 import Switch from "@/features/general/components/ui/Switch/Switch";
 
+function DifficultySelect({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  const { t } = useLocale();
+  const items = Array.from({ length: 10 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1}`,
+  }));
+
+  return (
+    <Field.Root name="difficulty">
+      <Field.Label className="mb-1 font-bold">
+        {t("lifeAreas.difficulty")}
+      </Field.Label>
+
+      <SelectDialog
+        name="difficultySelect"
+        items={items}
+        value={value}
+        onChange={(next) => onChange(Number(next))}
+        title={t("lifeAreas.difficulty")}
+        placeholder={t("lifeAreas.selectDifficulty")}
+        required
+      />
+
+      <Field.Error className="sub-text mt-0.5" />
+    </Field.Root>
+  );
+}
+
 export function LifeAreaForm() {
   const { t } = useLocale();
   const router = useRouter();
@@ -40,6 +75,7 @@ export function LifeAreaForm() {
   const [title, setTitle] = useState("");
   const [vision, setVision] = useState("");
   const [active, setActive] = useState(true);
+  const [difficulty, setDifficulty] = useState<number>(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const [state, formAction, pending] = useActionState(
@@ -72,6 +108,7 @@ export function LifeAreaForm() {
         setTitle("");
         setVision("");
         setActive(true);
+        setDifficulty(1);
       });
       return;
     }
@@ -81,6 +118,7 @@ export function LifeAreaForm() {
         setTitle(area.title);
         setVision(area.vision);
         setActive(area.active ?? true);
+        setDifficulty(area.difficulty || 1);
       });
     }
   }, [editId, area]);
@@ -98,7 +136,7 @@ export function LifeAreaForm() {
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
             aria-label={t("common.delete")}
->
+          >
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -123,6 +161,7 @@ export function LifeAreaForm() {
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="vision" value={vision} />
           <Field type="hidden" name="active" value={String(active)} />
+          <Field type="hidden" name="difficulty" value={difficulty} />
 
           <Field
             name="title"
@@ -134,6 +173,8 @@ export function LifeAreaForm() {
             onChange={(e) => setTitle(e.target.value)}
             schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
           />
+
+          <DifficultySelect value={difficulty} onChange={setDifficulty} />
 
           <label className="card items-center justify-between">
             <div className="flex flex-col">
@@ -168,7 +209,7 @@ export function LifeAreaForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "vision", "active"]}
+            knownFields={["title", "vision", "active", "difficulty"]}
           />
 
           <PageActionBtn submit disabled={pending} form="life-area-form">

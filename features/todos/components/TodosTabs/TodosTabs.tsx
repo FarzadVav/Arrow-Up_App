@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
+import { GaugeIcon } from "lucide-react";
 import { useTodos } from "../../hooks";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
@@ -50,6 +51,11 @@ function TodosTabs() {
   const progressPercent =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
+  const totalCost = currentTodos.reduce(
+    (acc, item) => acc + (item.difficulty ?? 0),
+    0,
+  );
+
   const tabs: SlideTabItem[] = [
     {
       id: "today",
@@ -81,34 +87,69 @@ function TodosTabs() {
       tabs={tabs}
       activeId={activeTab}
       between={
-        totalCount > 0 ? (
-          <div className="w-full rounded-container bg-card p-sm space-y-2">
+        <div className="w-full rounded-container bg-card p-sm space-y-3">
+          {totalCount > 0 && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold">
+                  {activeTab === "today"
+                    ? t("todos.dailyMomentum")
+                    : activeTab === "upcoming"
+                      ? t("todos.upcomingTargets")
+                      : t("todos.activeMissions")}
+                </span>
+                <span className="sub-text">
+                  {t("todos.completedOf", {
+                    done: completedCount,
+                    total: totalCount,
+                  })}
+                </span>
+              </div>
+
+              <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
+                <motion.div
+                  initial={{ width: 0 }}
+                  className="h-full rounded-container bg-foreground"
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                  animate={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold">
-                {activeTab === "today"
-                  ? t("todos.dailyMomentum")
-                  : activeTab === "upcoming"
-                    ? t("todos.upcomingTargets")
-                    : t("todos.activeMissions")}
+              <span className="flex items-center gap-1.5 font-bold">
+                <GaugeIcon className="size-3.5" />
+                <span>
+                  {activeTab === "today"
+                    ? t("todos.dailyCostUsed")
+                    : activeTab === "upcoming"
+                      ? t("todos.midtermCostUsed")
+                      : t("missions.costUsed")}
+                </span>
               </span>
-              <span className="sub-text">
-                {t("todos.completedOf", {
-                  done: completedCount,
-                  total: totalCount,
-                })}
+              <span className="sub-text font-medium">
+                {totalCost} / 10
               </span>
             </div>
 
-            <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
-              <motion.div
-                initial={{ width: 0 }}
-                className="h-full rounded-container bg-foreground"
-                transition={{ duration: 0.6, ease: "easeOut" }}
-                animate={{ width: `${progressPercent}%` }}
-              />
+            <div className="flex items-center gap-1">
+              {Array.from({ length: 10 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1.5 flex-1 rounded-full transition-colors ${
+                    index < totalCost
+                      ? totalCost > 10
+                        ? "bg-red-500"
+                        : "bg-foreground"
+                      : "bg-card-thick"
+                  }`}
+                />
+              ))}
             </div>
           </div>
-        ) : null
+        </div>
       }
     >
       <div className="w-full space-y-sm">

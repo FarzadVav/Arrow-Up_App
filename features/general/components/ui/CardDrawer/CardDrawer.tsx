@@ -16,6 +16,7 @@ export interface CardDrawerProps {
   description?: ReactNode;
   date?: ReactNode;
   dateTime?: ReactNode;
+  badge?: ReactNode;
   variant?: "card" | "card-thick" | "background";
   cardClassName?: string;
   actions?: ReactNode;
@@ -31,6 +32,7 @@ export function CardDrawer({
   description,
   date,
   dateTime,
+  badge,
   variant = "card",
   cardClassName,
   actions,
@@ -49,6 +51,7 @@ export function CardDrawer({
           title={title}
           description={description}
           date={date ?? dateTime}
+          badge={badge}
           className={cardClassName}
         />
       }

@@ -2,8 +2,11 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
+import { TodoType as DbTodoType } from '@/db/entities/enums';
 import { tryGetUserId } from '@/features/auth/lib/actor';
 import { lifeAreaFieldError } from '@/features/life-areas/lib/lifeAreaFieldError';
+import { getTranslations } from '@/features/general/lib/i18n/server';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 import { CreateTodoSchema, type TodoFormState, type TodoType, type CreateTodoData } from '../types';
 
 /**
@@ -20,7 +23,7 @@ export async function createTodoMutation(
   const rawDeadline = String(formData.get('deadline') ?? '').trim();
   const deadline = rawDeadline || null;
   const difficultyRaw = formData.get('difficulty');
-  const difficulty = difficultyRaw ? Number(difficultyRaw) : undefined;
+  const difficulty = difficultyRaw ? Number(difficultyRaw) : 1;
 
   const lifeAreaIdRaw = formData.get('lifeAreaId');
   const lifeAreaId =
@@ -72,7 +75,7 @@ export async function createTodoMutation(
     ...(description ? { description } : {}),
     type: typeValue,
     deadline,
-    ...(difficulty !== undefined ? { difficulty } : {}),
+    difficulty,
     ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
     ...(actions && actions.length > 0 ? { actions } : {}),
     ...(disciplines && disciplines.length > 0 ? { disciplines } : {}),
@@ -115,6 +118,38 @@ export async function createTodoMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
+      inputs: { title, description, type: typeValue, deadline, difficulty, lifeAreaId },
+      success: false,
+    };
+  }
+
+  const { t } = await getTranslations();
+
+  // Validate cost capacity for the selected category (Daily, Upcoming, or Mission)
+  const dbType =
+    typeValue === 'Daily'
+      ? DbTodoType.DAILY
+      : typeValue === 'Upcoming'
+        ? DbTodoType.UPCOMING
+        : DbTodoType.MISSION;
+
+  const existingTodos = await withRequestContext(async ({ todo }) => {
+    return await todo.find({ type: dbType, user: userId });
+  });
+
+  const capacity = checkCostCapacity(existingTodos, difficulty);
+  if (!capacity.valid) {
+    const errorKey =
+      typeValue === 'Daily'
+        ? 'todos.dailyCapacityError'
+        : typeValue === 'Upcoming'
+          ? 'todos.midtermCapacityError'
+          : 'missions.capacityError';
+
+    return {
+      errors: {
+        difficulty: [t(errorKey, { current: capacity.currentSum })],
+      },
       inputs: { title, description, type: typeValue, deadline, difficulty, lifeAreaId },
       success: false,
     };

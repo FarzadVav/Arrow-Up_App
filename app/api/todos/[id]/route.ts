@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
+import { TodoType as DbTodoType } from '@/db/entities/enums';
 import { getTodoByIdQuery } from '@/features/todos/queries';
 import { serializeTodo } from '@/features/todos/repositories';
-import { UpdateTodoSchema } from '@/features/todos/types';
+import { UpdateTodoSchema, type TodoType } from '@/features/todos/types';
 import { requireUserId } from '@/features/auth/lib/actor';
 import { authzResponse } from '@/features/general/lib/api/respond';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 
 export const dynamic = 'force-dynamic';
 
@@ -68,6 +70,38 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       );
     }
 
+    const currentTodo = await withRequestContext(async ({ todo }) => {
+      return await todo.findById(todoId, userId);
+    });
+
+    if (!currentTodo) {
+      return NextResponse.json({ message: 'Todo not found or unauthorized' }, { status: 404 });
+    }
+
+    const targetType = (validation.type ?? currentTodo.type) as TodoType;
+    const targetDifficulty = validation.difficulty !== undefined ? validation.difficulty : (currentTodo.difficulty ?? 1);
+    const dbType =
+      targetType === 'Daily'
+        ? DbTodoType.DAILY
+        : targetType === 'Upcoming'
+          ? DbTodoType.UPCOMING
+          : DbTodoType.MISSION;
+
+    const existingTodos = await withRequestContext(async ({ todo }) => {
+      return await todo.find({ type: dbType, user: userId });
+    });
+
+    const capacity = checkCostCapacity(existingTodos, targetDifficulty, todoId);
+    if (!capacity.valid) {
+      return NextResponse.json(
+        {
+          errors: `Capacity exceeded for ${targetType} todos. Currently using ${capacity.currentSum}/10.`,
+          message: 'Capacity exceeded',
+        },
+        { status: 400 },
+      );
+    }
+
     const updated = await withRequestContext(async ({ todo }) => {
       return await todo.updateTodo(todoId, validation, userId);
     });
@@ -98,11 +132,11 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
     }
 
-    const success = await withRequestContext(async ({ todo }) => {
+    const deleted = await withRequestContext(async ({ todo }) => {
       return await todo.deleteTodo(todoId, userId);
     });
 
-    if (!success) {
+    if (!deleted) {
       return NextResponse.json({ message: 'Todo not found or unauthorized' }, { status: 404 });
     }
 

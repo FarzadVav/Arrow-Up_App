@@ -78,23 +78,37 @@ function TypeSelect({
 function DifficultySelect({
   value,
   onChange,
+  type,
 }: {
   value: number;
   onChange: (value: number) => void;
+  type: TodoType;
 }) {
   const { t } = useLocale();
-  const items = [
-    { value: 1, label: "1 · " + t("missions.level1") },
-    { value: 2, label: "2 · " + t("missions.level2") },
-    { value: 3, label: "3 · " + t("missions.level3") },
-    { value: 4, label: "4 · " + t("missions.level4") },
-    { value: 5, label: "5 · " + t("missions.level5") },
-  ];
+
+  const label =
+    type === "Daily"
+      ? t("todos.dailyDifficulty")
+      : type === "Upcoming"
+        ? t("todos.midtermDifficulty")
+        : t("missions.difficulty");
+
+  const placeholder =
+    type === "Daily"
+      ? t("todos.selectDailyDifficulty")
+      : type === "Upcoming"
+        ? t("todos.selectMidtermDifficulty")
+        : t("missions.selectDifficulty");
+
+  const items = Array.from({ length: 10 }, (_, i) => ({
+    value: i + 1,
+    label: `${i + 1}`,
+  }));
 
   return (
     <Field.Root name="difficulty">
       <Field.Label className="mb-1 font-bold">
-        {t("missions.difficulty")}
+        {label}
       </Field.Label>
 
       <SelectDialog
@@ -102,8 +116,8 @@ function DifficultySelect({
         items={items}
         value={value}
         onChange={(next) => onChange(Number(next))}
-        title={t("missions.difficulty")}
-        placeholder={t("missions.selectDifficulty")}
+        title={label}
+        placeholder={placeholder}
         required
       />
 
@@ -180,7 +194,7 @@ export function TodoForm() {
   const [targetDate, setTargetDate] = useState<Date | null>(() =>
     resolveDefaultType(typeParam) === "Mission" ? new Date() : null,
   );
-  const [difficulty, setDifficulty] = useState<number>(3);
+  const [difficulty, setDifficulty] = useState<number>(1);
   const [actions, setActions] = useState<TodoAction[]>([]);
   const [disciplines, setDisciplines] = useState<TodoDiscipline[]>([]);
   const [isDone, setIsDone] = useState(false);
@@ -246,7 +260,7 @@ export function TodoForm() {
         setType(resolved);
         setDailyTime(null);
         setTargetDate(resolved === "Mission" ? new Date() : null);
-        setDifficulty(3);
+        setDifficulty(1);
         setLifeAreaId(null);
         setActions([]);
         setDisciplines([]);
@@ -261,7 +275,7 @@ export function TodoForm() {
         setDescription(todo.description || "");
         setType(todo.type);
         setIsDone(todo.isDone);
-        setDifficulty(todo.difficulty || 3);
+        setDifficulty(todo.difficulty || 1);
         setLifeAreaId(todo.lifeAreaId ?? null);
         setActions(todo.actions || []);
         setDisciplines(todo.disciplines || []);
@@ -440,9 +454,9 @@ export function TodoForm() {
             }
           />
           <Field type="hidden" name="isDone" value={String(isDone)} />
+          <Field type="hidden" name="difficulty" value={difficulty} />
           {type === "Mission" && (
             <>
-              <Field type="hidden" name="difficulty" value={difficulty} />
               <Field
                 type="hidden"
                 name="actions"
@@ -527,10 +541,14 @@ export function TodoForm() {
             <Field.Error className="sub-text mt-0.5" />
           </Field.Root>
 
+          <DifficultySelect
+            value={difficulty}
+            onChange={setDifficulty}
+            type={type}
+          />
+
           {type === "Mission" && (
             <>
-              <DifficultySelect value={difficulty} onChange={setDifficulty} />
-
               {/* Actions Section */}
               <Field.Root name="actions">
                 <div className="flex items-center justify-between mb-2">

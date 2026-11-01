@@ -9,6 +9,7 @@ import {
   ClockIcon,
   CompassIcon,
   FileTextIcon,
+  GaugeIcon,
   TagIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -49,6 +50,10 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
   }, [toggleState, deleteState, onMutated]);
 
   const isDaily = todo.type === "Daily";
+  const costLabel = isDaily
+    ? t("todos.dailyDifficulty")
+    : t("todos.midtermDifficulty");
+  const costValue = todo.difficulty ?? 1;
 
   return (
     <CardDrawer
@@ -64,6 +69,15 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
           <span>{formatDeadline(todo.deadline, isDaily)}</span>
         </span>
       }
+      badge={
+        <span
+          className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
+          title={`${costLabel}: ${costValue}`}
+        >
+          <GaugeIcon className="size-3.5" />
+          <span>{costValue}</span>
+        </span>
+      }
       icon={
         <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
           {todo.isDone ? (
@@ -76,7 +90,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       editHref={`/todos/new?editId=${todo.id}`}
       content={
         <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <TagIcon />
@@ -101,6 +115,14 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
             <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
+                <GaugeIcon className="size-4" />
+                <span className="truncate">{costLabel}</span>
+              </div>
+              <p className="mt-2 font-medium">{costValue} / 10</p>
+            </div>
+
+            <div className="rounded-container bg-background p-sm">
+              <div className="flex items-center gap-2 sub-text">
                 <CheckIcon />
                 <span>{t("common.status")}</span>
               </div>
@@ -112,7 +134,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </p>
             </div>
 
-            <div className="col-span-3 rounded-container bg-background p-sm">
+            <div className="col-span-2 rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CompassIcon />
                 <span>{t("lifeAreas.title")}</span>

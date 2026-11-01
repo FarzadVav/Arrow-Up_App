@@ -26,15 +26,18 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 function Difficulty({ value }: { value: number }) {
   return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <div
-          key={index}
-          className={`h-1.5 w-1/5 rounded-full ${
-            index < value ? "bg-foreground" : "bg-card-thick"
-          }`}
-        />
-      ))}
+    <div className="space-y-1">
+      <div className="flex items-center gap-0.5">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div
+            key={index}
+            className={`h-1.5 flex-1 rounded-full ${
+              index < value ? "bg-foreground" : "bg-card-thick"
+            }`}
+          />
+        ))}
+      </div>
+      <p className="text-xs sub-text">{value} / 10</p>
     </div>
   );
 }
@@ -156,6 +159,15 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               ? `${t("dates.to")} ${formatDate(todo.deadline)}`
               : t("common.notSet")}
           </span>
+        </span>
+      }
+      badge={
+        <span
+          className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
+          title={`${t("missions.difficulty")}: ${todo.difficulty ?? 1}`}
+        >
+          <GaugeIcon className="size-3.5" />
+          <span>{todo.difficulty ?? 1}</span>
         </span>
       }
       icon={

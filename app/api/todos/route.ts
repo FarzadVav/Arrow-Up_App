@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
+import { TodoType as DbTodoType } from '@/db/entities/enums';
 import { getTodosQuery } from '@/features/todos/queries';
 import { serializeTodo } from '@/features/todos/repositories';
 import { CreateTodoSchema, TodoType } from '@/features/todos/types';
 import { requireUserId } from '@/features/auth/lib/actor';
 import { authzResponse } from '@/features/general/lib/api/respond';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,6 +55,30 @@ export async function POST(request: NextRequest) {
     if (validation instanceof type.errors) {
       return NextResponse.json(
         { errors: validation.summary, message: 'Validation failed' },
+        { status: 400 },
+      );
+    }
+
+    const targetType = validation.type;
+    const targetDifficulty = validation.difficulty ?? 1;
+    const dbType =
+      targetType === 'Daily'
+        ? DbTodoType.DAILY
+        : targetType === 'Upcoming'
+          ? DbTodoType.UPCOMING
+          : DbTodoType.MISSION;
+
+    const existingTodos = await withRequestContext(async ({ todo }) => {
+      return await todo.find({ type: dbType, user: userId });
+    });
+
+    const capacity = checkCostCapacity(existingTodos, targetDifficulty);
+    if (!capacity.valid) {
+      return NextResponse.json(
+        {
+          errors: `Capacity exceeded for ${targetType} todos. Currently using ${capacity.currentSum}/10.`,
+          message: 'Capacity exceeded',
+        },
         { status: 400 },
       );
     }

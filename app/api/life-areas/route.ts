@@ -5,6 +5,7 @@ import { serializeLifeArea } from '@/features/life-areas/repositories';
 import { CreateLifeAreaSchema } from '@/features/life-areas/types';
 import { requireUserId } from '@/features/auth/lib/actor';
 import { authzResponse } from '@/features/general/lib/api/respond';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,6 +57,27 @@ export async function POST(request: NextRequest) {
         { errors: validation.summary, message: 'Validation failed' },
         { status: 400 },
       );
+    }
+
+    const targetDifficulty = validation.difficulty ?? 1;
+    const targetActive = validation.active ?? true;
+
+    if (targetActive) {
+      const existingAreas = await withRequestContext(async ({ lifeArea }) => {
+        return await lifeArea.findAllLifeAreas(userId);
+      });
+      const activeAreas = existingAreas.filter((a) => a.active !== false);
+      const capacity = checkCostCapacity(activeAreas, targetDifficulty);
+
+      if (!capacity.valid) {
+        return NextResponse.json(
+          {
+            errors: `Total life time and energy cost cannot exceed 10. (Currently using ${capacity.currentSum}/10)`,
+            message: 'Capacity exceeded',
+          },
+          { status: 400 },
+        );
+      }
     }
 
     const created = await withRequestContext(async ({ lifeArea }) => {

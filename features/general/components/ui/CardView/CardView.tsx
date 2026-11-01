@@ -28,6 +28,7 @@ export interface CardViewProps
   description?: ReactNode;
   date?: ReactNode;
   dateTime?: ReactNode;
+  badge?: ReactNode;
 }
 
 const CardView = forwardRef<HTMLDivElement, CardViewProps>(
@@ -38,6 +39,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
       description,
       date,
       dateTime,
+      badge,
       variant = "card",
       className,
       ...props
@@ -87,6 +89,12 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
             </div>
           )}
         </div>
+
+        {badge && (
+          <div className="shrink-0 flex items-center self-center">
+            {badge}
+          </div>
+        )}
       </div>
     );
   },

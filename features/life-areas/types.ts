@@ -8,6 +8,7 @@ export const LifeAreaSchema = type({
   title: 'string',
   vision: 'string',
   'active?': 'boolean',
+  'difficulty?': 'number',
   'createdAt?': 'string',
   'updatedAt?': 'string',
 });
@@ -20,6 +21,7 @@ export const CreateLifeAreaSchema = type({
   title: 'string >= 1',
   vision: 'string',
   'active?': 'boolean',
+  'difficulty?': 'number',
 });
 export type CreateLifeAreaData = typeof CreateLifeAreaSchema.infer;
 
@@ -28,6 +30,7 @@ export const UpdateLifeAreaSchema = type({
   'title?': 'string >= 1',
   'vision?': 'string',
   'active?': 'boolean',
+  'difficulty?': 'number',
 });
 export type UpdateLifeAreaData = typeof UpdateLifeAreaSchema.infer;
 
@@ -36,12 +39,14 @@ export type LifeAreaFormState = {
     title?: string[];
     vision?: string[];
     active?: string[];
+    difficulty?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
     vision?: string;
     active?: boolean;
+    difficulty?: number;
   };
   success?: boolean;
   lifeAreaId?: number;

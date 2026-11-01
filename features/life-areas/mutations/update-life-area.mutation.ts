@@ -3,6 +3,8 @@
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { tryGetUserId } from '@/features/auth/lib/actor';
+import { getTranslations } from '@/features/general/lib/i18n/server';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 import { UpdateLifeAreaSchema, type LifeAreaFormState } from '../types';
 
 /**
@@ -18,11 +20,15 @@ export async function updateLifeAreaMutation(
   const vision = String(formData.get('vision') ?? '');
   const activeRaw = formData.get('active');
   const active = activeRaw !== null ? activeRaw === 'true' || activeRaw === 'on' : undefined;
+  const difficultyRaw = formData.get('difficulty');
+  const difficulty = difficultyRaw !== null && difficultyRaw !== undefined && difficultyRaw !== ''
+    ? Number(difficultyRaw)
+    : undefined;
 
   if (!id || Number.isNaN(id)) {
     return {
       errors: { general: ['Invalid or missing life area ID.'] },
-      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}), ...(difficulty !== undefined ? { difficulty } : {}) },
       success: false,
     };
   }
@@ -32,6 +38,7 @@ export async function updateLifeAreaMutation(
     title,
     vision,
     ...(active !== undefined ? { active } : {}),
+    ...(difficulty !== undefined ? { difficulty } : {}),
   });
 
   if (validation instanceof type.errors) {
@@ -42,6 +49,7 @@ export async function updateLifeAreaMutation(
         | 'title'
         | 'vision'
         | 'active'
+        | 'difficulty'
         | 'general';
 
       if (!errors[field]) {
@@ -52,7 +60,7 @@ export async function updateLifeAreaMutation(
 
     return {
       errors,
-      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}), ...(difficulty !== undefined ? { difficulty } : {}) },
       success: false,
     };
   }
@@ -61,9 +69,36 @@ export async function updateLifeAreaMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}), ...(difficulty !== undefined ? { difficulty } : {}) },
       success: false,
     };
+  }
+
+  const { t } = await getTranslations();
+
+  // Validate cost capacity across active life areas if this area will be active
+  const existingAreas = await withRequestContext(async ({ lifeArea }) => {
+    return await lifeArea.findAllLifeAreas(userId);
+  });
+  const currentArea = existingAreas.find((a) => a.id === id);
+  const targetActive = active !== undefined ? active : (currentArea?.active ?? true);
+  const targetDifficulty = difficulty !== undefined ? difficulty : (currentArea?.difficulty ?? 1);
+
+  if (targetActive) {
+    const activeAreas = existingAreas.filter((a) => a.active !== false);
+    const capacity = checkCostCapacity(activeAreas, targetDifficulty, id);
+
+    if (!capacity.valid) {
+      return {
+        errors: {
+          difficulty: [
+            t('lifeAreas.capacityError', { current: capacity.currentSum }),
+          ],
+        },
+        inputs: { title, vision, ...(active !== undefined ? { active } : {}), difficulty: targetDifficulty },
+        success: false,
+      };
+    }
   }
 
   const updated = await withRequestContext(async ({ lifeArea }) => {
@@ -73,6 +108,7 @@ export async function updateLifeAreaMutation(
         title,
         vision,
         ...(active !== undefined ? { active } : {}),
+        ...(difficulty !== undefined ? { difficulty } : {}),
       },
       userId,
     );
@@ -81,7 +117,7 @@ export async function updateLifeAreaMutation(
   if (!updated) {
     return {
       errors: { general: ['Life area not found or unauthorized.'] },
-      inputs: { title, vision, ...(active !== undefined ? { active } : {}) },
+      inputs: { title, vision, ...(active !== undefined ? { active } : {}), ...(difficulty !== undefined ? { difficulty } : {}) },
       success: false,
     };
   }
@@ -89,6 +125,6 @@ export async function updateLifeAreaMutation(
   return {
     success: true,
     lifeAreaId: updated.id,
-    inputs: { title, vision, active: updated.active },
+    inputs: { title, vision, active: updated.active, difficulty: updated.difficulty },
   };
 }

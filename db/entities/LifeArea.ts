@@ -22,6 +22,12 @@ export class LifeArea extends BaseEntity {
   @Property({ type: 'boolean', default: true })
   active: boolean = true;
 
+  /**
+   * Life time and energy cost rating (1-10)
+   */
+  @Property({ type: 'integer', nullable: true })
+  difficulty?: number;
+
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;
 

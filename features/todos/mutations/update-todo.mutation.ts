@@ -2,8 +2,11 @@
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
+import { TodoType as DbTodoType } from '@/db/entities/enums';
 import { tryGetUserId } from '@/features/auth/lib/actor';
 import { lifeAreaFieldError } from '@/features/life-areas/lib/lifeAreaFieldError';
+import { getTranslations } from '@/features/general/lib/i18n/server';
+import { checkCostCapacity } from '@/features/general/lib/costCapacity';
 import { UpdateTodoSchema, type TodoFormState, type TodoType, type UpdateTodoData } from '../types';
 
 /**
@@ -145,6 +148,53 @@ export async function updateTodoMutation(
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
       inputs: { id, title, description, type: typeValue, deadline, difficulty, lifeAreaId },
+      success: false,
+    };
+  }
+
+  const { t } = await getTranslations();
+
+  // Validate capacity for the target category
+  const currentTodo = await withRequestContext(async ({ todo }) => {
+    return await todo.findById(id, userId);
+  });
+
+  if (!currentTodo) {
+    return {
+      errors: { general: ['Todo not found or not authorized to edit.'] },
+      inputs: { id, title, description, type: typeValue, deadline, difficulty, lifeAreaId },
+      success: false,
+    };
+  }
+
+  const effectiveType = (typeValue ?? currentTodo.type) as TodoType;
+  const effectiveDifficulty = difficulty !== undefined ? difficulty : (currentTodo.difficulty ?? 1);
+
+  const dbType =
+    effectiveType === 'Daily'
+      ? DbTodoType.DAILY
+      : effectiveType === 'Upcoming'
+        ? DbTodoType.UPCOMING
+        : DbTodoType.MISSION;
+
+  const existingTodos = await withRequestContext(async ({ todo }) => {
+    return await todo.find({ type: dbType, user: userId });
+  });
+
+  const capacity = checkCostCapacity(existingTodos, effectiveDifficulty, id);
+  if (!capacity.valid) {
+    const errorKey =
+      effectiveType === 'Daily'
+        ? 'todos.dailyCapacityError'
+        : effectiveType === 'Upcoming'
+          ? 'todos.midtermCapacityError'
+          : 'missions.capacityError';
+
+    return {
+      errors: {
+        difficulty: [t(errorKey, { current: capacity.currentSum })],
+      },
+      inputs: { id, title, description, type: typeValue, deadline, difficulty: effectiveDifficulty, lifeAreaId },
       success: false,
     };
   }

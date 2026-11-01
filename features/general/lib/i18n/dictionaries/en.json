@@ -98,7 +98,16 @@
     "completed": "Completed",
     "inProgress": "In Progress",
     "markAsCompleted": "Mark as Completed",
-    "markAsIncomplete": "Mark as Incomplete"
+    "markAsIncomplete": "Mark as Incomplete",
+    "dailyDifficulty": "Daily Time and Energy Cost",
+    "selectDailyDifficulty": "Select Daily Time and Energy Cost",
+    "dailyCapacityError": "Total daily time and energy cost cannot exceed 10. Currently {current}/10 is used.",
+    "dailyCostUsed": "Daily Time and Energy Cost",
+    "midtermDifficulty": "Mid-term Time and Energy Cost",
+    "selectMidtermDifficulty": "Select Mid-term Time and Energy Cost",
+    "midtermCapacityError": "Total mid-term time and energy cost cannot exceed 10. Currently {current}/10 is used.",
+    "midtermCostUsed": "Mid-term Time and Energy Cost",
+    "costOf": "{used} / {max} cost used"
   },
   "journals": {
     "title": "Journals",
@@ -139,8 +148,11 @@
     "title": "Missions",
     "new": "New Mission",
     "edit": "Edit Mission",
-    "difficulty": "Time and Energy Cost",
-    "selectDifficulty": "Select Time and Energy Cost",
+    "difficulty": "Long-term Time and Energy Cost",
+    "selectDifficulty": "Select Long-term Time and Energy Cost",
+    "capacityError": "Total long-term time and energy cost cannot exceed 10. Currently {current}/10 is used.",
+    "costUsed": "Long-term Time and Energy Cost",
+
     "titlePlaceholder": "Mission title...",
     "actionsLabel": "Actions",
     "editAction": "Edit action",
@@ -307,7 +319,11 @@
     "notActiveTitle": "Not Active Life Areas",
     "activeStatus": "Active Status",
     "activeDesc": "Active and visible across your activities",
-    "inactiveDesc": "Archived and hidden from regular selections"
+    "inactiveDesc": "Archived and hidden from regular selections",
+    "difficulty": "Life Time and Energy Cost",
+    "selectDifficulty": "Select Life Time and Energy Cost",
+    "capacityError": "Total life time and energy cost cannot exceed 10. Currently {current}/10 is used.",
+    "costUsed": "Life Time and Energy Cost"
   },
   "skills": {
     "title": "Skills",

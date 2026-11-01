@@ -14,6 +14,7 @@ export function serializeLifeArea(lifeArea: LifeArea): LifeAreaDto {
     title: lifeArea.title,
     vision: lifeArea.vision,
     active: lifeArea.active ?? true,
+    difficulty: lifeArea.difficulty,
     createdAt: lifeArea.createdAt instanceof Date ? lifeArea.createdAt.toISOString() : String(lifeArea.createdAt),
     updatedAt: lifeArea.updatedAt instanceof Date ? lifeArea.updatedAt.toISOString() : String(lifeArea.updatedAt),
   };
@@ -35,6 +36,7 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
       title: data.title.trim(),
       vision: data.vision || '',
       active: data.active ?? true,
+      difficulty: data.difficulty,
       user: this.em.getReference(User, userId),
     });
     await this.em.flush();
@@ -55,6 +57,7 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
       ...(data.title !== undefined ? { title: data.title.trim() } : {}),
       ...(data.vision !== undefined ? { vision: data.vision } : {}),
       ...(data.active !== undefined ? { active: Boolean(data.active) } : {}),
+      ...(data.difficulty !== undefined ? { difficulty: data.difficulty } : {}),
     });
 
     await this.em.flush();
