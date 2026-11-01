@@ -44,14 +44,14 @@ export function FrameworkCard({
       editHref={`/framework/new?editId=${framework.id}`}
       content={
         <div className="space-y-4">
-          <div className="flex items-center gap-3 flex-wrap sub-text text-xs">
-            <span className="flex items-center gap-1.5">
+          <div className="flex items-center gap-sm flex-wrap sub-text text-xs">
+            <span className="flex items-center gap-xs">
               <CompassIcon className="size-3 text-foreground/60" />
               <span>{framework.lifeArea?.title ?? t("common.notSet")}</span>
             </span>
 
             {framework.tag && (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-xs">
                 <TagIcon className="size-3 text-foreground/60" />
                 <span>{framework.tag}</span>
               </span>
@@ -67,7 +67,7 @@ export function FrameworkCard({
 
           {/* Recent History summary */}
           {framework.history && framework.history.length > 0 && (
-            <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-2.5">
+            <div className="rounded-container bg-card p-4 border border-foreground/10 space-y-sm">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-foreground">
                   {t("framework.historyTitle")}
@@ -78,14 +78,14 @@ export function FrameworkCard({
                 </span>
               </div>
 
-              <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto scrollbar-thin">
+              <div className="flex flex-wrap gap-xs max-h-36 overflow-y-auto scrollbar-thin">
                 {[...framework.history]
                   .reverse()
                   .slice(0, 14)
                   .map((entry) => (
                     <span
                       key={entry.id}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium ${
+                      className={`inline-flex items-center gap-1 px-xs py-1 rounded-md text-xs font-medium ${
                         entry.isDone
                           ? "bg-foreground/10 text-foreground"
                           : "bg-destructive/10 text-destructive line-through"

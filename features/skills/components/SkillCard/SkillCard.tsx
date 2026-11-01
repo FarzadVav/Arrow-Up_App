@@ -33,14 +33,14 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
       editHref={`/skills/new?editId=${skill.id}`}
       content={
         <div className="space-y-4">
-          <div className="flex items-center gap-3 flex-wrap sub-text text-xs">
-            <span className="flex items-center gap-1.5">
+          <div className="flex items-center gap-sm flex-wrap sub-text text-xs">
+            <span className="flex items-center gap-xs">
               <CompassIcon className="size-3 text-foreground/60" />
               <span>{skill.lifeArea?.title ?? t("common.notSet")}</span>
             </span>
 
             {skill.tag && (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-xs">
                 <TagIcon className="size-3 text-foreground/60" />
                 <span>{skill.tag}</span>
               </span>

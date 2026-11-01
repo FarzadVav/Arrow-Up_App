@@ -61,7 +61,7 @@ function ProfileStats() {
   ];
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full space-y-sm">
       {stats.map((stat) => (
         <CardView
           key={stat.label}

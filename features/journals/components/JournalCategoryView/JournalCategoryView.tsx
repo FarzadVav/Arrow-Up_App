@@ -106,7 +106,7 @@ export default function JournalCategoryView({
               setActiveTag(id);
             }
           }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
             <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
@@ -117,7 +117,7 @@ export default function JournalCategoryView({
             </div>
           }
         >
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-sm">
             {isLoading && journals.length === 0 ? (
               <Skeleton count={3} />
             ) : (
@@ -130,7 +130,10 @@ export default function JournalCategoryView({
                         : t("journals.noJournalsInCategory")
                     }
                     description={t("journals.subtitle")}
-                    className="p-10"
+                    href={`/journals/new?category=${encodeURIComponent(
+                      categoryName.toLowerCase(),
+                    )}${activeTag !== "all" && activeTag !== "tags-page" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
+                    className="p-md"
                   />
                 ) : (
                   <ReorderList

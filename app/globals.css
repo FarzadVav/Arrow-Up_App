@@ -46,7 +46,7 @@
 
 @layer base {
   * {
-    @apply select-none cursor-default outline-foreground/20 border-foreground/20 ring-foreground/20 border-solid;
+    @apply select-none cursor-default outline-foreground/10 border-foreground/10 ring-foreground/10 border-solid;
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-foreground) transparent;
@@ -119,7 +119,7 @@
 }
 
 @utility skeleton {
-  @apply w-full flex gap-3 p-0 rounded-container bg-card animate-pulse;
+  @apply w-full flex gap-sm p-0 rounded-container bg-card animate-pulse;
 }
 
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline

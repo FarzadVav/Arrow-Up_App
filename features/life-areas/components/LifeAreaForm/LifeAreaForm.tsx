@@ -115,7 +115,7 @@ export function LifeAreaForm() {
       ) : (
         <Form
           id="life-area-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("lifeAreas.edit") : t("lifeAreas.new")}
           action={formAction}
           errors={state?.errors}
@@ -135,7 +135,7 @@ export function LifeAreaForm() {
             schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
           />
 
-          <label className="rounded-container bg-card p-3 flex items-center justify-between cursor-pointer select-none">
+          <label className="rounded-container bg-card p-sm flex items-center justify-between cursor-pointer select-none">
             <div className="flex flex-col">
               <span className="text-sm font-medium text-foreground">
                 {t("lifeAreas.activeStatus")}

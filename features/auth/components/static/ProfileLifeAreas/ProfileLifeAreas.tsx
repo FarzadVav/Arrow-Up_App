@@ -19,21 +19,24 @@ export function ProfileLifeAreas() {
   const notActiveLifeAreas = lifeAreas.filter((area) => area.active === false);
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full space-y-sm">
       <div className="flex items-center justify-between">
         <p className="title">{t("lifeAreas.title")}</p>
 
-        <Button
-          type="button"
-          variant="card"
-          nativeButton={false}
-          render={
-            <Link href={"/profile/new-life-area"}>
-              <PlusIcon />
-              <span>{t("common.add")}</span>
-            </Link>
-          }
-        />
+        {lifeAreas.length ? (
+
+          <Button
+            type="button"
+            variant="card"
+            nativeButton={false}
+            render={
+              <Link href={"/profile/new-life-area"}>
+                <PlusIcon />
+                <span>{t("common.add")}</span>
+              </Link>
+            }
+          />
+        ) : null}
       </div>
 
       {isLoading ? (
@@ -63,7 +66,7 @@ export function ProfileLifeAreas() {
                 icon={<ArchiveIcon className="size-4 text-foreground/70" />}
                 description={`${notActiveLifeAreas.length}`}
                 content={
-                  <div className="space-y-3">
+                  <div className="space-y-sm">
                     {notActiveLifeAreas.map((area) => (
                       <LifeAreaCard key={area.id} lifeArea={area} />
                     ))}

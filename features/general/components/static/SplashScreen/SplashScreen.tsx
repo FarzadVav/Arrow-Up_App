@@ -42,7 +42,7 @@ function SplashScreen({ children }: PropsWithChildren) {
             transition={{ duration: 0.3, ease: "easeOut" }}
             initial={{ opacity: 1 }}
             exit={{ scale: 1.05, opacity: 0 }}
-            className="fixed inset-0 z-big-overlay flex h-dvh w-screen items-center justify-center flex-col gap-3 bg-background"
+            className="fixed inset-0 z-big-overlay flex h-dvh w-screen items-center justify-center flex-col gap-sm bg-background"
           >
             <motion.div
               initial={{ scale: 0.8, translateY: "20%", opacity: 0 }}

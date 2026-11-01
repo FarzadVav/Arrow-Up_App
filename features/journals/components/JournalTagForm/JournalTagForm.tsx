@@ -111,7 +111,7 @@ export function JournalTagForm({
       ) : (
         <Form
           id="tag-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("journals.editTag") : t("journals.newTag")}
           action={formAction}
           errors={state?.errors}

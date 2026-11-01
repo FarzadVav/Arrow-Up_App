@@ -135,7 +135,7 @@ const fieldLabelVariants = cva("block font-bold text-foreground select-none", {
   variants: {
     size: {
       sm: "text-xs mb-1",
-      md: "text-sm mb-1.5",
+      md: "text-sm mb-xs",
     },
   },
   defaultVariants: {
@@ -396,7 +396,7 @@ const FieldFormError = forwardRef<HTMLDivElement, FieldFormErrorProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "p-3 text-xs rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
+          "p-sm text-xs rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
           className,
         )}
         {...props}>

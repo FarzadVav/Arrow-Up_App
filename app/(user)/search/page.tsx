@@ -14,7 +14,7 @@ async function SearchPage() {
         <TopBar.Btn backIcon href="/profile" position="left" />
         <HelpDialog position="right" />
       </TopBar>
-      <div className="flex flex-1 items-center justify-center p-6 text-center sub-text">
+      <div className="flex flex-1 items-center justify-center p-md text-center sub-text">
         {t("search.title")}
       </div>
     </PageWrapper>

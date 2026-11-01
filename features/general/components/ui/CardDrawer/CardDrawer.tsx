@@ -86,7 +86,7 @@ export function CardDrawer({
                 className="flex-1 justify-center"
                 render={
                   <Link
-                    className="flex flex-1 items-center justify-center gap-1.5"
+                    className="flex flex-1 items-center justify-center gap-xs"
                     href={editHref}
                   >
                     <span>{t("common.edit")}</span>

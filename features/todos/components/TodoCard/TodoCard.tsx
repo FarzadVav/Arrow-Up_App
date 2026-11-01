@@ -77,7 +77,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       content={
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <TagIcon className="size-4" />
                 <span>{t("common.type")}</span>
@@ -85,7 +85,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <p className="mt-2 font-medium">{todo.type}</p>
             </div>
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 {isDaily ? (
                   <ClockIcon className="size-4" />
@@ -99,7 +99,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </p>
             </div>
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CheckIcon className="size-4" />
                 <span>{t("common.status")}</span>
@@ -112,7 +112,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </p>
             </div>
 
-            <div className="col-span-3 rounded-container bg-background p-3">
+            <div className="col-span-3 rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CompassIcon className="size-4" />
                 <span>{t("lifeAreas.title")}</span>
@@ -139,7 +139,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
           <form ref={toggleFormRef} action={toggleAction}>
             <Field type="hidden" name="id" value={todo.id} />
-            <label className="rounded-container bg-background p-3 flex items-center justify-between cursor-pointer select-none">
+            <label className="rounded-container bg-background p-sm flex items-center justify-between cursor-pointer select-none">
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-foreground">
                   {todo.isDone

@@ -68,13 +68,21 @@ function TodosTabs() {
     },
   ];
 
+  const newTodoHref = `/todos/new?type=${
+    activeTab === "missions"
+      ? "mission"
+      : activeTab === "upcoming"
+        ? "upcoming"
+        : "daily"
+  }`;
+
   return (
     <SlideTabs
       tabs={tabs}
       activeId={activeTab}
       between={
         totalCount > 0 ? (
-          <div className="w-full rounded-container bg-card p-3 space-y-2">
+          <div className="w-full rounded-container bg-card p-sm space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold">
                 {activeTab === "today"
@@ -103,7 +111,7 @@ function TodosTabs() {
         ) : null
       }
     >
-      <div className="w-full space-y-3">
+      <div className="w-full space-y-sm">
         {isLoading && todosList.length === 0 ? (
           <Skeleton count={3} />
         ) : (
@@ -116,6 +124,7 @@ function TodosTabs() {
                     : t("todos.noTodos")
                 }
                 alertClassName="sub-text font-normal"
+                href={newTodoHref}
               />
             ) : (
               <ReorderList

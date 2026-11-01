@@ -100,7 +100,7 @@ export function SkillTagForm({ lifeAreaId }: SkillTagFormProps) {
       ) : (
         <Form
           id="skill-tag-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("skills.editTag") : t("skills.newTag")}
           action={formAction}
           errors={state?.errors}

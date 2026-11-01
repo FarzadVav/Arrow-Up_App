@@ -47,7 +47,7 @@ export default function JournalsCategoryList() {
   const { t } = useLocale();
 
   return (
-    <div className="w-full flex flex-col gap-2.5">
+    <div className="w-full flex flex-col gap-sm">
       {JOURNAL_CATEGORIES.map((cat) => {
         const categoryName = cat.name;
         const meta = CATEGORY_META[categoryName];

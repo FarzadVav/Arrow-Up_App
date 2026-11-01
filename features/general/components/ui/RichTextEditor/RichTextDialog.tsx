@@ -82,12 +82,12 @@ export function RichTextDialog({
         <BaseUIDialog.Popup className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background text-foreground outline-none transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95">
           <div className="mx-auto max-w-3xl flex flex-col h-full overflow-hidden">
             {/* Header with Title and Undo/Redo in a justify-between flex */}
-            <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 sm:px-6 backdrop-blur-md">
+            <header className="flex h-14 shrink-0 items-center justify-between border-b bg-card/40 px-4 sm:px-md backdrop-blur-md">
               <BaseUIDialog.Title className="text-base font-bold text-foreground">
                 {title || t("editor.fullscreen") || t("common.content")}
               </BaseUIDialog.Title>
 
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-xs">
                 <Button
                   type="button"
                   variant="ghost"
@@ -131,7 +131,7 @@ export function RichTextDialog({
             />
 
             {/* Footer with Close and Done actions */}
-            <footer className="flex h-14 shrink-0 items-center justify-end gap-3 border-t bg-card/40 px-4 sm:px-6 backdrop-blur-md [&>button]:w-1/2">
+            <footer className="flex h-14 shrink-0 items-center justify-end gap-sm border-t bg-card/40 px-4 sm:px-md backdrop-blur-md [&>button]:w-1/2">
               <Button
                 type="button"
                 variant="card"

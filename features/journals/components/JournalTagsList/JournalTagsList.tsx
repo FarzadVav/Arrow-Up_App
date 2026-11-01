@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useActionState, useEffect } from "react";
-import { TagIcon, LoaderIcon } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { useJournalTags } from "../../hooks/useJournalTags";
 import { deleteJournalTagMutation } from "../../mutations/delete-journal-tag.mutation";
 import type { JournalCategory, JournalTag } from "../../types";
@@ -66,18 +66,18 @@ export function JournalTagsList({
         </div>
 
         {isLoading && tags.length === 0 ? (
-          <div className="w-full space-y-2.5">
+          <div className="w-full space-y-sm">
             <Skeleton count={3} />
           </div>
         ) : tags.length === 0 ? (
           <EmptyAlert
-            icon={<TagIcon className="size-5 text-foreground/40" />}
             alert={t("journals.noTags")}
             description={t("journals.noTagsSubtitle")}
-            className="p-10"
+            href={`/journals/${category.toLowerCase()}/tags/new`}
+            className="p-md"
           />
         ) : (
-          <div className="w-full space-y-2.5">
+          <div className="w-full space-y-sm">
             {tags.map((tag) => (
               <JournalTagCard
                 key={tag.id}
@@ -129,7 +129,7 @@ export function JournalTagsList({
                 className="bg-red-600 text-white hover:bg-red-700"
               >
                 {isDeleting ? (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-xs">
                     <LoaderIcon className="size-4 animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>

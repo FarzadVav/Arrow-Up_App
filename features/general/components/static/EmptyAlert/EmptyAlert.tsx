@@ -8,7 +8,6 @@ import { Button } from "../../ui/Button/Button";
 export type EmptyAlertProps = ComponentProps<"div"> & {
   alert?: ReactNode;
   description?: ReactNode;
-  icon?: ReactNode;
   href?: string;
   action?: ReactNode;
   alertClassName?: string;
@@ -19,7 +18,6 @@ export function EmptyAlert({
   href,
   alert,
   description,
-  icon,
   action,
   children,
   className,
@@ -30,20 +28,14 @@ export function EmptyAlert({
   return (
     <div
       className={cn(
-        "w-full flex gap-3 p-6 rounded-container border-2 border-dashed border-foreground/15 flex-col justify-center items-center text-center",
+        "w-full flex gap-sm p-sm rounded-container border-2 border-dashed flex-col justify-center items-center text-center",
         className,
       )}
       {...props}>
-      {icon ? (
-        <div className="size-10 rounded-full bg-foreground/5 flex items-center justify-center shrink-0 text-foreground/40 mb-0.5">
-          {icon}
-        </div>
-      ) : null}
-
       {alert ? (
         <p
           className={cn(
-            "title text-sm sm:text-base font-semibold text-foreground/80",
+            "title",
             alertClassName,
           )}>
           {alert}
@@ -53,7 +45,7 @@ export function EmptyAlert({
       {description ? (
         <p
           className={cn(
-            "sub-text max-w-xs leading-relaxed text-xs",
+            "sub-text",
             descriptionClassName,
           )}>
           {description}
@@ -67,7 +59,7 @@ export function EmptyAlert({
       ) : href ? (
         <Button
           size={"square"}
-          variant={"primary"}
+          variant={"card"}
           nativeButton={false}
           render={
             <Link href={href}>

@@ -34,7 +34,7 @@ function PageWrapper(p: PropsWithChildren) {
   }, [pathname]);
 
   return (
-    <div ref={pageWrapperRef} className="p-3 pt-6 flex flex-col justify-start items-start gap-6" {...p} />
+    <div ref={pageWrapperRef} className="p-sm pt-md flex flex-col justify-start items-start gap-md" {...p} />
   );
 }
 

@@ -68,7 +68,7 @@ function MissionActionRow({
         type="submit"
         variant="ghost"
         disabled={isToggling}
-        className={`h-auto w-full justify-start rounded-container bg-background p-3 text-left whitespace-normal transition-opacity hover:bg-background cursor-pointer [&_svg]:size-auto ${
+        className={`h-auto w-full justify-start rounded-container bg-background p-sm text-left whitespace-normal transition-opacity hover:bg-background cursor-pointer [&_svg]:size-auto ${
           action.isDone ? "opacity-60" : ""
         }`}>
         <div className="shrink-0">
@@ -89,7 +89,7 @@ function MissionActionRow({
             {action.title}
           </p>
 
-          <div className="mt-1 flex items-center gap-1.5 sub-text text-xs">
+          <div className="mt-1 flex items-center gap-xs sub-text text-xs">
             <CalendarIcon className="size-3" />
             <span>
               {action.deadline
@@ -105,7 +105,7 @@ function MissionActionRow({
 
 function MissionDisciplineRow({ discipline }: { discipline: TodoDiscipline }) {
   return (
-    <div className="flex items-center gap-3 rounded-container bg-background p-3">
+    <div className="flex items-center gap-sm rounded-container bg-background p-sm">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-component bg-card">
         <Repeat2Icon className="size-4" />
       </div>
@@ -166,7 +166,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
       editHref={`/todos/new?editId=${todo.id}`}
       content={
         <div className="space-y-4">
-          <div className="rounded-container bg-background p-3">
+          <div className="rounded-container bg-background p-sm">
             <div className="flex items-center justify-between">
               <span className="font-bold">{t("common.progress")}</span>
               <span className="sub-text text-sm">
@@ -174,7 +174,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               </span>
             </div>
 
-            <div className="h-1.5 overflow-hidden rounded-container bg-card mt-1.5">
+            <div className="h-1.5 overflow-hidden rounded-container bg-card mt-xs">
               <motion.div
                 initial={{ width: 0 }}
                 className="h-full rounded-container bg-foreground"
@@ -183,11 +183,11 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               />
             </div>
 
-            <p className="sub-text mt-1.5 text-xs">{progress}% completed</p>
+            <p className="sub-text mt-xs text-xs">{progress}% completed</p>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CalendarDaysIcon className="size-4" />
                 <span className="text-xs">{t("common.deadline")}</span>
@@ -197,19 +197,19 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               </p>
             </div>
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="text-xs truncate">
                   {t("missions.difficulty")}
                 </span>
               </div>
-              <div className="mt-3">
+              <div className="mt-sm">
                 <Difficulty value={todo.difficulty || 3} />
               </div>
             </div>
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CheckIcon className="size-4" />
                 <span className="text-xs">{t("missions.actionsLabel")}</span>
@@ -217,7 +217,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
               <p className="mt-2 text-xs font-medium">{totalActions}</p>
             </div>
 
-            <div className="col-span-3 rounded-container bg-background p-3">
+            <div className="col-span-3 rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CompassIcon className="size-4" />
                 <span className="text-xs">{t("lifeAreas.title")}</span>
@@ -266,7 +266,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
           )}
 
           {disciplines.length > 0 && (
-            <section className="space-y-3">
+            <section className="space-y-sm">
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="font-bold text-sm">

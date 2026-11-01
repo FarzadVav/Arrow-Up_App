@@ -44,7 +44,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       title={journal.title}
       description={stripHtml(journal.content)}
       date={
-        <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-xs flex-wrap">
           <span className="flex items-center gap-1">
             <CalendarDaysIcon className="size-3.5" />
             {formatDate(journal.createdAt)}
@@ -78,7 +78,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               "grid gap-2",
               journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3",
             )}>
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <FileTextIcon className="size-4" />
                 <span>{t("common.category")}</span>
@@ -89,7 +89,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             </div>
 
             {journal.tag && (
-              <div className="rounded-container bg-background p-3">
+              <div className="rounded-container bg-background p-sm">
                 <div className="flex items-center gap-2 sub-text">
                   <TagIcon className="size-4" />
                   <span>{t("common.tag")}</span>
@@ -98,7 +98,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               </div>
             )}
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CalendarDaysIcon className="size-4" />
                 <span>{t("common.date")}</span>
@@ -108,7 +108,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               </p>
             </div>
 
-            <div className="rounded-container bg-background p-3">
+            <div className="rounded-container bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <ClockIcon className="size-4" />
                 <span>{t("common.time")}</span>

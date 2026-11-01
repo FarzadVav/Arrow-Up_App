@@ -115,7 +115,7 @@ export function SkillDialog({
         />
 
         <div>
-          <label className="block font-bold text-xs mb-1.5">
+          <label className="block font-bold text-xs mb-xs">
             {t("lifeAreas.selectLifeArea")}
           </label>
           <SelectDialog<number>
@@ -130,10 +130,10 @@ export function SkillDialog({
         </div>
 
         <div>
-          <label className="block font-bold text-xs mb-1.5">
+          <label className="block font-bold text-xs mb-xs">
             {t("skills.contentLabel")}
           </label>
-          <div className="rounded-container border border-foreground/15 p-3 min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
+          <div className="rounded-container border border-foreground/15 p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
             <RichTextEditor
               value={content}
               onChange={setContent}
@@ -160,7 +160,7 @@ export function SkillDialog({
           />
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-xs">
                 <LoaderIcon className="size-4 animate-spin" />
                 <span>{t("common.loading")}</span>
               </span>

@@ -31,7 +31,7 @@ export function SkillTagCard({ tag, onRequestDelete }: SkillTagCardProps) {
         />
       </div>
 
-      <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-center gap-xs shrink-0">
         <Button
           nativeButton={false}
           render={

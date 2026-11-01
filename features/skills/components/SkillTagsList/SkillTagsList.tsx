@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useActionState, useEffect } from "react";
-import { TagIcon, LoaderIcon } from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 
 import { useSkillTags } from "../../hooks/useSkillTags";
 import { useLifeAreaTitle } from "@/features/life-areas/hooks/useLifeAreaTitle";
@@ -33,7 +33,8 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
   const isArchivedArea =
     lifeAreaId !== null &&
     lifeAreas.some((area) => area.id === lifeAreaId && area.active === false);
-  const { tags, isLoading, mutate: revalidateTags } = useSkillTags(lifeAreaId);
+  const { tags, isLoading, mutate: revalidateTags } =
+    useSkillTags(lifeAreaId);
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -70,18 +71,18 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
         </div>
 
         {isLoading && tags.length === 0 ? (
-          <div className="w-full space-y-2.5">
+          <div className="w-full space-y-sm">
             <Skeleton count={3} />
           </div>
         ) : tags.length === 0 ? (
           <EmptyAlert
-            icon={<TagIcon className="size-5 text-foreground/40" />}
             alert={t("skills.noTags")}
             description={t("skills.noTagsSubtitle")}
-            className="p-10"
+            href={isArchivedArea ? undefined : `/skills/${areaSlug}/tags/new`}
+            className="p-md"
           />
         ) : (
-          <div className="w-full space-y-2.5">
+          <div className="w-full space-y-sm">
             {tags.map((tag) => (
               <SkillTagCard
                 key={tag.id}
@@ -129,7 +130,7 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
                 className="bg-red-600 text-white hover:bg-red-700"
               >
                 {isDeleting ? (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-xs">
                     <LoaderIcon className="size-4 animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>

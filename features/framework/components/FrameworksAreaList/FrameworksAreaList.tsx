@@ -64,20 +64,20 @@ export function FrameworksAreaList() {
 
   if (isLoading) {
     return (
-      <div className="w-full space-y-2.5">
+      <div className="w-full space-y-sm">
         <Skeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col gap-2.5">
+    <div className="w-full flex flex-col gap-sm">
       {lifeAreas.length === 0 && (
         <EmptyAlert
-          icon={<CompassIcon className="size-5 text-foreground/40" />}
           alert={t("lifeAreas.empty")}
           description={t("lifeAreas.subtitle")}
-          className="p-8"
+          href="/profile/new-life-area"
+          className="p-md"
         />
       )}
 
@@ -92,14 +92,15 @@ export function FrameworksAreaList() {
         ),
       )}
 
-      {renderCard(
-        UNSET_LIFE_AREA_SLUG,
-        `/framework/${UNSET_LIFE_AREA_SLUG}`,
-        FolderOpenIcon,
-        t("common.general"),
-        t("framework.generalDesc"),
-        countByArea.general,
-      )}
+      {countByArea.general > 0 &&
+        renderCard(
+          UNSET_LIFE_AREA_SLUG,
+          `/framework/${UNSET_LIFE_AREA_SLUG}`,
+          FolderOpenIcon,
+          t("common.general"),
+          t("framework.generalDesc"),
+          countByArea.general,
+        )}
     </div>
   );
 }

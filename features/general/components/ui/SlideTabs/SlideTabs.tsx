@@ -85,8 +85,8 @@ export function SlideTabs({
     isRtlProp !== undefined
       ? isRtlProp
       : locale === "fa" ||
-        (typeof document !== "undefined" &&
-          document.documentElement.dir === "rtl");
+      (typeof document !== "undefined" &&
+        document.documentElement.dir === "rtl");
 
   const [internalActiveId, setInternalActiveId] = useState<string>(
     activeIdProp || tabs[0]?.id || "",
@@ -154,7 +154,7 @@ export function SlideTabs({
   }, [children, activeTab, currentIndex]);
 
   return (
-    <div className={cn("w-full space-y-3", className)}>
+    <div className={cn("w-full space-y-sm", className)}>
       {/* Tab Buttons Header */}
       <div className={cn("w-full flex gap-2", headerClassName)}>
         {tabs.map((tab, index) => {
@@ -165,14 +165,7 @@ export function SlideTabs({
               {tab.icon ? <span className="shrink-0">{tab.icon}</span> : null}
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge !== null ? (
-                <span
-                  className={cn(
-                    "text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold transition-colors",
-                    isActive
-                      ? "bg-background/25 text-background"
-                      : "bg-foreground/10 text-foreground/70",
-                  )}
-                >
+                <span>
                   {tab.badge}
                 </span>
               ) : null}
@@ -185,7 +178,7 @@ export function SlideTabs({
                 key={tab.id}
                 nativeButton={false}
                 className={cn(
-                  "flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5",
+                  "flex-1",
                   tabClassName,
                   tab.className,
                 )}
@@ -204,7 +197,7 @@ export function SlideTabs({
               key={tab.id}
               type="button"
               className={cn(
-                "flex-1 justify-center rounded-container text-xs sm:text-sm font-semibold transition-all py-2 gap-1.5",
+                "flex-1",
                 tabClassName,
                 tab.className,
               )}
@@ -230,7 +223,7 @@ export function SlideTabs({
       {/* Animated Sliding Panels */}
       <div
         className={cn(
-          "w-full overflow-hidden rounded-container",
+          "w-full overflow-hidden rounded-component",
           panelClassName,
         )}
       >

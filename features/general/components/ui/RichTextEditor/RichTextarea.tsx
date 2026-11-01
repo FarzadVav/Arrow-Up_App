@@ -60,9 +60,9 @@ export function RichTextarea({
         aria-label={title || resolvedPlaceholder}
       >
         {isEmpty ? (
-          <div className="flex flex-col items-center justify-center py-6 text-center">
+          <div className="flex flex-col items-center justify-center py-md text-center">
             <p className="sub-text text-sm">{resolvedPlaceholder}</p>
-            <span className="mt-3 inline-flex items-center gap-1.5 rounded-container bg-card-thick px-3 py-1 text-xs font-medium text-foreground/80 transition-colors group-hover:bg-foreground group-hover:text-background">
+            <span className="mt-sm inline-flex items-center gap-xs rounded-container bg-card-thick px-sm py-1 text-xs font-medium text-foreground/80 transition-colors group-hover:bg-foreground group-hover:text-background">
               <PenLineIcon className="size-3.5" />
               <span>{t("editor.fullscreen")}</span>
             </span>

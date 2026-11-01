@@ -97,8 +97,8 @@ export default function HelpDialog({
           </div>
 
           {/* Help Tips */}
-          <div className="space-y-2.5 py-1 text-sm">
-            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
+          <div className="space-y-sm py-1 text-sm">
+            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
               <Lightbulb className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">
@@ -110,7 +110,7 @@ export default function HelpDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
+            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
               <CheckCircle2 className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">
@@ -122,7 +122,7 @@ export default function HelpDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-3 rounded-container border border-foreground/10 bg-background/50 p-3">
+            <div className="flex items-start gap-sm rounded-container border border-foreground/10 bg-background/50 p-sm">
               <Sparkles className="size-4.5 text-foreground shrink-0 mt-0.5" />
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-foreground text-xs">

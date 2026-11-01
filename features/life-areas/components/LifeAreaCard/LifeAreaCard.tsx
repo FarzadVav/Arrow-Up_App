@@ -86,7 +86,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
                 disabled={isDeleting}
                 className="bg-red-600 text-white hover:bg-red-700">
                 {isDeleting ? (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-xs">
                     <LoaderIcon className="size-4 animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>

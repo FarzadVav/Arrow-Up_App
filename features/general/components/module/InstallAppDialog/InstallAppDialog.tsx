@@ -95,8 +95,8 @@ export default function InstallAppDialog({
           </div>
 
           {/* Value Highlights */}
-          <div className="space-y-3 py-2 text-xs sm:text-sm">
-            <div className="flex items-start gap-2.5">
+          <div className="space-y-sm py-2 text-xs sm:text-sm">
+            <div className="flex items-start gap-sm">
               <Zap className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">
@@ -108,7 +108,7 @@ export default function InstallAppDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5">
+            <div className="flex items-start gap-sm">
               <Wifi className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">
@@ -120,7 +120,7 @@ export default function InstallAppDialog({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5">
+            <div className="flex items-start gap-sm">
               <Sparkles className="size-4 text-foreground shrink-0 mt-0.5" />
               <div>
                 <span className="font-medium text-foreground">
@@ -135,12 +135,12 @@ export default function InstallAppDialog({
 
           {/* Device & Browser Specific Instructions / Status */}
           {installedSuccess ? (
-            <div className="flex items-center justify-center gap-2 py-3 rounded-container bg-card-thick border border-foreground/20 text-foreground font-semibold text-xs sm:text-sm">
+            <div className="flex items-center justify-center gap-2 py-sm rounded-container bg-card-thick border border-foreground/20 text-foreground font-semibold text-xs sm:text-sm">
               <CheckCircle2 className="size-5 shrink-0" />
               <span>{t("install.installedSuccess")}</span>
             </div>
           ) : isInstallable ? (
-            <div className="rounded-container border border-foreground/20 bg-card-thick/50 p-3 flex items-start gap-2.5 text-xs text-foreground/80">
+            <div className="rounded-container border border-foreground/20 bg-card-thick/50 p-sm flex items-start gap-sm text-xs text-foreground/80">
               <Layers className="size-4 text-foreground shrink-0 mt-0.5" />
               <p>
                 {isMobile
@@ -149,17 +149,17 @@ export default function InstallAppDialog({
               </p>
             </div>
           ) : isIOS ? (
-            <div className="rounded-container border border-foreground/10 bg-background/60 p-3 space-y-2 text-xs text-foreground/80">
+            <div className="rounded-container border border-foreground/10 bg-background/60 p-sm space-y-2 text-xs text-foreground/80">
               <p className="font-semibold text-foreground text-xs">
                 {t("install.iosTitle")}
               </p>
-              <div className="flex items-center gap-2.5 text-foreground/75">
+              <div className="flex items-center gap-sm text-foreground/75">
                 <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
                   <Share className="size-3.5" />
                 </span>
                 <span>{t("install.iosStep1")}</span>
               </div>
-              <div className="flex items-center gap-2.5 text-foreground/75">
+              <div className="flex items-center gap-sm text-foreground/75">
                 <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
                   <PlusSquare className="size-3.5" />
                 </span>
@@ -167,17 +167,17 @@ export default function InstallAppDialog({
               </div>
             </div>
           ) : isAndroid || isMobile ? (
-            <div className="rounded-container border border-foreground/10 bg-background/60 p-3 space-y-2 text-xs text-foreground/80">
+            <div className="rounded-container border border-foreground/10 bg-background/60 p-sm space-y-2 text-xs text-foreground/80">
               <p className="font-semibold text-foreground text-xs">
                 {t("install.androidTitle")}
               </p>
-              <div className="flex items-center gap-2.5 text-foreground/75">
+              <div className="flex items-center gap-sm text-foreground/75">
                 <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
                   <MoreVertical className="size-3.5" />
                 </span>
                 <span>{t("install.androidStep1")}</span>
               </div>
-              <div className="flex items-center gap-2.5 text-foreground/75">
+              <div className="flex items-center gap-sm text-foreground/75">
                 <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
                   <PlusSquare className="size-3.5" />
                 </span>
@@ -185,7 +185,7 @@ export default function InstallAppDialog({
               </div>
             </div>
           ) : (
-            <div className="rounded-container border border-foreground/10 bg-background/60 p-3 text-xs text-foreground/80">
+            <div className="rounded-container border border-foreground/10 bg-background/60 p-sm text-xs text-foreground/80">
               <p className="font-semibold text-foreground mb-1">
                 {t("install.desktopTitle")}
               </p>
@@ -194,7 +194,7 @@ export default function InstallAppDialog({
           )}
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-1">
+          <div className="flex items-center justify-end gap-sm pt-1">
             <Dialog.Close
               render={
                 <Button

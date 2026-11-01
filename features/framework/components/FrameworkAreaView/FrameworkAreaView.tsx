@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useActionState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TagIcon, Repeat2Icon, PlusIcon, LoaderIcon } from "lucide-react";
+import { TagIcon, LoaderIcon } from "lucide-react";
 
 import { useFrameworks } from "../../hooks/useFrameworks";
 import { useFrameworkTags } from "../../hooks/useFrameworkTags";
@@ -44,16 +44,15 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
   const { frameworks, isLoading, mutate: revalidateFrameworks } =
     useFrameworks();
   const { tags } = useFrameworkTags(lifeAreaId);
-
-  const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
-
   const { lifeAreas } = useLifeAreas();
+
   const isArchivedArea =
     lifeAreaId !== null &&
     lifeAreas.some((area) => area.id === lifeAreaId && area.active === false);
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteFrameworkMutation,
     undefined,
@@ -61,28 +60,28 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
 
   useEffect(() => {
     if (!deleteState?.success) return;
-
+    setDeleteDialogOpen(false);
     revalidateFrameworks();
   }, [deleteState, revalidateFrameworks]);
 
-  const areaFrameworks = useMemo(
-    () =>
-      frameworks.filter((framework) =>
-        lifeAreaId === null
-          ? !framework.lifeAreaId
-          : framework.lifeAreaId === lifeAreaId,
-      ),
-    [frameworks, lifeAreaId],
-  );
+  const areaFrameworks = useMemo(() => {
+    return frameworks.filter((framework) =>
+      lifeAreaId === null
+        ? !framework.lifeAreaId
+        : framework.lifeAreaId === lifeAreaId,
+    );
+  }, [frameworks, lifeAreaId]);
 
   const filteredFrameworks = useMemo(() => {
-    if (activeTag === "all") return areaFrameworks;
-    return areaFrameworks.filter(
-      (framework) => framework.tag?.toLowerCase() === activeTag,
-    );
+    return areaFrameworks.filter((framework) => {
+      if (activeTag === "all") return true;
+      return framework.tag?.toLowerCase() === activeTag;
+    });
   }, [areaFrameworks, activeTag]);
 
-  const filterTabs: SlideTabItem[] = useMemo(
+  const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
+
+  const filterTabs = useMemo<SlideTabItem[]>(
     () => [
       {
         id: "all",
@@ -137,7 +136,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               setActiveTag(id);
             }
           }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
             <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
@@ -148,34 +147,21 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
             </div>
           }
         >
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-sm">
             {isLoading && frameworks.length === 0 ? (
               <Skeleton count={3} />
             ) : (
               <>
                 {filteredFrameworks.length === 0 ? (
                   <EmptyAlert
-                    icon={<Repeat2Icon className="size-5 text-foreground/40" />}
                     alert={
                       activeTag !== "all"
                         ? t("framework.noFrameworksWithTag")
                         : t("framework.noFrameworksInArea")
                     }
                     description={t("framework.addFirst")}
-                    className="p-10"
-                    action={
-                      isArchivedArea ? undefined : (
-                          <Button
-                            type="button"
-                            variant="card"
-                            onClick={() => router.push(createHref())}
-                            className="h-8 px-3 text-xs mt-2 gap-1.5"
-                          >
-                            <PlusIcon className="size-3.5" />
-                            <span>{t("framework.new")}</span>
-                          </Button>
-                      )
-                    }
+                    href={isArchivedArea ? undefined : createHref()}
+                    className="p-md"
                   />
                 ) : (
                   <ReorderList
@@ -242,7 +228,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {isDeleting ? (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-xs">
                     <LoaderIcon className="size-4 animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>

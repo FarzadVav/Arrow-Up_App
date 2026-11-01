@@ -100,7 +100,7 @@ function LocalTimePickerDialog({
 
         <TimePicker value={draftTime} onChange={setDraftTime} />
 
-        <div className="flex items-center justify-between gap-3 pt-2">
+        <div className="flex items-center justify-between gap-sm pt-2">
           {allowClear && value ? (
             <Button type="button" variant="outline" onClick={handleClear}>
               {t("common.clear")}

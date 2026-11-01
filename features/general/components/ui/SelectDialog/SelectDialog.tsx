@@ -283,7 +283,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           </div>
         )}
 
-        <div className="space-y-1.5">
+        <div className="space-y-xs">
           {filteredItems.length === 0 ? (
             <div className="text-center">{t("common.noResults")}</div>
           ) : (
@@ -319,7 +319,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         </div>
 
         {multiple && (
-          <div className="flex items-center gap-3 *:w-1/2">
+          <div className="flex items-center gap-sm *:w-1/2">
             <Dialog.Close
               render={
                 <Button

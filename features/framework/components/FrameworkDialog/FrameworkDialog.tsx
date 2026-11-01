@@ -113,7 +113,7 @@ export function FrameworkDialog({
         />
 
         <div>
-          <label className="block font-bold text-xs mb-1.5">
+          <label className="block font-bold text-xs mb-xs">
             {t("lifeAreas.selectLifeArea")}
           </label>
           <SelectDialog<number>
@@ -156,7 +156,7 @@ export function FrameworkDialog({
           />
           <Button type="submit" variant="primary" disabled={isSubmitting}>
             {isSubmitting ? (
-              <span className="flex items-center gap-1.5">
+              <span className="flex items-center gap-xs">
                 <LoaderIcon className="size-4 animate-spin" />
                 <span>{t("common.loading")}</span>
               </span>

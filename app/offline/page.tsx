@@ -7,7 +7,7 @@ export default async function OfflinePage() {
 
   return (
     <main className="min-h-screen w-full flex items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-container bg-card border border-foreground/15 p-6 sm:p-8 flex flex-col items-center text-center shadow-lg">
+      <div className="w-full max-w-sm rounded-container bg-card border border-foreground/15 p-md sm:p-8 flex flex-col items-center text-center shadow-lg">
         <div className="size-16 rounded-container bg-card-thick border border-foreground/10 flex items-center justify-center mb-5 text-foreground">
           <WifiOff className="size-8" />
         </div>

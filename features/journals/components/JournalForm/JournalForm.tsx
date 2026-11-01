@@ -234,7 +234,7 @@ export function JournalForm() {
       ) : (
         <Form
           id="journal-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("journals.edit") : t("journals.new")}
           action={formAction}
           errors={state?.errors}

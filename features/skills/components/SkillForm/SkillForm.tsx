@@ -203,7 +203,7 @@ export function SkillForm() {
       ) : (
         <Form
           id="skill-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("skills.edit") : t("skills.new")}
           action={formAction}
           errors={state?.errors}

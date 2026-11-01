@@ -541,7 +541,7 @@ function ReorderListComponent<T extends { id: number }>({
       values={order}
       data-reorder="group"
       onReorder={handleReorder}
-      className={cn("w-full space-y-3", className)}
+      className={cn("w-full space-y-sm", className)}
     >
       {orderedItems.map((item) => (
         <ReorderListItem

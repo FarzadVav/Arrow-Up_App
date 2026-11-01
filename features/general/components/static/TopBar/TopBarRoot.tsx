@@ -8,7 +8,7 @@ function TopBarRoot({ className, ...p }: TopBarRootProps) {
   return (
     <header
       className={cn(
-        "flex py-3 items-center justify-between relative w-full",
+        "flex py-sm items-center justify-between relative w-full",
         className,
       )}
       {...p}

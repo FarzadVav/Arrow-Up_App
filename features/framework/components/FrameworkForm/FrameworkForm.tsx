@@ -203,7 +203,7 @@ export function FrameworkForm() {
       ) : (
         <Form
           id="framework-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("framework.edit") : t("framework.new")}
           action={formAction}
           errors={state?.errors}

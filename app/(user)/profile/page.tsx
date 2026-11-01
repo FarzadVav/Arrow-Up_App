@@ -56,13 +56,13 @@ async function UserProfilePage() {
 
         <ProfileStats />
 
-        <div className="w-full space-y-3">
-          <div className="flex items-center justify-between gap-3 p-3 rounded-container bg-card">
+        <div className="w-full space-y-sm">
+          <div className="flex items-center justify-between gap-sm p-sm rounded-container bg-card">
             <span className="font-bold">{t("profile.language")}</span>
             <LocaleSwitcher />
           </div>
 
-          <div className="flex items-center justify-between gap-3 p-3 rounded-container bg-card">
+          <div className="flex items-center justify-between gap-sm p-sm rounded-container bg-card">
             <span className="font-bold">{t("profile.colorScheme")}</span>
             <ThemeSwitcher />
           </div>

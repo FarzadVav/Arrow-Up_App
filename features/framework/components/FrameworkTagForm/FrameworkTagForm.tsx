@@ -96,7 +96,7 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
       ) : (
         <Form
           id="framework-tag-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("framework.editTag") : t("framework.newTag")}
           action={formAction}
           errors={state?.errors}

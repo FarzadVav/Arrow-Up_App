@@ -422,7 +422,7 @@ export function TodoForm() {
       ) : (
         <Form
           id="todo-form"
-          className="w-full space-y-6"
+          className="w-full space-y-md"
           aria-label={isEditMode ? t("todos.edit") : t("todos.new")}
           action={formAction}
           errors={state?.errors}>
@@ -547,17 +547,17 @@ export function TodoForm() {
                   variant="outline"
                   onClick={openNewAction}
                   disabled={pending}
-                  className="w-full justify-center gap-1.5 rounded-component">
+                  className="w-full justify-center gap-xs rounded-component">
                   <PlusIcon className="size-4" />
                   <span>{t("missions.newAction")}</span>
                 </Button>
 
                 {actions.length > 0 && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-sm space-y-2">
                     {actions.map((act) => (
                       <div
                         key={act.id}
-                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3">
+                        className="flex items-center justify-between gap-sm rounded-component bg-card p-sm">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {act.title}
@@ -611,17 +611,17 @@ export function TodoForm() {
                   variant="outline"
                   onClick={openNewDiscipline}
                   disabled={pending}
-                  className="w-full justify-center gap-1.5 rounded-component">
+                  className="w-full justify-center gap-xs rounded-component">
                   <PlusIcon className="size-4" />
                   <span>{t("missions.newDiscipline")}</span>
                 </Button>
 
                 {disciplines.length > 0 && (
-                  <div className="mt-3 space-y-2">
+                  <div className="mt-sm space-y-2">
                     {disciplines.map((d) => (
                       <div
                         key={d.id}
-                        className="flex items-center justify-between gap-3 rounded-component bg-card p-3">
+                        className="flex items-center justify-between gap-sm rounded-component bg-card p-sm">
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {d.title}

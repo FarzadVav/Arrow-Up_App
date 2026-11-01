@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const cardViewVariants = cva(
-  "w-full flex gap-3 p-3 rounded-container text-foreground transition-all select-none",
+  "w-full flex gap-sm p-sm rounded-container text-foreground transition-all select-none",
   {
     variants: {
       variant: {
@@ -82,7 +82,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
           )}
 
           {cardDate && (
-            <div className="sub-text text-xs text-foreground/60 mt-1 flex items-center gap-1.5">
+            <div className="sub-text text-xs text-foreground/60 mt-1 flex items-center gap-xs">
               {cardDate}
             </div>
           )}

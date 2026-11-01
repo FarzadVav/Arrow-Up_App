@@ -21,7 +21,7 @@ export function RichTextResult({
   return (
     <div
       className={cn(
-        "rounded-container bg-background p-3",
+        "rounded-container bg-background p-sm",
         containerClassName,
       )}
     >

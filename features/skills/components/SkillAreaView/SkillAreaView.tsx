@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useActionState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TagIcon, SparklesIcon, PlusIcon, LoaderIcon } from "lucide-react";
+import { TagIcon, LoaderIcon } from "lucide-react";
 
 import { useSkills } from "../../hooks/useSkills";
 import { useSkillTags } from "../../hooks/useSkillTags";
@@ -53,6 +53,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteSkillMutation,
     undefined,
@@ -60,28 +61,26 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
 
   useEffect(() => {
     if (!deleteState?.success) return;
-
+    setDeleteDialogOpen(false);
     revalidateSkills();
   }, [deleteState, revalidateSkills]);
 
-  const areaSkills = useMemo(
-    () =>
-      skills.filter((skill) =>
-        lifeAreaId === null
-          ? !skill.lifeAreaId
-          : skill.lifeAreaId === lifeAreaId,
-      ),
-    [skills, lifeAreaId],
-  );
+  const areaSkills = useMemo(() => {
+    return skills.filter((skill) =>
+      lifeAreaId === null
+        ? !skill.lifeAreaId
+        : skill.lifeAreaId === lifeAreaId,
+    );
+  }, [skills, lifeAreaId]);
 
   const filteredSkills = useMemo(() => {
-    if (activeTag === "all") return areaSkills;
-    return areaSkills.filter(
-      (skill) => skill.tag?.toLowerCase() === activeTag,
-    );
+    return areaSkills.filter((skill) => {
+      if (activeTag === "all") return true;
+      return skill.tag?.toLowerCase() === activeTag;
+    });
   }, [areaSkills, activeTag]);
 
-  const filterTabs: SlideTabItem[] = useMemo(
+  const filterTabs = useMemo<SlideTabItem[]>(
     () => [
       {
         id: "all",
@@ -134,7 +133,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
               setActiveTag(id);
             }
           }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-1.5"
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
             <div className="w-full flex items-center justify-between pb-1 text-xs text-foreground/70">
@@ -145,34 +144,21 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
             </div>
           }
         >
-          <div className="w-full space-y-3">
+          <div className="w-full space-y-sm">
             {isLoading && skills.length === 0 ? (
               <Skeleton count={3} />
             ) : (
               <>
                 {filteredSkills.length === 0 ? (
                   <EmptyAlert
-                    icon={<SparklesIcon className="size-5 text-foreground/40" />}
                     alert={
                       activeTag !== "all"
                         ? t("skills.noSkillsWithTag")
                         : t("skills.noSkillsInArea")
                     }
                     description={t("skills.addFirst")}
-                    className="p-10"
-                    action={
-                      isArchivedArea ? undefined : (
-                          <Button
-                            type="button"
-                            variant="card"
-                            onClick={() => router.push(createHref())}
-                            className="h-8 px-3 text-xs mt-2 gap-1.5"
-                          >
-                            <PlusIcon className="size-3.5" />
-                            <span>{t("skills.new")}</span>
-                          </Button>
-                      )
-                    }
+                    href={isArchivedArea ? undefined : createHref()}
+                    className="p-md"
                   />
                 ) : (
                   <ReorderList
@@ -235,7 +221,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {isDeleting ? (
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-xs">
                     <LoaderIcon className="size-4 animate-spin" />
                     <span>{t("common.loading")}</span>
                   </span>
