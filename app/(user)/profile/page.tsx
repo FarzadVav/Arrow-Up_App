@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { SearchIcon } from "lucide-react";
 import { ProfileLifeAreas } from "@/features/life-areas/components";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import LogoutBtn from "@/features/auth/components/LogoutBtn/LogoutBtn";
+import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
 import ProfileStats from "@/features/auth/components/static/ProfileStats/ProfileStats";
 import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
 import ProfileAccount from "@/features/auth/components/static/ProfileAccount/ProfileAccount";
 import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
 import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import LogoutBtn from "@/features/auth/components/LogoutBtn/LogoutBtn";
 import InstallAppDialog from "@/features/general/components/module/InstallAppDialog/InstallAppDialog";
-import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
 
 async function UserProfilePage() {
   const { t } = await getTranslations();

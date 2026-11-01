@@ -4,6 +4,7 @@
     "close": "Close",
     "save": "Save",
     "add": "Add",
+    "addFirst": "Add the first",
     "edit": "Edit",
     "delete": "Delete",
     "type": "Type",
@@ -86,6 +87,7 @@
     "loading": "Waiting for connection to load todos...",
     "today": "Today",
     "upcoming": "Upcoming",
+    "newUpcoming": "New Upcoming",
     "dailyMomentum": "Daily Momentum",
     "upcomingTargets": "Upcoming Targets",
     "activeMissions": "Mission Progress",
@@ -102,11 +104,11 @@
     "dailyDifficulty": "Daily Time and Energy Cost",
     "selectDailyDifficulty": "Select Daily Time and Energy Cost",
     "dailyCapacityError": "Total daily time and energy cost cannot exceed 10. Currently {current}/10 is used.",
-    "dailyCostUsed": "Daily Time and Energy Cost",
+    "dailyCostUsed": "Time and Energy Spent on Daily",
     "midtermDifficulty": "Mid-term Time and Energy Cost",
     "selectMidtermDifficulty": "Select Mid-term Time and Energy Cost",
     "midtermCapacityError": "Total mid-term time and energy cost cannot exceed 10. Currently {current}/10 is used.",
-    "midtermCostUsed": "Mid-term Time and Energy Cost",
+    "midtermCostUsed": "Time and Energy Spent on Mid-term",
     "costOf": "{used} / {max} cost used"
   },
   "journals": {
@@ -151,8 +153,7 @@
     "difficulty": "Long-term Time and Energy Cost",
     "selectDifficulty": "Select Long-term Time and Energy Cost",
     "capacityError": "Total long-term time and energy cost cannot exceed 10. Currently {current}/10 is used.",
-    "costUsed": "Long-term Time and Energy Cost",
-
+    "costUsed": "Time and Energy Spent on  Long-termt",
     "titlePlaceholder": "Mission title...",
     "actionsLabel": "Actions",
     "editAction": "Edit action",
@@ -323,7 +324,7 @@
     "difficulty": "Life Time and Energy Cost",
     "selectDifficulty": "Select Life Time and Energy Cost",
     "capacityError": "Total life time and energy cost cannot exceed 10. Currently {current}/10 is used.",
-    "costUsed": "Life Time and Energy Cost"
+    "costUsed": "Time and Energy Spent on Life"
   },
   "skills": {
     "title": "Skills",

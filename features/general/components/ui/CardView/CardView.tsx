@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 
 const cardViewVariants = cva(
-  "w-full flex gap-sm p-sm rounded-container transition-all select-none",
+  "w-full flex gap-sm p-sm rounded-component transition-all select-none",
   {
     variants: {
       variant: {
@@ -21,7 +21,8 @@ const cardViewVariants = cva(
 );
 
 export interface CardViewProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "title">,
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, "title">,
     VariantProps<typeof cardViewVariants> {
   title: ReactNode;
   icon?: ReactNode;
@@ -47,8 +48,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
     ref,
   ) => {
     const cardDate = date ?? dateTime;
-    const isInteractive =
-      Boolean(props.onClick);
+    const isInteractive = Boolean(props.onClick);
 
     return (
       <div
@@ -59,23 +59,19 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
           isInteractive && "hover:opacity-90 active:scale-[0.99]",
           className,
         )}
-        {...props}
-      >
+        {...props}>
         {icon && (
           <div
             className={cn(
               "shrink-0 flex items-center justify-center",
               (description || cardDate) && "mt-0.5",
-            )}
-          >
+            )}>
             {icon}
           </div>
         )}
 
         <div className="flex-1 min-w-0 flex flex-col justify-center">
-          <div className="font-bold text-sm truncate leading-snug">
-            {title}
-          </div>
+          <div className="font-bold text-sm truncate leading-snug">{title}</div>
 
           {description && (
             <div className="sub-text line-clamp-2 mt-0.5 leading-relaxed">
@@ -91,9 +87,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         </div>
 
         {badge && (
-          <div className="shrink-0 flex items-center self-center">
-            {badge}
-          </div>
+          <div className="shrink-0 flex items-center self-center">{badge}</div>
         )}
       </div>
     );

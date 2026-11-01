@@ -43,7 +43,8 @@ export function SkillDialog({
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [selectedLifeAreaId, setSelectedLifeAreaId] = useState<number>(UNASSIGNED_ID);
+  const [selectedLifeAreaId, setSelectedLifeAreaId] =
+    useState<number>(UNASSIGNED_ID);
 
   const [state, formAction, isSubmitting] = useActionState(
     isEdit ? updateSkillMutation : createSkillMutation,
@@ -84,7 +85,10 @@ export function SkillDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
+      <Form
+        action={formAction}
+        errors={state?.errors}
+        className="flex flex-col gap-4">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="content" value={content} />
         <Field
@@ -133,7 +137,7 @@ export function SkillDialog({
           <label className="block font-bold text-xs mb-xs">
             {t("skills.contentLabel")}
           </label>
-          <div className="rounded-container p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
+          <div className="rounded-component p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
             <RichTextEditor
               value={content}
               onChange={setContent}

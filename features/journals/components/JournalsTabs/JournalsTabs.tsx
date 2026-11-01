@@ -4,7 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { JOURNAL_CATEGORIES } from "../../types";
 import { useJournals } from "../../hooks";
 import JournalCard from "../JournalCard/JournalCard";
-import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import SlideTabs, {
+  SlideTabItem,
+} from "@/features/general/components/ui/SlideTabs";
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
@@ -39,8 +41,7 @@ function JournalsTabs() {
       tabs={tabs}
       activeId={activeTab}
       headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
-      tabClassName="shrink-0 flex-none"
-    >
+      tabClassName="shrink-0 flex-none">
       <div className="w-full space-y-sm">
         {isLoading && currentJournals.length === 0 ? (
           <Skeleton count={3} />
@@ -61,7 +62,6 @@ function JournalsTabs() {
                     ? t("journals.noJournalsInCategory")
                     : t("journals.noJournals")
                 }
-                alertClassName="sub-text"
                 href={
                   activeTab !== "all"
                     ? `/journals/new?category=${encodeURIComponent(activeTab)}`

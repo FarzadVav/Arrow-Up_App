@@ -27,7 +27,7 @@ export function FrameworkTagCard({
           title={tag.title}
           description={tag.createdAt ? formatDate(tag.createdAt) : undefined}
           icon={
-            <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
+            <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
               <TagIcon />
             </div>
           }

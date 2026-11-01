@@ -52,7 +52,7 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
   );
 
   return (
-    <div className="relative flex h-52 w-full select-none items-center justify-center overflow-hidden rounded-container bg-card p-2">
+    <div className="relative flex h-52 w-full select-none items-center justify-center overflow-hidden rounded-component bg-card p-2">
       {/* Central selection indicator bar */}
       <div className="pointer-events-none absolute inset-x-4 top-1/2 z-front h-10 -translate-y-1/2 rounded-component bg-foreground/5" />
 

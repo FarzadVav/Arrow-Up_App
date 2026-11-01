@@ -9,7 +9,8 @@ const switchTrackVariants = cva(
   [
     "group inline-flex shrink-0 items-center rounded-container transition-colors duration-200 ease-in-out select-none",
     "bg-card-thick",
-    "data-checked:bg-foreground",
+    "data-checked:bg-foreground",
+
     "disabled:cursor-not-allowed disabled:opacity-50",
   ],
   {

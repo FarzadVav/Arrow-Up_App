@@ -61,37 +61,28 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       description={todo.lifeArea?.title ?? t("common.notSet")}
       date={
         <span className="flex items-center gap-1">
-          {isDaily ? (
-            <ClockIcon />
-          ) : (
-            <CalendarDaysIcon />
-          )}
+          {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
           <span>{formatDeadline(todo.deadline, isDaily)}</span>
         </span>
       }
       badge={
         <span
           className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
-          title={`${costLabel}: ${costValue}`}
-        >
+          title={`${costLabel}: ${costValue}`}>
           <GaugeIcon className="size-3.5" />
           <span>{costValue}</span>
         </span>
       }
       icon={
-        <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
-          {todo.isDone ? (
-            <CheckIcon />
-          ) : (
-            <CircleIcon />
-          )}
+        <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+          {todo.isDone ? <CheckIcon /> : <CircleIcon />}
         </div>
       }
       editHref={`/todos/new?editId=${todo.id}`}
       content={
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <TagIcon />
                 <span>{t("common.type")}</span>
@@ -99,13 +90,9 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <p className="mt-2 font-medium">{todo.type}</p>
             </div>
 
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
-                {isDaily ? (
-                  <ClockIcon />
-                ) : (
-                  <CalendarDaysIcon />
-                )}
+                {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
                 <span>{t("common.deadline")}</span>
               </div>
               <p className="mt-2 font-medium">
@@ -113,7 +100,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               </p>
             </div>
 
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="truncate">{costLabel}</span>
@@ -121,20 +108,18 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
               <p className="mt-2 font-medium">{costValue} / 10</p>
             </div>
 
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CheckIcon />
                 <span>{t("common.status")}</span>
               </div>
               <p
-                className={`mt-2 font-medium ${
-                  todo.isDone ? "" : "sub-text"
-                }`}>
+                className={`mt-2 font-medium ${todo.isDone ? "" : "sub-text"}`}>
                 {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
               </p>
             </div>
 
-            <div className="col-span-2 rounded-container bg-background p-sm">
+            <div className="col-span-2 rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CompassIcon />
                 <span>{t("lifeAreas.title")}</span>
@@ -161,7 +146,7 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
 
           <form ref={toggleFormRef} action={toggleAction}>
             <Field type="hidden" name="id" value={todo.id} />
-            <label className="rounded-container bg-background p-sm flex items-center justify-between select-none">
+            <label className="rounded-component bg-background p-sm flex items-center justify-between select-none">
               <div className="flex flex-col">
                 <span className="text-sm font-medium">
                   {todo.isDone

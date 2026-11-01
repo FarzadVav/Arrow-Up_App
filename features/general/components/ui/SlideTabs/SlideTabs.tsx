@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ReactNode,
-  useMemo,
-  useState,
-} from "react";
+import { ReactNode, useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, type Transition } from "motion/react";
 import { cn } from "cn";
@@ -31,7 +27,9 @@ export type SlideTabsProps = {
   /** Content rendered between the tab header buttons and the sliding content panel */
   between?: ReactNode;
   /** Content to render inside the sliding panel (if not using tab.content) */
-  children?: ReactNode | ((activeTab: SlideTabItem, index: number) => ReactNode);
+  children?:
+    | ReactNode
+    | ((activeTab: SlideTabItem, index: number) => ReactNode);
   className?: string;
   headerClassName?: string;
   tabClassName?: string;
@@ -85,8 +83,8 @@ export function SlideTabs({
     isRtlProp !== undefined
       ? isRtlProp
       : locale === "fa" ||
-      (typeof document !== "undefined" &&
-        document.documentElement.dir === "rtl");
+        (typeof document !== "undefined" &&
+          document.documentElement.dir === "rtl");
 
   const [internalActiveId, setInternalActiveId] = useState<string>(
     activeIdProp || tabs[0]?.id || "",
@@ -156,7 +154,7 @@ export function SlideTabs({
   return (
     <div className={cn("w-full space-y-sm", className)}>
       {/* Tab Buttons Header */}
-      <div className={cn("w-full flex gap-2", headerClassName)}>
+      <div className={cn("flex items-center gap-xs", headerClassName)}>
         {tabs.map((tab, index) => {
           const isActive = tab.id === activeId;
 
@@ -165,9 +163,7 @@ export function SlideTabs({
               {tab.icon ? <span className="shrink-0">{tab.icon}</span> : null}
               <span>{tab.label}</span>
               {tab.badge !== undefined && tab.badge !== null ? (
-                <span>
-                  {tab.badge}
-                </span>
+                <span>{tab.badge}</span>
               ) : null}
             </>
           );
@@ -177,16 +173,11 @@ export function SlideTabs({
               <Button
                 key={tab.id}
                 nativeButton={false}
-                className={cn(
-                  "flex-1",
-                  tabClassName,
-                  tab.className,
-                )}
+                className={cn("flex-1", tabClassName, tab.className)}
                 render={<Link href={tab.href} scroll={false} />}
                 variant={isActive ? "primary" : "card"}
                 disabled={tab.disabled}
-                onClick={tab.onClick}
-              >
+                onClick={tab.onClick}>
                 {buttonContent}
               </Button>
             );
@@ -196,11 +187,7 @@ export function SlideTabs({
             <Button
               key={tab.id}
               type="button"
-              className={cn(
-                "flex-1",
-                tabClassName,
-                tab.className,
-              )}
+              className={cn("flex-1", tabClassName, tab.className)}
               variant={isActive ? "primary" : "card"}
               disabled={tab.disabled}
               onClick={() => {
@@ -209,8 +196,7 @@ export function SlideTabs({
                 }
                 onTabChange?.(tab.id, index);
                 tab.onClick?.();
-              }}
-            >
+              }}>
               {buttonContent}
             </Button>
           );
@@ -221,32 +207,25 @@ export function SlideTabs({
       {between}
 
       {/* Animated Sliding Panels */}
-      <div
-        className={cn(
-          "w-full overflow-hidden rounded-component",
-          panelClassName,
-        )}
-      >
+      <div className={cn("overflow-hidden rounded-component", panelClassName)}>
         <AnimatePresence
           mode={mode}
           initial={false}
-          custom={{ direction, isRtl: effectiveIsRtl }}
-        >
+          custom={{ direction, isRtl: effectiveIsRtl }}>
           <motion.div
             key={activeId}
-            custom={{ direction, isRtl: effectiveIsRtl }}
-            variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
+            className="space-y-sm"
+            variants={slideVariants}
+            custom={{ direction, isRtl: effectiveIsRtl }}
             transition={
               transition || {
                 duration: 0.22,
                 ease: [0.25, 1, 0.5, 1],
               }
-            }
-            className="w-full"
-          >
+            }>
             {renderedContent}
           </motion.div>
         </AnimatePresence>

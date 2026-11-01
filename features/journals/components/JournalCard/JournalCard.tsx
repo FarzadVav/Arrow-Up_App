@@ -66,7 +66,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
         </div>
       }
       icon={
-        <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
+        <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
           <FileTextIcon />
         </div>
       }
@@ -78,7 +78,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               "grid gap-2",
               journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3",
             )}>
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <FileTextIcon />
                 <span>{t("common.category")}</span>
@@ -89,7 +89,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             </div>
 
             {journal.tag && (
-              <div className="rounded-container bg-background p-sm">
+              <div className="rounded-component bg-background p-sm">
                 <div className="flex items-center gap-2 sub-text">
                   <TagIcon />
                   <span>{t("common.tag")}</span>
@@ -98,7 +98,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               </div>
             )}
 
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <CalendarDaysIcon />
                 <span>{t("common.date")}</span>
@@ -108,7 +108,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
               </p>
             </div>
 
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <ClockIcon />
                 <span>{t("common.time")}</span>

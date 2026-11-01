@@ -57,7 +57,10 @@ export function LifeAreaDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
+      <Form
+        action={formAction}
+        errors={state?.errors}
+        className="flex flex-col gap-4">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="vision" value={vision} />
 
@@ -86,7 +89,7 @@ export function LifeAreaDialog({
           <label className="block font-bold text-xs mb-xs">
             {t("lifeAreas.visionLabel")}
           </label>
-          <div className="rounded-container p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
+          <div className="rounded-component p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
             <RichTextEditor
               value={vision}
               onChange={setVision}

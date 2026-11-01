@@ -29,12 +29,7 @@ async function TodosPage() {
 
         <p className="sub-text w-full text-center">{t("todos.subtitle")}</p>
 
-        <Suspense
-          fallback={
-            <PageActionBtn href="/todos/new?type=daily">
-              {t("todos.new")}
-            </PageActionBtn>
-          }>
+        <Suspense>
           <TodosActionBtn />
         </Suspense>
       </PageItemsWrapper>

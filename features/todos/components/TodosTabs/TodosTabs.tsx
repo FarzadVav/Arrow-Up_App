@@ -6,18 +6,17 @@ import { GaugeIcon } from "lucide-react";
 import { useTodos } from "../../hooks";
 import TodoCard from "../TodoCard/TodoCard";
 import TodoMissionCard from "../TodoMissionCard/TodoMissionCard";
-import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideTabs";
+import SlideTabs, {
+  SlideTabItem,
+} from "@/features/general/components/ui/SlideTabs";
 import ReorderList from "@/features/general/components/ui/ReorderList";
 import EmptyAlert from "@/features/general/components/static/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import TimeAndEnergyCostCard from "@/features/general/components/module/TimeAndEnergyCostCard/TimeAndEnergyCostCard";
 
 function TodosTabs() {
-  const {
-    todos: todosList,
-    isLoading,
-    mutate: revalidateTodos,
-  } = useTodos();
+  const { todos: todosList, isLoading, mutate: revalidateTodos } = useTodos();
 
   const sp = useSearchParams();
   const { t } = useLocale();
@@ -83,91 +82,54 @@ function TodosTabs() {
   }`;
 
   return (
-    <SlideTabs
-      tabs={tabs}
-      activeId={activeTab}
-      between={
-        <div className="w-full rounded-container bg-card p-sm space-y-3">
-          {totalCount > 0 && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold">
-                  {activeTab === "today"
-                    ? t("todos.dailyMomentum")
-                    : activeTab === "upcoming"
-                      ? t("todos.upcomingTargets")
-                      : t("todos.activeMissions")}
-                </span>
-                <span className="sub-text">
-                  {t("todos.completedOf", {
-                    done: completedCount,
-                    total: totalCount,
-                  })}
-                </span>
+    <SlideTabs tabs={tabs} activeId={activeTab}>
+      {isLoading && todosList.length === 0 ? (
+        <Skeleton count={3} />
+      ) : (
+        <>
+          {currentTodos.length === 0 ? (
+            <EmptyAlert
+              href={newTodoHref}
+              alert={
+                activeTab === "missions"
+                  ? t("todos.noMissions")
+                  : t("todos.noTodos")
+              }
+            />
+          ) : (
+            <>
+              <div className="space-y-xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold">{t("common.progress")}</span>
+                  <span className="sub-text">
+                    {t("todos.completedOf", {
+                      done: completedCount,
+                      total: totalCount,
+                    })}
+                  </span>
+                </div>
+
+                <div className="h-1.5 overflow-hidden rounded-full bg-card-thick">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    className="h-full rounded-full bg-foreground"
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    animate={{ width: `${progressPercent}%` }}
+                  />
+                </div>
               </div>
 
-              <div className="h-1.5 overflow-hidden rounded-container bg-card-thick">
-                <motion.div
-                  initial={{ width: 0 }}
-                  className="h-full rounded-container bg-foreground"
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  animate={{ width: `${progressPercent}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="flex items-center gap-1.5 font-bold">
-                <GaugeIcon className="size-3.5" />
-                <span>
-                  {activeTab === "today"
+              <TimeAndEnergyCostCard
+                totalCost={totalCost}
+                title={
+                  activeTab === "today"
                     ? t("todos.dailyCostUsed")
                     : activeTab === "upcoming"
                       ? t("todos.midtermCostUsed")
-                      : t("missions.costUsed")}
-                </span>
-              </span>
-              <span className="sub-text font-medium">
-                {totalCost} / 10
-              </span>
-            </div>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 10 }).map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${
-                    index < totalCost
-                      ? totalCost > 10
-                        ? "bg-red-500"
-                        : "bg-foreground"
-                      : "bg-card-thick"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      }
-    >
-      <div className="w-full space-y-sm">
-        {isLoading && todosList.length === 0 ? (
-          <Skeleton count={3} />
-        ) : (
-          <>
-            {currentTodos.length === 0 ? (
-              <EmptyAlert
-                alert={
-                  activeTab === "missions"
-                    ? t("todos.noMissions")
-                    : t("todos.noTodos")
+                      : t("missions.costUsed")
                 }
-                alertClassName="sub-text"
-                href={newTodoHref}
               />
-            ) : (
+
               <ReorderList
                 key={activeTab}
                 items={currentTodos}
@@ -175,19 +137,16 @@ function TodosTabs() {
                 revalidate={revalidateTodos}
                 renderItem={(todo) =>
                   activeTab === "missions" ? (
-                    <TodoMissionCard
-                      todo={todo}
-                      onMutated={revalidateTodos}
-                    />
+                    <TodoMissionCard todo={todo} onMutated={revalidateTodos} />
                   ) : (
                     <TodoCard todo={todo} onMutated={revalidateTodos} />
                   )
                 }
               />
-            )}
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </>
+      )}
     </SlideTabs>
   );
 }

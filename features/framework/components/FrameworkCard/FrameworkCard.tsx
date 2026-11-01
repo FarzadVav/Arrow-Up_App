@@ -37,7 +37,7 @@ export function FrameworkCard({
       title={framework.title}
       description={stripHtml(framework.description)}
       icon={
-        <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
+        <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
           <Repeat2Icon />
         </div>
       }
@@ -61,13 +61,13 @@ export function FrameworkCard({
           {framework.description && (
             <RichTextResult
               content={framework.description}
-              containerClassName="rounded-container bg-background/60 p-4"
+              containerClassName="rounded-component bg-background/60 p-4"
             />
           )}
 
           {/* Recent History summary */}
           {framework.history && framework.history.length > 0 && (
-            <div className="rounded-container bg-card p-4 space-y-sm">
+            <div className="rounded-component bg-card p-4 space-y-sm">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold">
                   {t("framework.historyTitle")}

@@ -1,6 +1,7 @@
-# **Refactor**
+# **Bug & Refactor**
 
-*Nothing*
+* Back redirection to prev active tab
+* Change all spacing to the reusable global spacings
 
 ---
 

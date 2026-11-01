@@ -26,7 +26,7 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
       title={skill.title}
       description={plainContent}
       icon={
-        <div className="size-8 rounded-container bg-foreground/10 flex items-center justify-center shrink-0">
+        <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
           <SparklesIcon />
         </div>
       }

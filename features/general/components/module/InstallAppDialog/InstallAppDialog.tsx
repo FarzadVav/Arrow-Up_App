@@ -17,7 +17,10 @@ import {
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import TopBar from "@/features/general/components/static/TopBar/TopBar";
 import { usePwaInstall } from "@/features/general/hooks/usePwaInstall";
-import { Button, ButtonProps } from "@/features/general/components/ui/Button/Button";
+import {
+  Button,
+  ButtonProps,
+} from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 export default function InstallAppDialog({
@@ -67,8 +70,7 @@ export default function InstallAppDialog({
           setIsOpen(true);
           onClick?.(ev);
         }}
-        {...p}
-      >
+        {...p}>
         {children || <Download />}
       </Button>
 
@@ -82,7 +84,7 @@ export default function InstallAppDialog({
               unoptimized
               alt={t("install.title")}
               src="/icon-192x192.png"
-              className="size-13 rounded-container object-cover shadow-md shrink-0"
+              className="size-13 rounded-component object-cover shadow-md shrink-0"
             />
             <div className="flex flex-col min-w-0">
               <Dialog.Title className="title">
@@ -102,45 +104,35 @@ export default function InstallAppDialog({
                 <span className="font-medium">
                   {t("install.standaloneTitle")}
                 </span>
-                <span className=" ml-1">
-                  {t("install.standaloneDesc")}
-                </span>
+                <span className=" ml-1">{t("install.standaloneDesc")}</span>
               </div>
             </div>
 
             <div className="flex items-start gap-sm">
               <Wifi className="shrink-0 mt-0.5" />
               <div>
-                <span className="font-medium">
-                  {t("install.offlineTitle")}
-                </span>
-                <span className=" ml-1">
-                  {t("install.offlineDesc")}
-                </span>
+                <span className="font-medium">{t("install.offlineTitle")}</span>
+                <span className=" ml-1">{t("install.offlineDesc")}</span>
               </div>
             </div>
 
             <div className="flex items-start gap-sm">
               <Sparkles className="shrink-0 mt-0.5" />
               <div>
-                <span className="font-medium">
-                  {t("install.quickTitle")}
-                </span>
-                <span className=" ml-1">
-                  {t("install.quickDesc")}
-                </span>
+                <span className="font-medium">{t("install.quickTitle")}</span>
+                <span className=" ml-1">{t("install.quickDesc")}</span>
               </div>
             </div>
           </div>
 
           {/* Device & Browser Specific Instructions / Status */}
           {installedSuccess ? (
-            <div className="flex items-center justify-center gap-2 py-sm rounded-container bg-card-thick font-semibold text-xs sm:text-sm">
+            <div className="flex items-center justify-center gap-2 py-sm rounded-component bg-card-thick font-semibold text-xs sm:text-sm">
               <CheckCircle2 className="shrink-0" />
               <span>{t("install.installedSuccess")}</span>
             </div>
           ) : isInstallable ? (
-            <div className="rounded-container bg-card-thick/50 p-sm flex items-start gap-sm text-xs">
+            <div className="rounded-component bg-card-thick/50 p-sm flex items-start gap-sm text-xs">
               <Layers className="shrink-0 mt-0.5" />
               <p>
                 {isMobile
@@ -149,10 +141,8 @@ export default function InstallAppDialog({
               </p>
             </div>
           ) : isIOS ? (
-            <div className="rounded-container bg-background/60 p-sm space-y-2 text-xs">
-              <p className="font-semibold text-xs">
-                {t("install.iosTitle")}
-              </p>
+            <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
+              <p className="font-semibold text-xs">{t("install.iosTitle")}</p>
               <div className="flex items-center gap-sm">
                 <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
                   <Share />
@@ -167,7 +157,7 @@ export default function InstallAppDialog({
               </div>
             </div>
           ) : isAndroid || isMobile ? (
-            <div className="rounded-container bg-background/60 p-sm space-y-2 text-xs">
+            <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
               <p className="font-semibold text-xs">
                 {t("install.androidTitle")}
               </p>
@@ -185,10 +175,8 @@ export default function InstallAppDialog({
               </div>
             </div>
           ) : (
-            <div className="rounded-container bg-background/60 p-sm text-xs">
-              <p className="font-semibold mb-1">
-                {t("install.desktopTitle")}
-              </p>
+            <div className="rounded-component bg-background/60 p-sm text-xs">
+              <p className="font-semibold mb-1">{t("install.desktopTitle")}</p>
               <p className="leading-relaxed">{t("install.desktopDesc")}</p>
             </div>
           )}
@@ -203,8 +191,7 @@ export default function InstallAppDialog({
                   className={
                     isInstallable && !installedSuccess ? "flex-1" : "w-full"
                   }
-                  onClick={() => setIsOpen(false)}
-                >
+                  onClick={() => setIsOpen(false)}>
                   {installedSuccess
                     ? t("common.close")
                     : isInstallable
@@ -220,8 +207,7 @@ export default function InstallAppDialog({
                 variant="primary"
                 className="flex-1 flex items-center justify-center gap-2 font-medium"
                 onClick={handleInstall}
-                disabled={isInstalling}
-              >
+                disabled={isInstalling}>
                 <span>
                   {isInstalling
                     ? t("install.installing")

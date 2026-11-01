@@ -43,22 +43,19 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
         badge={
           <span
             className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
-            title={`${t("lifeAreas.difficulty")}: ${costValue}`}
-          >
+            title={`${t("lifeAreas.difficulty")}: ${costValue}`}>
             <GaugeIcon className="size-3.5" />
             <span>{costValue}</span>
           </span>
         }
         content={
           <div className="space-y-4">
-            <div className="rounded-container bg-background p-sm">
+            <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-2 sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="text-xs">{t("lifeAreas.difficulty")}</span>
               </div>
-              <p className="mt-2 font-medium">
-                {costValue} / 10
-              </p>
+              <p className="mt-2 font-medium">{costValue} / 10</p>
             </div>
 
             <RichTextResult

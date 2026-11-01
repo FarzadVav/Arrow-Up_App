@@ -11,7 +11,9 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 export default function PwaManager() {
   const { t } = useLocale();
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
+  const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(
+    null,
+  );
   const pathname = usePathname();
 
   // Register service worker and handle lifecycle updates.
@@ -45,7 +47,10 @@ export default function PwaManager() {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.onstatechange = () => {
-              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+              if (
+                newWorker.state === "installed" &&
+                navigator.serviceWorker.controller
+              ) {
                 setWaitingWorker(newWorker);
                 setUpdateAvailable(true);
               }
@@ -65,10 +70,16 @@ export default function PwaManager() {
         window.location.reload();
       }
     };
-    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
+    navigator.serviceWorker.addEventListener(
+      "controllerchange",
+      onControllerChange,
+    );
 
     return () => {
-      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        onControllerChange,
+      );
     };
   }, [pathname]);
 
@@ -86,8 +97,7 @@ export default function PwaManager() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-container bg-card shadow-2xl flex items-center justify-between gap-sm"
-        >
+          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-component bg-card shadow-2xl flex items-center justify-between gap-sm">
           <div className="flex items-center gap-sm">
             <Sparkles className="shrink-0" />
             <div className="text-xs">
@@ -99,8 +109,7 @@ export default function PwaManager() {
             type="button"
             variant="primary"
             onClick={handleUpdate}
-            className="h-auto w-auto rounded-container px-sm py-xs text-xs font-semibold transition-colors"
-          >
+            className="h-auto w-auto rounded-component px-sm py-xs text-xs font-semibold transition-colors">
             {t("pwa.refresh")}
           </Button>
         </motion.div>
