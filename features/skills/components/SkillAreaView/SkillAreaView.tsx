@@ -67,9 +67,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
 
   const areaSkills = useMemo(() => {
     return skills.filter((skill) =>
-      lifeAreaId === null
-        ? !skill.lifeAreaId
-        : skill.lifeAreaId === lifeAreaId,
+      lifeAreaId === null ? !skill.lifeAreaId : skill.lifeAreaId === lifeAreaId,
     );
   }, [skills, lifeAreaId]);
 
@@ -142,8 +140,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
                 {filteredSkills.length} {t("profile.total")}
               </span>
             </div>
-          }
-        >
+          }>
           <div className="w-full space-y-sm">
             {isLoading && skills.length === 0 ? (
               <Skeleton count={3} />
@@ -187,50 +184,44 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
             {t("lifeAreas.inactiveDesc")}
           </p>
         ) : (
-          <PageActionBtn href={createHref()}>
-            {t("skills.new")}
-          </PageActionBtn>
+          <PageActionBtn href={createHref()}>{t("skills.new")}</PageActionBtn>
         )}
       </PageItemsWrapper>
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="flex flex-col gap-4 p-1">
-          <div>
-            <Dialog.Title className="title">{t("skills.deleteConfirm")}</Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("skills.deleteDesc", { title: targetSkill?.title || "" })}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">
+          {t("skills.deleteConfirm")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("skills.deleteDesc", { title: targetSkill?.title || "" })}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="actions-footer">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={isDeleting}>
+            {t("common.cancel")}
+          </Button>
+          <form action={deleteAction}>
+            <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
             <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={isDeleting}
-            >
-              {t("common.cancel")}
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || deleteTargetId === null}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {isDeleting ? (
+                <span className="flex items-center gap-xs">
+                  <LoaderIcon className="animate-spin" />
+                  <span>{t("common.loading")}</span>
+                </span>
+              ) : (
+                <span>{t("common.delete")}</span>
+              )}
             </Button>
-            <form action={deleteAction}>
-              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || deleteTargetId === null}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                {isDeleting ? (
-                  <span className="flex items-center gap-xs">
-                    <LoaderIcon className="animate-spin" />
-                    <span>{t("common.loading")}</span>
-                  </span>
-                ) : (
-                  <span>{t("common.delete")}</span>
-                )}
-              </Button>
-            </form>
-          </div>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

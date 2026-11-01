@@ -12,7 +12,10 @@ import { SelectDialog } from "@/features/general/components/ui/SelectDialog/Sele
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";
 import { selectableLifeAreas } from "@/features/life-areas/lib/selectableLifeAreas";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
-import { createFrameworkMutation, updateFrameworkMutation } from "../../mutations";
+import {
+  createFrameworkMutation,
+  updateFrameworkMutation,
+} from "../../mutations";
 
 export interface FrameworkDialogProps {
   open: boolean;
@@ -42,7 +45,8 @@ export function FrameworkDialog({
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [selectedLifeAreaId, setSelectedLifeAreaId] = useState<number>(UNASSIGNED_ID);
+  const [selectedLifeAreaId, setSelectedLifeAreaId] =
+    useState<number>(UNASSIGNED_ID);
 
   const [state, formAction, isSubmitting] = useActionState(
     isEdit ? updateFrameworkMutation : createFrameworkMutation,
@@ -82,8 +86,8 @@ export function FrameworkDialog({
   ];
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form action={formAction} errors={state?.errors} className="flex flex-col gap-4">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Form action={formAction} errors={state?.errors} className="space-y-3">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field
           type="hidden"
@@ -91,14 +95,12 @@ export function FrameworkDialog({
           value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
         />
 
-        <div>
-          <Dialog.Title className="title">
-            {isEdit ? t("framework.edit") : t("framework.new")}
-          </Dialog.Title>
-          <Dialog.Description className="sub-text mt-1">
-            {t("framework.subtitle")}
-          </Dialog.Description>
-        </div>
+        <Dialog.Title className="title">
+          {isEdit ? t("framework.edit") : t("framework.new")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("framework.subtitle")}
+        </Dialog.Description>
 
         <Field
           name="title"
@@ -126,7 +128,6 @@ export function FrameworkDialog({
             disabled={isSubmitting || isLoadingLifeAreas}
           />
         </div>
-
 
         <Field
           multiline

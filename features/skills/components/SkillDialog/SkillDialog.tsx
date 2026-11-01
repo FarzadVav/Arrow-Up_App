@@ -84,11 +84,8 @@ export function SkillDialog({
   ];
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form
-        action={formAction}
-        errors={state?.errors}
-        className="flex flex-col gap-4">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <Form action={formAction} errors={state?.errors} className="space-y-3">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="content" value={content} />
         <Field
@@ -97,56 +94,45 @@ export function SkillDialog({
           value={selectedLifeAreaId > 0 ? String(selectedLifeAreaId) : "none"}
         />
 
-        <div>
-          <Dialog.Title className="title">
-            {isEdit ? t("skills.edit") : t("skills.new")}
-          </Dialog.Title>
-          <Dialog.Description className="sub-text mt-1">
-            {t("skills.subtitle")}
-          </Dialog.Description>
-        </div>
+        <Dialog.Title className="title">
+          {isEdit ? t("skills.edit") : t("skills.new")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("skills.subtitle")}
+        </Dialog.Description>
 
         <Field
-          name="title"
-          label={t("common.title")}
-          labelSize="sm"
           required
-          placeholder={t("skills.titlePlaceholder")}
+          name="title"
+          labelSize="sm"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
           disabled={isSubmitting}
+          label={t("common.title")}
+          placeholder={t("skills.titlePlaceholder")}
+          onChange={(e) => setTitle(e.target.value)}
           schema={isEdit ? UpdateSkillSchema : CreateSkillSchema}
         />
 
-        <div>
-          <label className="block font-bold text-xs mb-xs">
-            {t("lifeAreas.selectLifeArea")}
-          </label>
-          <SelectDialog<number>
-            name="lifeAreaSelect"
-            items={lifeAreaItems}
-            value={selectedLifeAreaId}
-            onChange={(val) => setSelectedLifeAreaId(val)}
-            title={t("lifeAreas.selectLifeArea")}
-            placeholder={t("lifeAreas.selectLifeArea")}
-            disabled={isSubmitting || isLoadingLifeAreas}
-          />
-        </div>
+        <label className="font-bold">{t("lifeAreas.selectLifeArea")}</label>
+        <SelectDialog<number>
+          name="lifeAreaSelect"
+          items={lifeAreaItems}
+          value={selectedLifeAreaId}
+          title={t("lifeAreas.selectLifeArea")}
+          placeholder={t("lifeAreas.selectLifeArea")}
+          disabled={isSubmitting || isLoadingLifeAreas}
+          onChange={(val) => setSelectedLifeAreaId(val)}
+        />
 
-        <div>
-          <label className="block font-bold text-xs mb-xs">
-            {t("skills.contentLabel")}
-          </label>
-          <div className="rounded-component p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
-            <RichTextEditor
-              value={content}
-              onChange={setContent}
-              placeholder={t("skills.contentPlaceholder")}
-              autoFocus={false}
-              showToolbar={true}
-              className="flex-1"
-            />
-          </div>
+        <label className="font-bold">{t("skills.contentLabel")}</label>
+        <div className="rounded-component p-sm min-h-30 bg-background">
+          <RichTextEditor
+            value={content}
+            autoFocus={false}
+            showToolbar={true}
+            onChange={setContent}
+            placeholder={t("skills.contentPlaceholder")}
+          />
         </div>
 
         <Field.FormError
@@ -154,7 +140,7 @@ export function SkillDialog({
           knownFields={["title", "content", "lifeAreaId"]}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="actions-footer">
           <Dialog.Close
             render={
               <Button type="button" variant="ghost" disabled={isSubmitting}>

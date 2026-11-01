@@ -99,46 +99,38 @@ export function JournalTagsList({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("common.delete")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("journals.deleteTagConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("journals.deleteTagConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}
-            >
-              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || deleteTargetId === null}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                {isDeleting ? (
-                  <span className="flex items-center gap-xs">
-                    <LoaderIcon className="animate-spin" />
-                    <span>{t("common.loading")}</span>
-                  </span>
-                ) : (
-                  <span>{t("common.delete")}</span>
-                )}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || deleteTargetId === null}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? (
+                <span className="flex items-center gap-xs">
+                  <LoaderIcon className="animate-spin" />
+                  <span>{t("common.loading")}</span>
+                </span>
+              ) : (
+                <span>{t("common.delete")}</span>
+              )}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

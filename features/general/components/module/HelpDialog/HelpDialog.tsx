@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { CircleHelp, Lightbulb, CheckCircle2, Sparkles } from "lucide-react";
+import {
+  CircleHelpIcon,
+  Lightbulb,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 
 import TopBarBtn from "@/features/general/components/static/TopBar/TopBarBtn";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -11,7 +16,6 @@ import {
   ButtonProps,
 } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
-import { cn } from "cn";
 
 type HelpDialogProps = ButtonProps & {
   topic?: string;
@@ -78,65 +82,55 @@ export default function HelpDialog({
         }}
         className={className}
         {...p}>
-        {children || <CircleHelp />}
+        {children || <CircleHelpIcon />}
       </TopBarBtn>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <div className="flex flex-col gap-5 max-w-sm w-full p-1">
-          {/* Header */}
-          <div className="flex items-center gap-3.5">
-            <div className="size-11 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
-              <CircleHelp />
-            </div>
-            <div className="flex flex-col">
-              <Dialog.Title className="title">{title}</Dialog.Title>
-              <Dialog.Description className="sub-text">
-                {subtitle}
-              </Dialog.Description>
+        <div className="space-y-xs">
+          <Dialog.Title className="title">{title}</Dialog.Title>
+          <Dialog.Description className="sub-text">
+            {subtitle}
+          </Dialog.Description>
+        </div>
+
+        <div className="space-y-xs">
+          <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
+            <Lightbulb className="shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold text-xs">{tip1Title}</span>
+              <span className="sub-text leading-relaxed">{tip1Desc}</span>
             </div>
           </div>
 
-          {/* Help Tips */}
-          <div className="space-y-sm py-1 text-sm">
-            <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-              <Lightbulb className="shrink-0 mt-0.5" />
-              <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-xs">{tip1Title}</span>
-                <span className="sub-text leading-relaxed">{tip1Desc}</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-              <CheckCircle2 className="shrink-0 mt-0.5" />
-              <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-xs">{tip2Title}</span>
-                <span className="sub-text leading-relaxed">{tip2Desc}</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-              <Sparkles className="shrink-0 mt-0.5" />
-              <div className="flex flex-col gap-0.5">
-                <span className="font-semibold text-xs">{tip3Title}</span>
-                <span className="sub-text leading-relaxed">{tip3Desc}</span>
-              </div>
+          <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
+            <CheckCircle2 className="shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold text-xs">{tip2Title}</span>
+              <span className="sub-text leading-relaxed">{tip2Desc}</span>
             </div>
           </div>
 
-          {/* Footer Action */}
-          <div className="flex items-center justify-end">
-            <Dialog.Close
-              render={
-                <Button
-                  type="button"
-                  variant="primary"
-                  className="w-full"
-                  onClick={() => setIsOpen(false)}>
-                  {t("help.gotIt")}
-                </Button>
-              }
-            />
+          <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
+            <Sparkles className="shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-0.5">
+              <span className="font-semibold text-xs">{tip3Title}</span>
+              <span className="sub-text leading-relaxed">{tip3Desc}</span>
+            </div>
           </div>
+        </div>
+
+        {/* Footer Action */}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button
+                type="button"
+                variant="primary"
+                onClick={() => setIsOpen(false)}>
+                {t("help.gotIt")}
+              </Button>
+            }
+          />
         </div>
       </Dialog>
     </>

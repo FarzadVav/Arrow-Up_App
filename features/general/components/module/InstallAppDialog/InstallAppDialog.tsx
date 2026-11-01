@@ -75,148 +75,128 @@ export default function InstallAppDialog({
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <div className="flex flex-col gap-4 max-w-sm w-full p-1 sm:p-2">
-          {/* Header */}
-          <div className="flex items-center gap-3.5">
-            <Image
-              width={52}
-              height={52}
-              unoptimized
-              alt={t("install.title")}
-              src="/icon-192x192.png"
-              className="size-13 rounded-component object-cover shadow-md shrink-0"
-            />
-            <div className="flex flex-col min-w-0">
-              <Dialog.Title className="title">
-                {t("install.label")}
-              </Dialog.Title>
-              <Dialog.Description className="sub-text line-clamp-2">
-                {t("install.subtitle")}
-              </Dialog.Description>
+        <Image
+          width={52}
+          height={52}
+          unoptimized
+          src="/icon-192x192.png"
+          alt={t("install.title")}
+          className="size-14 rounded-full object-cover shadow-md shrink-0"
+        />
+        <Dialog.Title className="title">{t("install.label")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("install.subtitle")}
+        </Dialog.Description>
+
+        <div className="flex items-start gap-sm">
+          <Zap className="shrink-0 mt-0.5" />
+          <div>
+            <span className="font-medium">{t("install.standaloneTitle")}</span>
+            <span className=" ml-1">{t("install.standaloneDesc")}</span>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-sm">
+          <Wifi className="shrink-0 mt-0.5" />
+          <div>
+            <span className="font-medium">{t("install.offlineTitle")}</span>
+            <span className=" ml-1">{t("install.offlineDesc")}</span>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-sm">
+          <Sparkles className="shrink-0 mt-0.5" />
+          <div>
+            <span className="font-medium">{t("install.quickTitle")}</span>
+            <span className=" ml-1">{t("install.quickDesc")}</span>
+          </div>
+        </div>
+
+        {/* Device & Browser Specific Instructions / Status */}
+        {installedSuccess ? (
+          <div className="flex items-center justify-center gap-2 py-sm rounded-component bg-card-thick font-semibold text-xs sm:text-sm">
+            <CheckCircle2 className="shrink-0" />
+            <span>{t("install.installedSuccess")}</span>
+          </div>
+        ) : isInstallable ? (
+          <div className="rounded-component bg-card-thick/50 p-sm flex items-start gap-sm text-xs">
+            <Layers className="shrink-0 mt-0.5" />
+            <p>
+              {isMobile
+                ? t("install.mobileInstallReady")
+                : t("install.desktopInstallReady")}
+            </p>
+          </div>
+        ) : isIOS ? (
+          <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
+            <p className="font-semibold text-xs">{t("install.iosTitle")}</p>
+            <div className="flex items-center gap-sm">
+              <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+                <Share />
+              </span>
+              <span>{t("install.iosStep1")}</span>
+            </div>
+            <div className="flex items-center gap-sm">
+              <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+                <PlusSquare />
+              </span>
+              <span>{t("install.iosStep2")}</span>
             </div>
           </div>
-
-          {/* Value Highlights */}
-          <div className="space-y-sm py-2 text-xs sm:text-sm">
-            <div className="flex items-start gap-sm">
-              <Zap className="shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">
-                  {t("install.standaloneTitle")}
-                </span>
-                <span className=" ml-1">{t("install.standaloneDesc")}</span>
-              </div>
+        ) : isAndroid || isMobile ? (
+          <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
+            <p className="font-semibold text-xs">{t("install.androidTitle")}</p>
+            <div className="flex items-center gap-sm">
+              <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+                <MoreVertical />
+              </span>
+              <span>{t("install.androidStep1")}</span>
             </div>
-
-            <div className="flex items-start gap-sm">
-              <Wifi className="shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">{t("install.offlineTitle")}</span>
-                <span className=" ml-1">{t("install.offlineDesc")}</span>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-sm">
-              <Sparkles className="shrink-0 mt-0.5" />
-              <div>
-                <span className="font-medium">{t("install.quickTitle")}</span>
-                <span className=" ml-1">{t("install.quickDesc")}</span>
-              </div>
+            <div className="flex items-center gap-sm">
+              <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
+                <PlusSquare />
+              </span>
+              <span>{t("install.androidStep2")}</span>
             </div>
           </div>
+        ) : (
+          <div className="rounded-component bg-background/60 p-sm text-xs">
+            <p className="font-semibold mb-1">{t("install.desktopTitle")}</p>
+            <p className="leading-relaxed">{t("install.desktopDesc")}</p>
+          </div>
+        )}
 
-          {/* Device & Browser Specific Instructions / Status */}
-          {installedSuccess ? (
-            <div className="flex items-center justify-center gap-2 py-sm rounded-component bg-card-thick font-semibold text-xs sm:text-sm">
-              <CheckCircle2 className="shrink-0" />
-              <span>{t("install.installedSuccess")}</span>
-            </div>
-          ) : isInstallable ? (
-            <div className="rounded-component bg-card-thick/50 p-sm flex items-start gap-sm text-xs">
-              <Layers className="shrink-0 mt-0.5" />
-              <p>
-                {isMobile
-                  ? t("install.mobileInstallReady")
-                  : t("install.desktopInstallReady")}
-              </p>
-            </div>
-          ) : isIOS ? (
-            <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
-              <p className="font-semibold text-xs">{t("install.iosTitle")}</p>
-              <div className="flex items-center gap-sm">
-                <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
-                  <Share />
-                </span>
-                <span>{t("install.iosStep1")}</span>
-              </div>
-              <div className="flex items-center gap-sm">
-                <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
-                  <PlusSquare />
-                </span>
-                <span>{t("install.iosStep2")}</span>
-              </div>
-            </div>
-          ) : isAndroid || isMobile ? (
-            <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
-              <p className="font-semibold text-xs">
-                {t("install.androidTitle")}
-              </p>
-              <div className="flex items-center gap-sm">
-                <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
-                  <MoreVertical />
-                </span>
-                <span>{t("install.androidStep1")}</span>
-              </div>
-              <div className="flex items-center gap-sm">
-                <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
-                  <PlusSquare />
-                </span>
-                <span>{t("install.androidStep2")}</span>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-component bg-background/60 p-sm text-xs">
-              <p className="font-semibold mb-1">{t("install.desktopTitle")}</p>
-              <p className="leading-relaxed">{t("install.desktopDesc")}</p>
-            </div>
-          )}
-
-          {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-sm pt-1">
-            <Dialog.Close
-              render={
-                <Button
-                  type="button"
-                  variant="card"
-                  className={
-                    isInstallable && !installedSuccess ? "flex-1" : "w-full"
-                  }
-                  onClick={() => setIsOpen(false)}>
-                  {installedSuccess
-                    ? t("common.close")
-                    : isInstallable
-                      ? t("install.later")
-                      : t("help.gotIt")}
-                </Button>
-              }
-            />
-
-            {isInstallable && !installedSuccess && (
+        {/* Footer Actions */}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
               <Button
                 type="button"
-                variant="primary"
-                className="flex-1 flex items-center justify-center gap-2 font-medium"
-                onClick={handleInstall}
-                disabled={isInstalling}>
-                <span>
-                  {isInstalling
-                    ? t("install.installing")
-                    : t("install.installNow")}
-                </span>
-                <Download className="size-4" />
+                variant="card"
+                onClick={() => setIsOpen(false)}>
+                {installedSuccess
+                  ? t("common.close")
+                  : isInstallable
+                    ? t("install.later")
+                    : t("help.gotIt")}
               </Button>
-            )}
-          </div>
+            }
+          />
+
+          {isInstallable && !installedSuccess && (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleInstall}
+              disabled={isInstalling}>
+              <span>
+                {isInstalling
+                  ? t("install.installing")
+                  : t("install.installNow")}
+              </span>
+              <Download />
+            </Button>
+          )}
         </div>
       </Dialog>
     </>

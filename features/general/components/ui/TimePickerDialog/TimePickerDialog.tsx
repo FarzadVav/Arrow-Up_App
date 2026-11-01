@@ -86,11 +86,10 @@ function LocalTimePickerDialog({
       open={isOpen}
       onOpenChange={handleOpenChange}
       trigger={computedTrigger}
-      nativeButton={nativeButton}
-    >
+      nativeButton={nativeButton}>
       <div className="w-80 max-w-full space-y-4">
         <div>
-          <Dialog.Title className="font-bold">{resolvedTitle}</Dialog.Title>
+          <Dialog.Title className="title">{resolvedTitle}</Dialog.Title>
           {resolvedDescription ? (
             <Dialog.Description className="sub-text mt-1">
               {resolvedDescription}
@@ -115,8 +114,7 @@ function LocalTimePickerDialog({
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => handleOpenChange(false)}
-                >
+                  onClick={() => handleOpenChange(false)}>
                   {t("common.cancel")}
                 </Button>
               }

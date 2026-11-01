@@ -207,23 +207,21 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
             <Maximize2Icon />
           </Button>
         }>
-        <div className="flex items-center justify-between">
-          <Dialog.Title className="text-sm sm:text-base font-bold truncate">
-            {title || placeholder || t("common.select")}
-          </Dialog.Title>
+        <Dialog.Title className="title">
+          {title || placeholder || t("common.select")}
+        </Dialog.Title>
 
-          <Dialog.Close
-            render={
-              <Button
-                size={"square"}
-                type="button"
-                variant="ghost"
-                aria-label={t("common.close")}>
-                <XIcon />
-              </Button>
-            }
-          />
-        </div>
+        <Dialog.Close
+          render={
+            <Button
+              size={"square"}
+              type="button"
+              variant="ghost"
+              aria-label={t("common.close")}>
+              <XIcon />
+            </Button>
+          }
+        />
 
         {description ? (
           <Dialog.Description className="sub-text">
@@ -235,7 +233,6 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           <Field
             type="text"
             value={searchQuery}
-            inputClassName="ps-9 pe-8 text-sm"
             placeholder={t("common.search")}
             onChange={(e) => setSearchQuery(e.target.value)}
             startAdornment={<SearchIcon />}

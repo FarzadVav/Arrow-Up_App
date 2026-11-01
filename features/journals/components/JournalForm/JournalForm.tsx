@@ -1,7 +1,13 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState, useActionState, useMemo } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useActionState,
+  useMemo,
+} from "react";
 import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
 
 import { Form } from "@base-ui/react";
@@ -47,7 +53,9 @@ function TypeSelect({
 
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">{t("common.category")}</Field.Label>
+      <Field.Label className="mb-1 font-bold">
+        {t("common.category")}
+      </Field.Label>
 
       <SelectDialog
         name="typeSelect"
@@ -109,7 +117,9 @@ function TagSelect({
         items={items}
         value={value ?? "none"}
         onChange={(nextValue) => {
-          onChange(nextValue === "none" || !nextValue ? null : String(nextValue));
+          onChange(
+            nextValue === "none" || !nextValue ? null : String(nextValue),
+          );
         }}
         title={t("common.tag")}
         placeholder={t("journals.selectTag")}
@@ -125,7 +135,8 @@ export function JournalForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const editId = searchParams.get("editId");
-  const categoryParam = searchParams.get("category") || searchParams.get("type");
+  const categoryParam =
+    searchParams.get("category") || searchParams.get("type");
   const tagParam = searchParams.get("tag");
   const isEditMode = Boolean(editId);
 
@@ -133,16 +144,13 @@ export function JournalForm() {
     editId ? Number(editId) : null,
   );
 
-  const resolveCategory = useCallback(
-    (param: string | null): JournalType => {
-      if (!param) return "Logs";
-      const matched = JOURNAL_CATEGORIES.find(
-        (c) => c.name.toLowerCase() === param.toLowerCase(),
-      );
-      return matched?.name ?? "Logs";
-    },
-    [],
-  );
+  const resolveCategory = useCallback((param: string | null): JournalType => {
+    if (!param) return "Logs";
+    const matched = JOURNAL_CATEGORIES.find(
+      (c) => c.name.toLowerCase() === param.toLowerCase(),
+    );
+    return matched?.name ?? "Logs";
+  }, []);
 
   const [title, setTitle] = useState("");
   const [type, setType] = useState<JournalType>(() =>
@@ -215,9 +223,7 @@ export function JournalForm() {
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -237,8 +243,7 @@ export function JournalForm() {
           className="w-full space-y-md"
           aria-label={isEditMode ? t("journals.edit") : t("journals.new")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {/* Hidden fields to pass data to Server Action */}
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="type" value={type ?? "Logs"} />
@@ -270,7 +275,9 @@ export function JournalForm() {
 
           <TagSelect category={type} value={tag} onChange={setTag} />
 
-          <Field.Root name="content" schema={isEditMode ? UpdateJournalSchema : CreateJournalSchema}>
+          <Field.Root
+            name="content"
+            schema={isEditMode ? UpdateJournalSchema : CreateJournalSchema}>
             <Field.Label>{t("common.content")}</Field.Label>
 
             <RichTextarea
@@ -297,37 +304,31 @@ export function JournalForm() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("common.delete")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("common.deleteConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("common.deleteConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

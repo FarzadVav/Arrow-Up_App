@@ -107,9 +107,7 @@ function DifficultySelect({
 
   return (
     <Field.Root name="difficulty">
-      <Field.Label className="mb-1 font-bold">
-        {label}
-      </Field.Label>
+      <Field.Label className="mb-1 font-bold">{label}</Field.Label>
 
       <SelectDialog
         name="difficultySelect"
@@ -418,8 +416,7 @@ export function TodoForm() {
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
->
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -676,60 +673,56 @@ export function TodoForm() {
               <Dialog
                 open={actionDialogOpen}
                 onOpenChange={setActionDialogOpen}>
-                <div className="p-1 space-y-4">
-                  <div>
-                    <Dialog.Title className="font-bold">
-                      {actionDraft.id !== null
-                        ? t("missions.editAction")
-                        : t("missions.newAction")}
-                    </Dialog.Title>
-                    <Dialog.Description className="sub-text mt-1">
-                      {t("missions.createActionDesc")}
-                    </Dialog.Description>
-                  </div>
+                <Dialog.Title className="title">
+                  {actionDraft.id !== null
+                    ? t("missions.editAction")
+                    : t("missions.newAction")}
+                </Dialog.Title>
+                <Dialog.Description className="sub-text">
+                  {t("missions.createActionDesc")}
+                </Dialog.Description>
 
-                  <Field
-                    name="actionTitle"
-                    label={t("common.title")}
-                    labelSize="sm"
-                    required
-                    minLength={2}
-                    value={actionDraft.title}
-                    placeholder={t("missions.actionTitlePlaceholder")}
-                    onChange={(e) =>
-                      setActionDraft((d) => ({ ...d, title: e.target.value }))
+                <Field
+                  name="actionTitle"
+                  label={t("common.title")}
+                  labelSize="sm"
+                  required
+                  minLength={2}
+                  value={actionDraft.title}
+                  placeholder={t("missions.actionTitlePlaceholder")}
+                  onChange={(e) =>
+                    setActionDraft((d) => ({ ...d, title: e.target.value }))
+                  }
+                />
+
+                <Field.Root name="actionDeadline">
+                  <Field.Label size="sm">{t("common.deadline")}</Field.Label>
+                  <DayPickerDialog
+                    value={actionDraft.deadline}
+                    allowClear
+                    onChange={(date) =>
+                      setActionDraft((d) => ({ ...d, deadline: date }))
                     }
                   />
+                </Field.Root>
 
-                  <Field.Root name="actionDeadline">
-                    <Field.Label size="sm">{t("common.deadline")}</Field.Label>
-                    <DayPickerDialog
-                      value={actionDraft.deadline}
-                      allowClear
-                      onChange={(date) =>
-                        setActionDraft((d) => ({ ...d, deadline: date }))
-                      }
-                    />
-                  </Field.Root>
-
-                  <div className="flex items-center justify-end gap-2 pt-2">
-                    <Dialog.Close
-                      render={
-                        <Button type="button" variant="ghost">
-                          {t("common.cancel")}
-                        </Button>
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={saveAction}
-                      disabled={actionDraft.title.trim().length < 2}>
-                      {actionDraft.id !== null
-                        ? t("common.save")
-                        : t("common.add")}
-                    </Button>
-                  </div>
+                <div className="actions-footer">
+                  <Dialog.Close
+                    render={
+                      <Button type="button" variant="ghost">
+                        {t("common.cancel")}
+                      </Button>
+                    }
+                  />
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={saveAction}
+                    disabled={actionDraft.title.trim().length < 2}>
+                    {actionDraft.id !== null
+                      ? t("common.save")
+                      : t("common.add")}
+                  </Button>
                 </div>
               </Dialog>
 
@@ -737,54 +730,50 @@ export function TodoForm() {
               <Dialog
                 open={disciplineDialogOpen}
                 onOpenChange={setDisciplineDialogOpen}>
-                <div className="p-1 space-y-4">
-                  <div>
-                    <Dialog.Title className="font-bold">
-                      {disciplineDraft.id !== null
-                        ? t("missions.editDiscipline")
-                        : t("missions.newDiscipline")}
-                    </Dialog.Title>
-                    <Dialog.Description className="sub-text mt-1">
-                      {disciplineDraft.id !== null
-                        ? t("missions.editDisciplineDesc")
-                        : t("missions.createDisciplineDesc")}
-                    </Dialog.Description>
-                  </div>
+                <Dialog.Title className="title">
+                  {disciplineDraft.id !== null
+                    ? t("missions.editDiscipline")
+                    : t("missions.newDiscipline")}
+                </Dialog.Title>
+                <Dialog.Description className="sub-text">
+                  {disciplineDraft.id !== null
+                    ? t("missions.editDisciplineDesc")
+                    : t("missions.createDisciplineDesc")}
+                </Dialog.Description>
 
-                  <Field
-                    name="disciplineTitle"
-                    label={t("common.title")}
-                    labelSize="sm"
-                    required
-                    minLength={3}
-                    value={disciplineDraft.title}
-                    placeholder={t("missions.disciplineTitlePlaceholder")}
-                    onChange={(e) =>
-                      setDisciplineDraft((d) => ({
-                        ...d,
-                        title: e.target.value,
-                      }))
+                <Field
+                  name="disciplineTitle"
+                  label={t("common.title")}
+                  labelSize="sm"
+                  required
+                  minLength={3}
+                  value={disciplineDraft.title}
+                  placeholder={t("missions.disciplineTitlePlaceholder")}
+                  onChange={(e) =>
+                    setDisciplineDraft((d) => ({
+                      ...d,
+                      title: e.target.value,
+                    }))
+                  }
+                />
+
+                <div className="actions-footer">
+                  <Dialog.Close
+                    render={
+                      <Button type="button" variant="ghost">
+                        {t("common.cancel")}
+                      </Button>
                     }
                   />
-
-                  <div className="flex items-center justify-end gap-2 pt-2">
-                    <Dialog.Close
-                      render={
-                        <Button type="button" variant="ghost">
-                          {t("common.cancel")}
-                        </Button>
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={saveDiscipline}
-                      disabled={disciplineDraft.title.trim().length < 3}>
-                      {disciplineDraft.id !== null
-                        ? t("common.save")
-                        : t("common.add")}
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    onClick={saveDiscipline}
+                    disabled={disciplineDraft.title.trim().length < 3}>
+                    {disciplineDraft.id !== null
+                      ? t("common.save")
+                      : t("common.add")}
+                  </Button>
                 </div>
               </Dialog>
             </>
@@ -810,37 +799,31 @@ export function TodoForm() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("common.delete")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("common.deleteConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title>{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("common.deleteConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={removeTodoAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={removeTodoAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

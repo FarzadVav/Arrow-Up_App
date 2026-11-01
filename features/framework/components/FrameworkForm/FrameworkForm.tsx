@@ -6,8 +6,14 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
-import { CreateFrameworkSchema, UpdateFrameworkSchema } from "@/features/framework/types";
-import { UNSET_LIFE_AREA_SLUG, parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import {
+  CreateFrameworkSchema,
+  UpdateFrameworkSchema,
+} from "@/features/framework/types";
+import {
+  UNSET_LIFE_AREA_SLUG,
+  parseLifeAreaSlug,
+} from "@/features/general/lib/lifeAreaSlug";
 import { Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -57,7 +63,9 @@ function LifeAreaSelect({
         name="lifeAreaSelect"
         items={items}
         value={value ? String(value) : "none"}
-        onChange={(next) => onChange(next === "none" || !next ? null : Number(next))}
+        onChange={(next) =>
+          onChange(next === "none" || !next ? null : Number(next))
+        }
         title={t("lifeAreas.selectLifeArea")}
         placeholder={t("lifeAreas.selectLifeArea")}
       />
@@ -96,7 +104,9 @@ function TagSelect({
         name="tagSelect"
         items={items}
         value={value ?? "none"}
-        onChange={(next) => onChange(next === "none" || !next ? null : String(next))}
+        onChange={(next) =>
+          onChange(next === "none" || !next ? null : String(next))
+        }
         title={t("common.tag")}
         placeholder={t("framework.selectTag")}
       />
@@ -115,7 +125,9 @@ export function FrameworkForm() {
   const tagParam = searchParams.get("tag");
   const isEditMode = Boolean(editId);
 
-  const { framework, isLoading: isHabitLoading } = useFramework(editId ? Number(editId) : null);
+  const { framework, isLoading: isHabitLoading } = useFramework(
+    editId ? Number(editId) : null,
+  );
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -184,9 +196,7 @@ export function FrameworkForm() {
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -206,14 +216,9 @@ export function FrameworkForm() {
           className="w-full space-y-md"
           aria-label={isEditMode ? t("framework.edit") : t("framework.new")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
-          <Field
-            type="hidden"
-            name="lifeAreaId"
-            value={areaSlug}
-          />
+          <Field type="hidden" name="lifeAreaId" value={areaSlug} />
           <Field type="hidden" name="tag" value={tag ?? ""} />
           <Field type="hidden" name="description" value={description} />
 
@@ -239,11 +244,9 @@ export function FrameworkForm() {
 
           <TagSelect lifeAreaId={lifeAreaId} value={tag} onChange={setTag} />
 
-
           <Field.Root
             name="description"
-            schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}
-          >
+            schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}>
             <Field.Label className="mb-1 font-bold">
               {t("common.description")}
             </Field.Label>
@@ -269,35 +272,31 @@ export function FrameworkForm() {
       )}
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("framework.deleteConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("framework.deleteConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

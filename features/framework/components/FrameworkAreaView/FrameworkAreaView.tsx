@@ -41,8 +41,11 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
 
   const title = useLifeAreaTitle(lifeAreaId, t("framework.unknownArea"));
   const router = useRouter();
-  const { frameworks, isLoading, mutate: revalidateFrameworks } =
-    useFrameworks();
+  const {
+    frameworks,
+    isLoading,
+    mutate: revalidateFrameworks,
+  } = useFrameworks();
   const { tags } = useFrameworkTags(lifeAreaId);
   const { lifeAreas } = useLifeAreas();
 
@@ -145,8 +148,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                 {filteredFrameworks.length} {t("profile.total")}
               </span>
             </div>
-          }
-        >
+          }>
           <div className="w-full space-y-sm">
             {isLoading && frameworks.length === 0 ? (
               <Skeleton count={3} />
@@ -198,46 +200,40 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="flex flex-col gap-4 p-1">
-          <div>
-            <Dialog.Title className="title">
-              {t("framework.deleteConfirm")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("framework.deleteDesc", {
-                title: targetFramework?.title || "",
-              })}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">
+          {t("framework.deleteConfirm")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("framework.deleteDesc", {
+            title: targetFramework?.title || "",
+          })}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="actions-footer">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={isDeleting}>
+            {t("common.cancel")}
+          </Button>
+          <form action={deleteAction}>
+            <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
             <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setDeleteDialogOpen(false)}
-              disabled={isDeleting}
-            >
-              {t("common.cancel")}
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || deleteTargetId === null}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {isDeleting ? (
+                <span className="flex items-center gap-xs">
+                  <LoaderIcon className="animate-spin" />
+                  <span>{t("common.loading")}</span>
+                </span>
+              ) : (
+                <span>{t("common.delete")}</span>
+              )}
             </Button>
-            <form action={deleteAction}>
-              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || deleteTargetId === null}
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              >
-                {isDeleting ? (
-                  <span className="flex items-center gap-xs">
-                    <LoaderIcon className="animate-spin" />
-                    <span>{t("common.loading")}</span>
-                  </span>
-                ) : (
-                  <span>{t("common.delete")}</span>
-                )}
-              </Button>
-            </form>
-          </div>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

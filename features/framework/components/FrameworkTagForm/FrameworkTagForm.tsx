@@ -20,7 +20,10 @@ import {
   updateFrameworkTagMutation,
   deleteFrameworkTagMutation,
 } from "../../mutations";
-import { CreateFrameworkTagSchema, UpdateFrameworkTagSchema } from "../../types";
+import {
+  CreateFrameworkTagSchema,
+  UpdateFrameworkTagSchema,
+} from "../../types";
 import { UNSET_LIFE_AREA_SLUG } from "@/features/general/lib/lifeAreaSlug";
 
 export interface FrameworkTagFormProps {
@@ -75,15 +78,17 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
         <TopBar.Title asTitle>
           {isEditMode ? t("framework.editTag") : t("framework.newTag")}
         </TopBar.Title>
-        <TopBar.Btn backIcon href={`/framework/${areaSlug}/tags`} position="left" />
+        <TopBar.Btn
+          backIcon
+          href={`/framework/${areaSlug}/tags`}
+          position="left"
+        />
 
         {isEditMode && (
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         )}
@@ -97,10 +102,11 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
         <Form
           id="framework-tag-form"
           className="w-full space-y-md"
-          aria-label={isEditMode ? t("framework.editTag") : t("framework.newTag")}
+          aria-label={
+            isEditMode ? t("framework.editTag") : t("framework.newTag")
+          }
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="lifeAreaId" value={areaSlug} />
 
@@ -113,7 +119,9 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
             disabled={pending}
             placeholder={t("framework.tagTitlePlaceholder")}
             onChange={(event) => setTitleDraft(event.target.value)}
-            schema={isEditMode ? UpdateFrameworkTagSchema : CreateFrameworkTagSchema}
+            schema={
+              isEditMode ? UpdateFrameworkTagSchema : CreateFrameworkTagSchema
+            }
           />
 
           <div className="sub-text">
@@ -131,34 +139,31 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("framework.deleteTagConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("framework.deleteTagConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form action={deleteAction} onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600 hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

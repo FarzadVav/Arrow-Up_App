@@ -75,8 +75,7 @@ function LocalDayPickerDialog({
     <Button
       type="button"
       variant="outline"
-      className={`${className} ${showIcon ? "gap-2" : ""}`}
-    >
+      className={`${className} ${showIcon ? "gap-2" : ""}`}>
       {showIcon && <CalendarDaysIcon className="opacity-70" />}
       <span>
         {resolvedLabel}: {formatDateValue(value)}
@@ -89,54 +88,51 @@ function LocalDayPickerDialog({
       open={isOpen}
       onOpenChange={handleOpenChange}
       trigger={computedTrigger}
-      nativeButton={nativeButton}
-    >
-      <div className="flex flex-col items-center">
-        {title ? (
-          <div className="mb-2 text-center">
-            <Dialog.Title className="font-bold">{title}</Dialog.Title>
-            {description ? (
-              <Dialog.Description className="sub-text">
-                {description}
-              </Dialog.Description>
-            ) : null}
-          </div>
+      nativeButton={nativeButton}>
+      {title ? (
+        <>
+          <Dialog.Title className="title">{title}</Dialog.Title>
+          {description ? (
+            <Dialog.Description className="sub-text">
+              {description}
+            </Dialog.Description>
+          ) : null}
+        </>
+      ) : (
+        <Dialog.Title className="sr-only">
+          {t("common.selectDate")}
+        </Dialog.Title>
+      )}
+
+      <DayPicker
+        dir={effectiveDir}
+        locale={locale}
+        value={value}
+        onChange={handleSelectDate}
+      />
+
+      <div className="actions-footer">
+        {allowClear && value !== null ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSelectDate(null)}>
+            {t("common.clear")}
+          </Button>
         ) : (
-          <Dialog.Title className="sr-only">{t("common.selectDate")}</Dialog.Title>
+          <div />
         )}
 
-        <DayPicker
-          dir={effectiveDir}
-          locale={locale}
-          value={value}
-          onChange={handleSelectDate}
-        />
-
-        <div className="mt-4 flex w-full items-center justify-between">
-          {allowClear && value !== null ? (
+        <Dialog.Close
+          render={
             <Button
               type="button"
-              variant="outline"
-              onClick={() => handleSelectDate(null)}
-            >
-              {t("common.clear")}
+              variant="ghost"
+              onClick={() => handleOpenChange(false)}>
+              {t("common.close")}
             </Button>
-          ) : (
-            <div />
-          )}
-
-          <Dialog.Close
-            render={
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => handleOpenChange(false)}
-              >
-                {t("common.close")}
-              </Button>
-            }
-          />
-        </div>
+          }
+        />
       </div>
     </Dialog>
   );

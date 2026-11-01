@@ -57,48 +57,38 @@ export function LifeAreaDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form
-        action={formAction}
-        errors={state?.errors}
-        className="flex flex-col gap-4">
+      <Form action={formAction} errors={state?.errors} className="space-y-3">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="vision" value={vision} />
 
-        <div>
-          <Dialog.Title className="title">
-            {isEdit ? t("lifeAreas.edit") : t("lifeAreas.new")}
-          </Dialog.Title>
-          <Dialog.Description className="sub-text mt-1">
-            {t("lifeAreas.subtitle")}
-          </Dialog.Description>
-        </div>
+        <Dialog.Title className="title">
+          {isEdit ? t("lifeAreas.edit") : t("lifeAreas.new")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("lifeAreas.subtitle")}
+        </Dialog.Description>
 
         <Field
-          name="title"
-          label={t("common.title")}
-          labelSize="sm"
           required
-          placeholder={t("lifeAreas.titlePlaceholder")}
+          name="title"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          labelSize="sm"
           disabled={isSubmitting}
+          label={t("common.title")}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder={t("lifeAreas.titlePlaceholder")}
           schema={isEdit ? UpdateLifeAreaSchema : CreateLifeAreaSchema}
         />
 
-        <div>
-          <label className="block font-bold text-xs mb-xs">
-            {t("lifeAreas.visionLabel")}
-          </label>
-          <div className="rounded-component p-sm min-h-[180px] max-h-[340px] flex flex-col bg-background overflow-hidden">
-            <RichTextEditor
-              value={vision}
-              onChange={setVision}
-              placeholder={t("lifeAreas.visionPlaceholder")}
-              autoFocus={false}
-              showToolbar={true}
-              className="flex-1"
-            />
-          </div>
+        <label className="font-bold">{t("lifeAreas.visionLabel")}</label>
+        <div className="rounded-component p-sm min-h-30 bg-background">
+          <RichTextEditor
+            value={vision}
+            autoFocus={false}
+            showToolbar={true}
+            onChange={setVision}
+            placeholder={t("lifeAreas.visionPlaceholder")}
+          />
         </div>
 
         <Field.FormError
@@ -106,7 +96,7 @@ export function LifeAreaDialog({
           knownFields={["title", "vision"]}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="actions-footer">
           <Dialog.Close
             render={
               <Button type="button" variant="ghost" disabled={isSubmitting}>

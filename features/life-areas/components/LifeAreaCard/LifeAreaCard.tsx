@@ -78,44 +78,40 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
       />
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("lifeAreas.deleteConfirm")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("lifeAreas.deleteDesc")?.replace("{title}", lifeArea.title)}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">
+          {t("lifeAreas.deleteConfirm")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("lifeAreas.deleteDesc")?.replace("{title}", lifeArea.title)}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteLifeAreaAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={lifeArea.id} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? (
-                  <span className="flex items-center gap-xs">
-                    <LoaderIcon className="animate-spin" />
-                    <span>{t("common.loading")}</span>
-                  </span>
-                ) : (
-                  <span>{t("common.delete")}</span>
-                )}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteLifeAreaAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={lifeArea.id} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? (
+                <span className="flex items-center gap-xs">
+                  <LoaderIcon className="animate-spin" />
+                  <span>{t("common.loading")}</span>
+                </span>
+              ) : (
+                <span>{t("common.delete")}</span>
+              )}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </>

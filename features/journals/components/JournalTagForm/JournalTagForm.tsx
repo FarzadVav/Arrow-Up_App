@@ -96,9 +96,7 @@ export function JournalTagForm({
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         )}
@@ -114,8 +112,7 @@ export function JournalTagForm({
           className="w-full space-y-md"
           aria-label={isEditMode ? t("journals.editTag") : t("journals.newTag")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="category" value={category} />
 
@@ -128,7 +125,9 @@ export function JournalTagForm({
             disabled={pending}
             placeholder={t("journals.tagTitlePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
-            schema={isEditMode ? UpdateJournalTagSchema : CreateJournalTagSchema}
+            schema={
+              isEditMode ? UpdateJournalTagSchema : CreateJournalTagSchema
+            }
           />
 
           <Field.FormError
@@ -142,39 +141,31 @@ export function JournalTagForm({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("common.delete")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("journals.deleteTagConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("journals.deleteTagConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}
-            >
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

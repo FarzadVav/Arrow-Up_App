@@ -7,7 +7,10 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
-import { CreateLifeAreaSchema, UpdateLifeAreaSchema } from "@/features/life-areas/types";
+import {
+  CreateLifeAreaSchema,
+  UpdateLifeAreaSchema,
+} from "@/features/life-areas/types";
 import { Trash2Icon } from "lucide-react";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
@@ -135,8 +138,7 @@ export function LifeAreaForm() {
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -156,8 +158,7 @@ export function LifeAreaForm() {
           className="w-full space-y-md"
           aria-label={isEditMode ? t("lifeAreas.edit") : t("lifeAreas.new")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="vision" value={vision} />
           <Field type="hidden" name="active" value={String(active)} />
@@ -182,7 +183,9 @@ export function LifeAreaForm() {
                 {t("lifeAreas.activeStatus")}
               </span>
               <span className="sub-text">
-                {active ? t("lifeAreas.activeDesc") : t("lifeAreas.inactiveDesc")}
+                {active
+                  ? t("lifeAreas.activeDesc")
+                  : t("lifeAreas.inactiveDesc")}
               </span>
             </div>
             <Switch
@@ -193,7 +196,9 @@ export function LifeAreaForm() {
             />
           </label>
 
-          <Field.Root name="vision" schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}>
+          <Field.Root
+            name="vision"
+            schema={isEditMode ? UpdateLifeAreaSchema : CreateLifeAreaSchema}>
             <Field.Label>{t("lifeAreas.visionLabel")}</Field.Label>
 
             <RichTextarea
@@ -219,37 +224,33 @@ export function LifeAreaForm() {
       )}
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">
-              {t("lifeAreas.deleteConfirm")}
-            </Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("lifeAreas.deleteDesc", { title: area?.title || "" })}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">
+          {t("lifeAreas.deleteConfirm")}
+        </Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("lifeAreas.deleteDesc", { title: area?.title || "" })}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !editId}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !editId}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

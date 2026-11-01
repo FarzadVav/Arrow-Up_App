@@ -33,8 +33,11 @@ export function FrameworkTagsList({ lifeAreaId }: FrameworkTagsListProps) {
   const isArchivedArea =
     lifeAreaId !== null &&
     lifeAreas.some((area) => area.id === lifeAreaId && area.active === false);
-  const { tags, isLoading, mutate: revalidateTags } =
-    useFrameworkTags(lifeAreaId);
+  const {
+    tags,
+    isLoading,
+    mutate: revalidateTags,
+  } = useFrameworkTags(lifeAreaId);
 
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -74,7 +77,9 @@ export function FrameworkTagsList({ lifeAreaId }: FrameworkTagsListProps) {
           <EmptyAlert
             alert={t("framework.noTags")}
             description={t("framework.noTagsSubtitle")}
-            href={isArchivedArea ? undefined : `/framework/${areaSlug}/tags/new`}
+            href={
+              isArchivedArea ? undefined : `/framework/${areaSlug}/tags/new`
+            }
             className="p-md"
           />
         ) : (
@@ -101,41 +106,38 @@ export function FrameworkTagsList({ lifeAreaId }: FrameworkTagsListProps) {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("framework.deleteTagConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("framework.deleteTagConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form action={deleteAction} onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || deleteTargetId === null}
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                {isDeleting ? (
-                  <span className="flex items-center gap-xs">
-                    <LoaderIcon className="animate-spin" />
-                    <span>{t("common.loading")}</span>
-                  </span>
-                ) : (
-                  <span>{t("common.delete")}</span>
-                )}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={deleteTargetId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || deleteTargetId === null}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? (
+                <span className="flex items-center gap-xs">
+                  <LoaderIcon className="animate-spin" />
+                  <span>{t("common.loading")}</span>
+                </span>
+              ) : (
+                <span>{t("common.delete")}</span>
+              )}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>

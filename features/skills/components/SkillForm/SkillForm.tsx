@@ -7,7 +7,10 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
 import { CreateSkillSchema, UpdateSkillSchema } from "@/features/skills/types";
-import { UNSET_LIFE_AREA_SLUG, parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import {
+  UNSET_LIFE_AREA_SLUG,
+  parseLifeAreaSlug,
+} from "@/features/general/lib/lifeAreaSlug";
 import { Trash2Icon } from "lucide-react";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
@@ -57,7 +60,9 @@ function LifeAreaSelect({
         name="lifeAreaSelect"
         items={items}
         value={value ? String(value) : "none"}
-        onChange={(next) => onChange(next === "none" || !next ? null : Number(next))}
+        onChange={(next) =>
+          onChange(next === "none" || !next ? null : Number(next))
+        }
         title={t("lifeAreas.selectLifeArea")}
         placeholder={t("lifeAreas.selectLifeArea")}
       />
@@ -96,7 +101,9 @@ function TagSelect({
         name="tagSelect"
         items={items}
         value={value ?? "none"}
-        onChange={(next) => onChange(next === "none" || !next ? null : String(next))}
+        onChange={(next) =>
+          onChange(next === "none" || !next ? null : String(next))
+        }
         title={t("common.tag")}
         placeholder={t("skills.selectTag")}
       />
@@ -115,7 +122,9 @@ export function SkillForm() {
   const tagParam = searchParams.get("tag");
   const isEditMode = Boolean(editId);
 
-  const { skill, isLoading: isSkillLoading } = useSkill(editId ? Number(editId) : null);
+  const { skill, isLoading: isSkillLoading } = useSkill(
+    editId ? Number(editId) : null,
+  );
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -184,9 +193,7 @@ export function SkillForm() {
           <TopBar.Btn
             position="right"
             onClick={() => setDeleteDialogOpen(true)}
-            aria-label={t("common.delete")}
-
-          >
+            aria-label={t("common.delete")}>
             <Trash2Icon />
           </TopBar.Btn>
         ) : (
@@ -206,8 +213,7 @@ export function SkillForm() {
           className="w-full space-y-md"
           aria-label={isEditMode ? t("skills.edit") : t("skills.new")}
           action={formAction}
-          errors={state?.errors}
-        >
+          errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
           <Field type="hidden" name="lifeAreaId" value={areaSlug} />
           <Field type="hidden" name="tag" value={tag ?? ""} />
@@ -235,7 +241,9 @@ export function SkillForm() {
 
           <TagSelect lifeAreaId={lifeAreaId} value={tag} onChange={setTag} />
 
-          <Field.Root name="content" schema={isEditMode ? UpdateSkillSchema : CreateSkillSchema}>
+          <Field.Root
+            name="content"
+            schema={isEditMode ? UpdateSkillSchema : CreateSkillSchema}>
             <Field.Label>{t("skills.contentLabel")}</Field.Label>
 
             <RichTextarea
@@ -261,35 +269,31 @@ export function SkillForm() {
       )}
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <div className="p-1 space-y-4">
-          <div>
-            <Dialog.Title className="font-bold">{t("common.delete")}</Dialog.Title>
-            <Dialog.Description className="sub-text mt-1">
-              {t("skills.deleteConfirm")}
-            </Dialog.Description>
-          </div>
+        <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
+        <Dialog.Description className="sub-text">
+          {t("skills.deleteConfirm")}
+        </Dialog.Description>
 
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <Dialog.Close
-              render={
-                <Button type="button" variant="ghost" disabled={isDeleting}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-            <form
-              action={deleteAction}
-              onSubmit={() => setDeleteDialogOpen(false)}>
-              <Field type="hidden" name="id" value={editId ?? ""} />
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isDeleting || !isEditMode}
-                className="bg-red-600 text-white hover:bg-red-700">
-                {isDeleting ? t("common.loading") : t("common.delete")}
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button type="button" variant="ghost" disabled={isDeleting}>
+                {t("common.cancel")}
               </Button>
-            </form>
-          </div>
+            }
+          />
+          <form
+            action={deleteAction}
+            onSubmit={() => setDeleteDialogOpen(false)}>
+            <Field type="hidden" name="id" value={editId ?? ""} />
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isDeleting || !isEditMode}
+              className="bg-red-600 text-white hover:bg-red-700">
+              {isDeleting ? t("common.loading") : t("common.delete")}
+            </Button>
+          </form>
         </div>
       </Dialog>
     </PageWrapper>
