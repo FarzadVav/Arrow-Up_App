@@ -49,13 +49,27 @@ export async function getJournalsQuery(
       entities = await journal.findByCategory(category, userId, tag);
     } else if (tag && tag.toLowerCase() !== 'all') {
       entities = await journal.find(
-        { user: userId, tag },
-        { orderBy: { createdAt: 'DESC' } },
+        { user: userId, tag, deletedAt: null },
+        { orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }] },
       );
     } else {
       entities = await journal.findAllJournals(userId);
     }
 
+    return entities.map((item) => serializeJournal(item));
+  });
+}
+
+/**
+ * Server query for retrieving the acting user's deleted journals (history).
+ */
+export async function getJournalsHistoryQuery(
+  category?: JournalCategoryType | 'all' | string,
+): Promise<Journal[]> {
+  const userId = await requireUserId();
+
+  return withRequestContext(async ({ journal }) => {
+    const entities = await journal.findHistory(userId, category);
     return entities.map((item) => serializeJournal(item));
   });
 }

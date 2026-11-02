@@ -32,7 +32,12 @@
     "clear": "Clear",
     "deleteConfirm": "Are you sure you want to delete this item?",
     "done": "Done",
-    "description": "Description"
+    "description": "Description",
+    "history": "History",
+    "restore": "Restore",
+    "restoreConfirm": "Are you sure you want to restore this item?",
+    "permanentDelete": "Delete Permanently",
+    "permanentDeleteConfirm": "Are you sure you want to permanently delete this item? This action cannot be undone."
   },
   "dates": {
     "to": "To",
@@ -379,5 +384,21 @@
     "generalDesc": "Frameworks that are not linked to a life area yet",
     "unknownArea": "Unknown life area",
     "countSuffix": "frameworks"
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "Review deleted items and restore them at any time",
+    "empty": "No items in history",
+    "deletedAt": "Deleted on",
+    "restoreSuccess": "Item restored successfully",
+    "deleteSuccess": "Item permanently deleted",
+    "tabs": {
+      "daily": "Daily Todos",
+      "upcoming": "Upcoming",
+      "missions": "Missions",
+      "framework": "Framework",
+      "skills": "Skills",
+      "journals": "Journals"
+    }
   }
 }

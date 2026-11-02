@@ -30,6 +30,7 @@ export const FrameworkSchema = type({
   'history?': FrameworkHistoryItemSchema.array(),
   'createdAt?': 'string',
   'updatedAt?': 'string',
+  'deletedAt?': 'string | null',
 });
 export type Framework = typeof FrameworkSchema.infer;
 

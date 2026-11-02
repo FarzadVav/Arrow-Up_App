@@ -8,7 +8,7 @@ export { JournalCategory };
 
 @Entity({ tableName: 'journals' })
 export class Journal extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type' | 'tag' | 'sortNumber';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'type' | 'tag' | 'sortNumber' | 'deletedAt';
 
   @Property({ type: 'string' })
   title!: string;
@@ -27,6 +27,9 @@ export class Journal extends BaseEntity {
 
   @Property({ type: 'string', nullable: true })
   tag?: string | null;
+
+  @Property({ type: 'datetime', nullable: true })
+  deletedAt?: Date | null;
 
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;

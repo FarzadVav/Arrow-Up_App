@@ -52,6 +52,12 @@ export function serializeFramework(habit: Habit): FrameworkDto {
       habit.updatedAt instanceof Date
         ? habit.updatedAt.toISOString()
         : String(habit.updatedAt),
+    deletedAt:
+      habit.deletedAt instanceof Date
+        ? habit.deletedAt.toISOString()
+        : habit.deletedAt
+          ? String(habit.deletedAt)
+          : null,
   };
 }
 
@@ -76,7 +82,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     userId: number,
     options?: { lifeAreaId?: number | null },
   ): Promise<Habit[]> {
-    const where: FilterQuery<Habit> = { user: userId };
+    const where: FilterQuery<Habit> = { user: userId, deletedAt: null };
     if (options?.lifeAreaId !== undefined) {
       where.lifeArea = options.lifeAreaId;
     }
@@ -88,7 +94,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
   }
 
   async findById(id: number, userId: number): Promise<Habit | null> {
-    return this.findOne({ id, user: userId }, { populate: ['lifeArea', 'history'] });
+    return this.findOne({ id, user: userId, deletedAt: null }, { populate: ['lifeArea', 'history'] });
   }
 
   async createFramework(data: CreateFrameworkData, userId: number): Promise<Habit> {
@@ -152,9 +158,41 @@ export class FrameworkRepository extends EntityRepository<Habit> {
       return false;
     }
 
+    habit.deletedAt = new Date();
+    await this.em.flush();
+    return true;
+  }
+
+  async restoreFramework(id: number, userId: number): Promise<boolean> {
+    const habit = await this.findOne({ id, user: userId, deletedAt: { $ne: null } });
+    if (!habit) {
+      return false;
+    }
+
+    habit.deletedAt = null;
+    await this.em.flush();
+    return true;
+  }
+
+  async hardDeleteFramework(id: number, userId: number): Promise<boolean> {
+    const habit = await this.findOne({ id, user: userId });
+    if (!habit) {
+      return false;
+    }
+
     this.em.remove(habit);
     await this.em.flush();
     return true;
+  }
+
+  async findHistory(userId: number): Promise<Habit[]> {
+    return this.find(
+      { user: userId, deletedAt: { $ne: null } },
+      {
+        populate: ['lifeArea', 'history'],
+        orderBy: [{ deletedAt: 'DESC' }],
+      },
+    );
   }
 
   async recordHistory(

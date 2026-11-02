@@ -242,6 +242,54 @@ export async function deleteJournalMutation(
 }
 
 /**
+ * Server Action mutation for restoring a deleted Journal from history.
+ */
+export async function restoreJournalMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid journal id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  return withRequestContext(async ({ journal }) => {
+    const success = await journal.restoreJournal(id, userId);
+    return success ? { success: true } : { success: false, error: 'Journal not found in history' };
+  });
+}
+
+/**
+ * Server Action mutation for permanently deleting a Journal from history.
+ */
+export async function hardDeleteJournalMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid journal id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  return withRequestContext(async ({ journal }) => {
+    const success = await journal.hardDeleteJournal(id, userId);
+    return success ? { success: true } : { success: false, error: 'Journal not found' };
+  });
+}
+
+/**
  * Server Action mutation for creating a new Journal tag.
  */
 export async function createJournalTagMutation(

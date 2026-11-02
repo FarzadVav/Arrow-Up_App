@@ -223,6 +223,58 @@ export async function deleteSkillMutation(
   }
 }
 
+export async function restoreSkillMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid skill id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  try {
+    const success = await withRequestContext(async ({ skill }) => {
+      return await skill.restoreSkill(id, userId);
+    });
+    return success ? { success: true } : { success: false, error: 'Skill not found in history' };
+  } catch (error) {
+    console.error('Failed to restore skill:', error);
+    return { success: false, error: 'Failed to restore skill' };
+  }
+}
+
+export async function hardDeleteSkillMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid skill id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  try {
+    const success = await withRequestContext(async ({ skill }) => {
+      return await skill.hardDeleteSkill(id, userId);
+    });
+    return success ? { success: true } : { success: false, error: 'Skill not found' };
+  } catch (error) {
+    console.error('Failed to hard delete skill:', error);
+    return { success: false, error: 'Failed to delete skill' };
+  }
+}
+
 export async function createSkillTagMutation(
   prevState: SkillTagFormState,
   formData: FormData,

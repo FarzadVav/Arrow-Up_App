@@ -31,6 +31,12 @@ export function serializeJournal(journal: Journal): JournalDto {
     type: journal.type as unknown as JournalDto['type'],
     tag: journal.tag ?? null,
     createdAt: journal.createdAt instanceof Date ? journal.createdAt.toISOString() : String(journal.createdAt),
+    deletedAt:
+      journal.deletedAt instanceof Date
+        ? journal.deletedAt.toISOString()
+        : journal.deletedAt
+          ? String(journal.deletedAt)
+          : null,
   };
 }
 
@@ -55,7 +61,7 @@ export class JournalRepository extends EntityRepository<Journal> {
     userId: number,
     options?: { limit?: number; offset?: number },
   ): Promise<Journal[]> {
-    return this.find({ user: userId }, {
+    return this.find({ user: userId, deletedAt: null }, {
       orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
       limit: options?.limit,
       offset: options?.offset,
@@ -72,7 +78,7 @@ export class JournalRepository extends EntityRepository<Journal> {
         (c) => c.toLowerCase() === category.toLowerCase(),
       ) ?? JournalCategory.LOGS;
 
-    const where: FilterQuery<Journal> = { type: matchedCategory, user: userId };
+    const where: FilterQuery<Journal> = { type: matchedCategory, user: userId, deletedAt: null };
     if (tag && tag.toLowerCase() !== 'all') {
       where.tag = tag;
     }
@@ -81,7 +87,7 @@ export class JournalRepository extends EntityRepository<Journal> {
   }
 
   async findById(id: number, userId: number): Promise<Journal | null> {
-    return this.findOne({ id, user: userId });
+    return this.findOne({ id, user: userId, deletedAt: null });
   }
 
   async searchJournals(query: string, userId: number): Promise<Journal[]> {
@@ -92,6 +98,7 @@ export class JournalRepository extends EntityRepository<Journal> {
         { content: { $like: `%${cleanQuery}%` } },
       ],
       user: userId,
+      deletedAt: null,
     };
 
     return this.find(where, { orderBy: { createdAt: 'DESC' } });
@@ -132,15 +139,60 @@ export class JournalRepository extends EntityRepository<Journal> {
       return false;
     }
 
+    journal.deletedAt = new Date();
+    await this.em.flush();
+    return true;
+  }
+
+  async restoreJournal(id: number, userId: number): Promise<boolean> {
+    const journal = await this.findOne({ id, user: userId, deletedAt: { $ne: null } });
+    if (!journal) {
+      return false;
+    }
+
+    journal.deletedAt = null;
+    await this.em.flush();
+    return true;
+  }
+
+  async hardDeleteJournal(id: number, userId: number): Promise<boolean> {
+    const journal = await this.findOne({ id, user: userId });
+    if (!journal) {
+      return false;
+    }
+
     this.em.remove(journal);
     await this.em.flush();
     return true;
   }
 
+  async findHistory(
+    userId: number,
+    category?: JournalCategory | string,
+  ): Promise<Journal[]> {
+    const where: FilterQuery<Journal> = {
+      user: userId,
+      deletedAt: { $ne: null },
+    };
+    if (category && category !== 'all') {
+      const matchedCategory =
+        Object.values(JournalCategory).find(
+          (c) => c.toLowerCase() === category.toLowerCase(),
+        );
+      if (matchedCategory) {
+        where.type = matchedCategory;
+      }
+    }
+
+    return this.find(where, {
+      orderBy: [{ deletedAt: 'DESC' }],
+    });
+  }
+
   async getCategoryCounts(userId: number): Promise<Record<JournalCategory, number>> {
     const categories = Object.values(JournalCategory);
     const counts = await Promise.all(
-      categories.map((cat) => this.count({ user: userId, type: cat })),
+      categories.map((cat) => this.count({ user: userId, type: cat, deletedAt: null })),
     );
 
     const result = {} as Record<JournalCategory, number>;

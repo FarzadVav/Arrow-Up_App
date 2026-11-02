@@ -7,7 +7,7 @@ import { HabitHistory } from './HabitHistory';
 
 @Entity({ tableName: 'habits' })
 export class Habit extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt';
 
   @Property({ type: 'string' })
   title!: string;
@@ -20,6 +20,9 @@ export class Habit extends BaseEntity {
 
   @Property({ type: 'string', nullable: true })
   tag?: string | null;
+
+  @Property({ type: 'datetime', nullable: true })
+  deletedAt?: Date | null;
 
 
   @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })

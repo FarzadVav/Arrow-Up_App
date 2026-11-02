@@ -22,6 +22,15 @@ export async function getSkillByIdQuery(id: number): Promise<Skill | null> {
   });
 }
 
+export async function getSkillsHistoryQuery(): Promise<Skill[]> {
+  const userId = await requireUserId();
+
+  return withRequestContext(async ({ skill }) => {
+    const items = await skill.findHistory(userId);
+    return items.map(serializeSkill);
+  });
+}
+
 export async function getSkillTagsQuery(lifeAreaId?: number | null): Promise<SkillTag[]> {
   const userId = await requireUserId();
 

@@ -21,6 +21,7 @@ export const SkillSchema = type({
   'tag?': 'string | null',
   'createdAt?': 'string',
   'updatedAt?': 'string',
+  'deletedAt?': 'string | null',
 });
 export type Skill = typeof SkillSchema.infer;
 

@@ -22,6 +22,15 @@ export async function getFrameworkByIdQuery(id: number): Promise<Framework | nul
   });
 }
 
+export async function getFrameworksHistoryQuery(): Promise<Framework[]> {
+  const userId = await requireUserId();
+
+  return withRequestContext(async ({ framework }) => {
+    const items = await framework.findHistory(userId);
+    return items.map(serializeFramework);
+  });
+}
+
 export async function getFrameworkTagsQuery(lifeAreaId?: number | null): Promise<FrameworkTag[]> {
   const userId = await requireUserId();
 

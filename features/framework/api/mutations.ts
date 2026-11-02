@@ -223,6 +223,58 @@ export async function deleteFrameworkMutation(
   }
 }
 
+export async function restoreFrameworkMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid framework id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  try {
+    const success = await withRequestContext(async ({ framework }) => {
+      return await framework.restoreFramework(id, userId);
+    });
+    return success ? { success: true } : { success: false, error: 'Framework not found in history' };
+  } catch (error) {
+    console.error('Failed to restore framework:', error);
+    return { success: false, error: 'Failed to restore framework' };
+  }
+}
+
+export async function hardDeleteFrameworkMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid framework id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  try {
+    const success = await withRequestContext(async ({ framework }) => {
+      return await framework.hardDeleteFramework(id, userId);
+    });
+    return success ? { success: true } : { success: false, error: 'Framework not found' };
+  } catch (error) {
+    console.error('Failed to hard delete framework:', error);
+    return { success: false, error: 'Failed to delete framework' };
+  }
+}
+
 export async function recordFrameworkMutation(
   prevState: ActionResult,
   formData: FormData,

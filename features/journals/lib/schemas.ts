@@ -30,6 +30,7 @@ export const JournalSchema = type({
   type: JournalTypeSchema,
   'tag?': 'string | null',
   createdAt: 'string',
+  'deletedAt?': 'string | null',
 });
 export type Journal = typeof JournalSchema.infer;
 

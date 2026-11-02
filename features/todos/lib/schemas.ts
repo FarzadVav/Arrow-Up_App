@@ -64,6 +64,7 @@ export const TodoSchema = type({
   'disciplines?': TodoDisciplineSchema.array(),
   'createdAt?': 'string',
   'updatedAt?': 'string',
+  'deletedAt?': 'string | null',
 });
 export type Todo = typeof TodoSchema.infer;
 

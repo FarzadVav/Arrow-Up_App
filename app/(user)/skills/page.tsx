@@ -1,3 +1,4 @@
+import { HistoryIcon } from "lucide-react";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
@@ -13,6 +14,13 @@ export default async function SkillsPage() {
   return (
     <PageWrapper>
       <TopBar>
+        <TopBar.Btn
+          position="left"
+          href="/history?tab=skills"
+          aria-label={t("common.history")}
+        >
+          <HistoryIcon />
+        </TopBar.Btn>
         <TopBar.Title asTitle>{t("skills.title")}</TopBar.Title>
         <HelpDialog position="right" />
       </TopBar>

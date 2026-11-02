@@ -38,6 +38,7 @@ export function serializeSkill(skill: Skill): SkillDto {
     tag: skill.tag ?? null,
     createdAt: skill.createdAt instanceof Date ? skill.createdAt.toISOString() : String(skill.createdAt),
     updatedAt: skill.updatedAt instanceof Date ? skill.updatedAt.toISOString() : String(skill.updatedAt),
+    deletedAt: skill.deletedAt instanceof Date ? skill.deletedAt.toISOString() : skill.deletedAt ? String(skill.deletedAt) : null,
   };
 }
 
@@ -59,7 +60,7 @@ export function serializeSkillTag(tag: SkillTag): SkillTagDto {
 
 export class SkillRepository extends EntityRepository<Skill> {
   async findAllSkills(userId: number, lifeAreaId?: number): Promise<Skill[]> {
-    const where: FilterQuery<Skill> = { user: userId };
+    const where: FilterQuery<Skill> = { user: userId, deletedAt: null };
     if (lifeAreaId) {
       where.lifeArea = lifeAreaId;
     }
@@ -71,7 +72,7 @@ export class SkillRepository extends EntityRepository<Skill> {
   }
 
   async findById(id: number, userId: number): Promise<Skill | null> {
-    return this.findOne({ id, user: userId }, {
+    return this.findOne({ id, user: userId, deletedAt: null }, {
       populate: ['lifeArea'],
     });
   }
@@ -136,9 +137,41 @@ export class SkillRepository extends EntityRepository<Skill> {
       return false;
     }
 
+    skill.deletedAt = new Date();
+    await this.em.flush();
+    return true;
+  }
+
+  async restoreSkill(id: number, userId: number): Promise<boolean> {
+    const skill = await this.findOne({ id, user: userId, deletedAt: { $ne: null } });
+    if (!skill) {
+      return false;
+    }
+
+    skill.deletedAt = null;
+    await this.em.flush();
+    return true;
+  }
+
+  async hardDeleteSkill(id: number, userId: number): Promise<boolean> {
+    const skill = await this.findOne({ id, user: userId });
+    if (!skill) {
+      return false;
+    }
+
     this.em.remove(skill);
     await this.em.flush();
     return true;
+  }
+
+  async findHistory(userId: number): Promise<Skill[]> {
+    return this.find(
+      { user: userId, deletedAt: { $ne: null } },
+      {
+        populate: ['lifeArea'],
+        orderBy: [{ deletedAt: 'DESC' }],
+      },
+    );
   }
 }
 

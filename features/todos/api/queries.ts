@@ -63,3 +63,16 @@ export async function getTodosStatsQuery(): Promise<TodosStats> {
     return todo.getTodosStats(userId);
   });
 }
+
+/**
+ * Server query for retrieving the acting user's deleted todos (history).
+ */
+export async function getTodosHistoryQuery(type?: TodoType | 'all' | string): Promise<Todo[]> {
+  const userId = await requireUserId();
+
+  return withRequestContext(async ({ todo }) => {
+    const filterType = type && type !== 'all' ? (type as TodoType) : undefined;
+    const entities = await todo.findHistory(userId, filterType);
+    return entities.map((item) => serializeTodo(item));
+  });
+}

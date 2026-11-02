@@ -1,16 +1,16 @@
 # **Bug & Refactor**
 
-- Refactor folder and file structured
-- New Reusable components (Card, Text, Row, List)
-- Refactor all reusable components
-- Add history for daily todo entities, upcoming todo entities, mission todo entities, framework entities, skills entities, journals entities.
-  don't add for life areas, framework tags, skills tags, journals tags.
-  histories should have a separate page, we should show a histories link btn in the main pages, also user should restore entities from histories.
+### AI
+
 - User can't set a tag in the framework, skills, journals create/edit form.
-
-- Back redirection to prev active tab
-
 - Review all translations; shorten or combine them where possible. Ensure the Persian and English items are perfectly aligned. Remove any unused elements, and replace any hard-coded text throughout the project with translations.
+
+### Manually
+
+- New Reusable components (Card, Text, Row, List)
+- Reusable components
+- Folder and file structured
+- Back redirection to prev active tab
 - Optimize translations
 - Optimize helps
 

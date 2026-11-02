@@ -460,6 +460,54 @@ export async function deleteTodoMutation(
 }
 
 /**
+ * Server Action mutation for restoring a deleted Todo from history.
+ */
+export async function restoreTodoMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid todo id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  return withRequestContext(async ({ todo }) => {
+    const success = await todo.restoreTodo(id, userId);
+    return success ? { success: true } : { success: false, error: 'Todo not found in history' };
+  });
+}
+
+/**
+ * Server Action mutation for permanently deleting a Todo from history.
+ */
+export async function hardDeleteTodoMutation(
+  prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const id = Number(formData.get('id'));
+
+  if (!id || Number.isNaN(id)) {
+    return { success: false, error: 'Invalid todo id' };
+  }
+
+  const userId = await tryGetUserId();
+  if (userId === null) {
+    return { success: false, error: 'Your session has expired. Please sign in again.' };
+  }
+
+  return withRequestContext(async ({ todo }) => {
+    const success = await todo.hardDeleteTodo(id, userId);
+    return success ? { success: true } : { success: false, error: 'Todo not found' };
+  });
+}
+
+/**
  * Server Action mutation for toggling a Todo's isDone status.
  * Reads the target id from the submitted form (hidden input).
  */
