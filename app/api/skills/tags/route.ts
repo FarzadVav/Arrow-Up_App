@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
 import { serializeSkillTag } from '@/features/skills/api/repository';
 import { CreateSkillTagSchema } from '@/features/skills/lib/types';
-import { parseLifeAreaSlug } from "@/features/general/lib/utils";
+import {
+  parseLifeAreaSlug,
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,23 +29,9 @@ export async function GET(request: NextRequest) {
       return entities.map(serializeSkillTag);
     });
 
-    return NextResponse.json(
-      { tags },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ tags });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get skill tags:', error);
-    return NextResponse.json(
-      { tags: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get skill tags:');
   }
 }
 
@@ -58,10 +48,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const created = await withRequestContext(async ({ skillTag }) => {
@@ -73,12 +60,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create skill tag:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create skill tag:');
   }
 }

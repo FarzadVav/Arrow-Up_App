@@ -5,67 +5,57 @@ import { getJournalByIdQuery } from '@/features/journals/api/queries';
 import { serializeJournal } from '@/features/journals/api/repository';
 import { UpdateJournalSchema } from '@/features/journals/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
+import {
+  parseRouteId,
+  invalidIdResponse,
+  notFoundResponse,
+  validationErrorResponse,
+  jsonNoStore,
+  handleApiError,
+  type IdRouteParams,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
-
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
 
 /**
  * GET /api/journals/[id]
  */
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
-    const { id } = await params;
-    const journalId = Number(id);
-
-    if (isNaN(journalId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const journalId = await parseRouteId(params);
+    if (!journalId) return invalidIdResponse();
 
     const journal = await getJournalByIdQuery(journalId);
     if (!journal) {
-      return NextResponse.json({ message: 'Journal entry not found' }, { status: 404 });
+      return notFoundResponse('Journal entry');
     }
 
-    return NextResponse.json(
-      { journal },
-      {
-        status: 200,
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      },
-    );
+    return jsonNoStore({ journal });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get journal by ID:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to get journal by ID:');
   }
 }
 
 /**
  * PATCH /api/journals/[id]
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id } = await params;
-    const journalId = Number(id);
-
-    if (isNaN(journalId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const journalId = await parseRouteId(params);
+    if (!journalId) return invalidIdResponse();
 
     const body = await request.json();
     const validation = UpdateJournalSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const updated = await withRequestContext(async ({ journal }) => {
@@ -73,44 +63,37 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     });
 
     if (!updated) {
-      return NextResponse.json({ message: 'Journal entry not found or unauthorized' }, { status: 404 });
+      return notFoundResponse('Journal entry');
     }
 
     return NextResponse.json({ journal: serializeJournal(updated) }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to update journal:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to update journal:');
   }
 }
 
 /**
  * DELETE /api/journals/[id]
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id } = await params;
-    const journalId = Number(id);
-
-    if (isNaN(journalId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const journalId = await parseRouteId(params);
+    if (!journalId) return invalidIdResponse();
 
     const success = await withRequestContext(async ({ journal }) => {
       return await journal.deleteJournal(journalId, userId);
     });
 
     if (!success) {
-      return NextResponse.json({ message: 'Journal entry not found or unauthorized' }, { status: 404 });
+      return notFoundResponse('Journal entry');
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to delete journal:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to delete journal:');
   }
 }

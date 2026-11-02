@@ -1,17 +1,14 @@
 import { Suspense } from "react";
-
-import { getTranslations } from "@/features/general/lib/i18n/server";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import TodosTabs from "@/features/todos/components/statics/TodosTabs/TodosTabs";
 import TodosActionBtn from "@/features/todos/components/modules/TodosActionBtn/TodosActionBtn";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
-import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
 import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
-
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
+import { getTranslations } from "@/features/general/lib/i18n/server";
 
-async function TodosPage() {
+export default async function TodosPage() {
   const { t } = await getTranslations();
 
   return (
@@ -22,10 +19,9 @@ async function TodosPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense
-          fallback={<ConnectivityFallback message={t("todos.loading")} />}>
+        <ContentSuspense fallbackMessage={t("todos.loading")}>
           <TodosTabs />
-        </Suspense>
+        </ContentSuspense>
 
         <p className="sub-text w-full text-center">{t("todos.subtitle")}</p>
 
@@ -36,5 +32,3 @@ async function TodosPage() {
     </PageWrapper>
   );
 }
-
-export default TodosPage;

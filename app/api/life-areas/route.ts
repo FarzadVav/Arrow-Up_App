@@ -4,8 +4,12 @@ import { withRequestContext } from '@/db';
 import { serializeLifeArea } from '@/features/life-areas/api/repository';
 import { CreateLifeAreaSchema } from '@/features/life-areas/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
-import { checkCostCapacity } from '@/features/general/lib/utils';
+import {
+  checkCostCapacity,
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,23 +26,9 @@ export async function GET() {
       return entities.map(serializeLifeArea);
     });
 
-    return NextResponse.json(
-      { lifeAreas },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ lifeAreas });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get life areas in GET /api/life-areas:', error);
-    return NextResponse.json(
-      { lifeAreas: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get life areas:');
   }
 }
 
@@ -53,31 +43,23 @@ export async function POST(request: NextRequest) {
     const validation = CreateLifeAreaSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
-    const targetDifficulty = validation.difficulty ?? 1;
-    const targetActive = validation.active ?? true;
+    const existingAreas = await withRequestContext(async ({ lifeArea }) => {
+      return await lifeArea.findAllLifeAreas(userId);
+    });
+    const activeAreas = existingAreas.filter((a) => a.active !== false);
+    const capacity = checkCostCapacity(activeAreas, validation.difficulty ?? 1);
 
-    if (targetActive) {
-      const existingAreas = await withRequestContext(async ({ lifeArea }) => {
-        return await lifeArea.findAllLifeAreas(userId);
-      });
-      const activeAreas = existingAreas.filter((a) => a.active !== false);
-      const capacity = checkCostCapacity(activeAreas, targetDifficulty);
-
-      if (!capacity.valid) {
-        return NextResponse.json(
-          {
-            errors: `Total life time and energy cost cannot exceed 10. (Currently using ${capacity.currentSum}/10)`,
-            message: 'Capacity exceeded',
-          },
-          { status: 400 },
-        );
-      }
+    if (!capacity.valid) {
+      return NextResponse.json(
+        {
+          errors: `Total life time and energy cost cannot exceed 10. (Currently using ${capacity.currentSum}/10)`,
+          message: 'Capacity exceeded',
+        },
+        { status: 400 },
+      );
     }
 
     const created = await withRequestContext(async ({ lifeArea }) => {
@@ -89,12 +71,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create life area in POST /api/life-areas:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create life area:');
   }
 }

@@ -1,29 +1,29 @@
 import type { MetadataRoute } from "next";
+import { APP_PROFILE } from "@/features/general/lib/constants";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
     scope: "/",
-    name: "Arrow Up",
+    name: APP_PROFILE.name,
     start_url: "/profile",
-    short_name: "ArrowUp",
+    short_name: APP_PROFILE.name.replace(/\s+/g, ""),
     display: "standalone",
-    theme_color: "#fafafa",
-    background_color: "#fafafa",
+    theme_color: APP_PROFILE.themeColor,
+    background_color: APP_PROFILE.themeColor,
     orientation: "portrait-primary",
-    description:
-      "Personal Operating System for Daily Momentum & Habits",
+    description: APP_PROFILE.description,
     icons: [
       {
-        src: "/icon-192x192.png",
-        sizes: "192x192",
-        type: "image/png",
+        src: APP_PROFILE.icons[192].url,
+        sizes: APP_PROFILE.icons[192].sizes,
+        type: APP_PROFILE.icons[192].type,
         purpose: "any",
       },
       {
-        src: "/icon-512x512.png",
-        sizes: "512x512",
-        type: "image/png",
+        src: APP_PROFILE.icons[512].url,
+        sizes: APP_PROFILE.icons[512].sizes,
+        type: APP_PROFILE.icons[512].type,
         purpose: "any",
       },
       {
@@ -47,8 +47,8 @@ export default function manifest(): MetadataRoute.Manifest {
         description: "Create a new todo or mission",
         icons: [
           {
-            src: "/icon-192x192.png",
-            sizes: "192x192",
+            src: APP_PROFILE.icons[192].url,
+            sizes: APP_PROFILE.icons[192].sizes,
           },
         ],
       },
@@ -59,8 +59,8 @@ export default function manifest(): MetadataRoute.Manifest {
         description: "Write a new journal entry",
         icons: [
           {
-            src: "/icon-192x192.png",
-            sizes: "192x192",
+            src: APP_PROFILE.icons[192].url,
+            sizes: APP_PROFILE.icons[192].sizes,
           },
         ],
       },

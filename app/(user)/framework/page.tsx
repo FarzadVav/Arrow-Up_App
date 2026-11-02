@@ -1,15 +1,13 @@
-import { Suspense } from "react";
-
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 import FrameworksAreaList from "@/features/framework/components/statics/FrameworksAreaList/FrameworksAreaList";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
-export default async function HabitsPage() {
+export default async function FrameworkPage() {
   const { t } = await getTranslations();
 
   return (
@@ -20,9 +18,9 @@ export default async function HabitsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense fallback={<ConnectivityFallback message={t("common.loading")} />}>
+        <ContentSuspense fallbackMessage={t("common.loading")}>
           <FrameworksAreaList />
-        </Suspense>
+        </ContentSuspense>
 
         <p className="sub-text w-full text-center">
           {t("framework.subtitle")}

@@ -4,8 +4,12 @@ import { withRequestContext } from '@/db';
 import { serializeFramework } from '@/features/framework/api/repository';
 import { CreateFrameworkSchema } from '@/features/framework/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
-import { parseLifeAreaSlug } from '@/features/general/lib/utils';
+import {
+  parseLifeAreaSlug,
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +20,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
-
     const searchParams = request.nextUrl.searchParams;
     const lifeAreaId = parseLifeAreaSlug(searchParams.get('lifeAreaId'));
 
@@ -25,23 +28,9 @@ export async function GET(request: NextRequest) {
       return entities.map(serializeFramework);
     });
 
-    return NextResponse.json(
-      { frameworks },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ frameworks });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get frameworks in GET /api/frameworks:', error);
-    return NextResponse.json(
-      { frameworks: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get frameworks:');
   }
 }
 
@@ -56,10 +45,7 @@ export async function POST(request: NextRequest) {
     const validation = CreateFrameworkSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const created = await withRequestContext(async ({ framework }) => {
@@ -71,12 +57,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create framework in POST /api/frameworks:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create framework:');
   }
 }

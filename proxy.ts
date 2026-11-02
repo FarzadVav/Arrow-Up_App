@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { decrypt } from "@/features/auth/lib/utils";
+import { SESSION_COOKIE_NAME } from "@/features/auth/lib/constants";
 
 const publicRoutes = ["/login", "/offline", "/language"];
 
@@ -8,7 +9,7 @@ export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.includes(path);
 
-  const session = await decrypt(req.cookies.get("session")?.value);
+  const session = await decrypt(req.cookies.get(SESSION_COOKIE_NAME)?.value);
 
   if (!isPublicRoute && !session?.userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));

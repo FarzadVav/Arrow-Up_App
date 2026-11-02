@@ -6,68 +6,58 @@ import { getTodoByIdQuery } from '@/features/todos/api/queries';
 import { serializeTodo } from '@/features/todos/api/repository';
 import { UpdateTodoSchema, type TodoType } from '@/features/todos/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
-import { checkCostCapacity } from '@/features/general/lib/utils';
+import {
+  checkCostCapacity,
+  parseRouteId,
+  invalidIdResponse,
+  notFoundResponse,
+  validationErrorResponse,
+  jsonNoStore,
+  handleApiError,
+  type IdRouteParams,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
-
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
 
 /**
  * GET /api/todos/[id]
  */
-export async function GET(_request: NextRequest, { params }: RouteContext) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
-    const { id } = await params;
-    const todoId = Number(id);
-
-    if (isNaN(todoId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const todoId = await parseRouteId(params);
+    if (!todoId) return invalidIdResponse();
 
     const todo = await getTodoByIdQuery(todoId);
     if (!todo) {
-      return NextResponse.json({ message: 'Todo not found' }, { status: 404 });
+      return notFoundResponse('Todo');
     }
 
-    return NextResponse.json(
-      { todo },
-      {
-        status: 200,
-        headers: { 'Cache-Control': 'no-store, max-age=0' },
-      },
-    );
+    return jsonNoStore({ todo });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get todo by ID:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to get todo by ID:');
   }
 }
 
 /**
  * PATCH /api/todos/[id]
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id } = await params;
-    const todoId = Number(id);
-
-    if (isNaN(todoId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const todoId = await parseRouteId(params);
+    if (!todoId) return invalidIdResponse();
 
     const body = await request.json();
     const validation = UpdateTodoSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const currentTodo = await withRequestContext(async ({ todo }) => {
@@ -75,11 +65,14 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     });
 
     if (!currentTodo) {
-      return NextResponse.json({ message: 'Todo not found or unauthorized' }, { status: 404 });
+      return notFoundResponse('Todo');
     }
 
     const targetType = (validation.type ?? currentTodo.type) as TodoType;
-    const targetDifficulty = validation.difficulty !== undefined ? validation.difficulty : (currentTodo.difficulty ?? 1);
+    const targetDifficulty =
+      validation.difficulty !== undefined
+        ? validation.difficulty
+        : currentTodo.difficulty ?? 1;
     const dbType =
       targetType === 'Daily'
         ? DbTodoType.DAILY
@@ -107,44 +100,37 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     });
 
     if (!updated) {
-      return NextResponse.json({ message: 'Todo not found or unauthorized' }, { status: 404 });
+      return notFoundResponse('Todo');
     }
 
     return NextResponse.json({ todo: serializeTodo(updated) }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to update todo:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to update todo:');
   }
 }
 
 /**
  * DELETE /api/todos/[id]
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id } = await params;
-    const todoId = Number(id);
-
-    if (isNaN(todoId)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const todoId = await parseRouteId(params);
+    if (!todoId) return invalidIdResponse();
 
     const deleted = await withRequestContext(async ({ todo }) => {
       return await todo.deleteTodo(todoId, userId);
     });
 
     if (!deleted) {
-      return NextResponse.json({ message: 'Todo not found or unauthorized' }, { status: 404 });
+      return notFoundResponse('Todo');
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to delete todo:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to delete todo:');
   }
 }

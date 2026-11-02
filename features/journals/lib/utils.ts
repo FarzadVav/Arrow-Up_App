@@ -1,7 +1,6 @@
 import { JOURNAL_CATEGORIES } from './constants';
 import type { JournalCategoryDefinition } from './types';
 
-
 /**
  * Helper to find a category definition by its name (case-insensitive).
  */

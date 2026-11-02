@@ -6,8 +6,12 @@ import { getTodosQuery } from '@/features/todos/api/queries';
 import { serializeTodo } from '@/features/todos/api/repository';
 import { CreateTodoSchema, TodoType } from '@/features/todos/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
-import { checkCostCapacity } from '@/features/general/lib/utils';
+import {
+  checkCostCapacity,
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,23 +26,9 @@ export async function GET(request: NextRequest) {
 
     const todos = await getTodosQuery(typeParam as TodoType);
 
-    return NextResponse.json(
-      { todos },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ todos });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get todos in GET /api/todos:', error);
-    return NextResponse.json(
-      { todos: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get todos:');
   }
 }
 
@@ -53,10 +43,7 @@ export async function POST(request: NextRequest) {
     const validation = CreateTodoSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const targetType = validation.type;
@@ -92,12 +79,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create todo in POST /api/todos:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create todo:');
   }
 }

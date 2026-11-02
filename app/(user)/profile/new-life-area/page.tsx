@@ -1,16 +1,10 @@
-import { Suspense } from "react";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import { LifeAreaForm } from "@/features/life-areas/components";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
 
-export default async function ProfileNewLifeAreaPage() {
-  const { t } = await getTranslations();
-
+export default function ProfileNewLifeAreaPage() {
   return (
-    <Suspense
-      fallback={<ConnectivityFallback message={t("common.loading")} />}
-    >
+    <ContentSuspense>
       <LifeAreaForm />
-    </Suspense>
+    </ContentSuspense>
   );
 }

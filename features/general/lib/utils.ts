@@ -1,3 +1,5 @@
+import { notFound } from 'next/navigation';
+import { type } from 'arktype';
 import { NextResponse } from 'next/server';
 import type { CapacityCheckResult } from './types';
 
@@ -435,4 +437,87 @@ export function authzResponse(error: unknown): NextResponse | null {
   }
 
   return null;
+}
+
+/* =========================================================================
+   Route Parameters & API Response Helpers
+   ========================================================================= */
+
+export type AreaRouteParams = Promise<{ area: string }>;
+export type IdRouteParams = Promise<{ id: string }>;
+
+/**
+ * Resolves and validates an area slug from route parameters.
+ * Automatically triggers notFound() if the slug is invalid or not found.
+ */
+export async function resolveAreaSlug(params: AreaRouteParams): Promise<number | null> {
+  const { area: rawSlug } = await params;
+  const lifeAreaId = parseLifeAreaSlug(rawSlug);
+
+  if (lifeAreaId === undefined) {
+    notFound();
+  }
+
+  return lifeAreaId;
+}
+
+/**
+ * Parses numeric ID from route parameters. Returns null if invalid or <= 0.
+ */
+export async function parseRouteId(params: IdRouteParams): Promise<number | null> {
+  const { id } = await params;
+  const numericId = Number(id);
+  return Number.isSafeInteger(numericId) && numericId > 0 ? numericId : null;
+}
+
+/**
+ * Standard 400 Bad Request response for invalid IDs.
+ */
+export function invalidIdResponse(): NextResponse {
+  return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
+}
+
+/**
+ * Standard 404 Not Found response.
+ */
+export function notFoundResponse(item = 'Item'): NextResponse {
+  return NextResponse.json({ message: `${item} not found` }, { status: 404 });
+}
+
+/**
+ * Standard response for ArkType validation failure.
+ */
+export function validationErrorResponse(validation: type.errors): NextResponse {
+  return NextResponse.json(
+    { errors: validation.summary, message: 'Validation failed' },
+    { status: 400 },
+  );
+}
+
+/**
+ * Standard JSON response with no-store cache headers.
+ */
+export function jsonNoStore(data: unknown, status = 200): NextResponse {
+  return NextResponse.json(data, {
+    status,
+    headers: { 'Cache-Control': 'no-store, max-age=0' },
+  });
+}
+
+/**
+ * Standard catch-block error handler for API routes.
+ * Handles authz errors automatically and logs server errors.
+ */
+export function handleApiError(
+  error: unknown,
+  logPrefix = 'API Error:',
+): NextResponse {
+  const authz = authzResponse(error);
+  if (authz) return authz;
+
+  console.error(logPrefix, error);
+  return NextResponse.json(
+    { message: 'Internal Server Error' },
+    { status: 500 },
+  );
 }

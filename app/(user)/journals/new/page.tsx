@@ -1,16 +1,10 @@
-import { Suspense } from "react";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import JournalForm from "@/features/journals/components/modules/JournalForm/JournalForm";
 
-export default async function NewJournalPage() {
-  const { t } = await getTranslations();
-
+export default function NewJournalPage() {
   return (
-    <Suspense
-      fallback={<ConnectivityFallback message={t("common.loading")} />}
-    >
+    <ContentSuspense>
       <JournalForm />
-    </Suspense>
+    </ContentSuspense>
   );
 }

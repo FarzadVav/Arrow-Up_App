@@ -1,40 +1,23 @@
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import { JournalTagForm } from "@/features/journals/components/modules/JournalTagForm/JournalTagForm";
+import {
+  resolveJournalCategory,
+  type JournalCategoryRouteParams,
+} from "@/features/journals/api/queries";
 
-type PageProps = {
-  params: Promise<{ category: string }>;
-};
-
-export default async function NewJournalTagPage({ params }: PageProps) {
-  const { category: rawSlug } = await params;
-
-  if (!rawSlug) {
-    notFound();
-  }
-
-  const matchedCategory = JOURNAL_CATEGORIES.find(
-    (c) => c.name.toLowerCase() === rawSlug.toLowerCase(),
-  );
-
-  if (!matchedCategory) {
-    notFound();
-  }
-
-  const { t } = await getTranslations();
-  const categoryTitle =
-    t(`journals.categories.${matchedCategory.name.toLowerCase()}`) ||
-    matchedCategory.name;
+export default async function NewJournalTagPage({
+  params,
+}: {
+  params: JournalCategoryRouteParams;
+}) {
+  const { category, title } = await resolveJournalCategory(params);
 
   return (
-    <Suspense fallback={<ConnectivityFallback message={t("common.loading")} />}>
+    <ContentSuspense>
       <JournalTagForm
-        category={matchedCategory.name}
-        categoryTitle={categoryTitle}
+        category={category.name}
+        categoryTitle={title}
       />
-    </Suspense>
+    </ContentSuspense>
   );
 }

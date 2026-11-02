@@ -1,9 +1,18 @@
 import 'server-only';
+import { notFound } from 'next/navigation';
 import { withRequestContext } from '@/db';
 import { requireUserId } from '@/features/auth/lib/utils';
+import { getTranslations } from '@/features/general/lib/i18n/server';
 import { JournalCategory } from '@/db/entities/enums';
 import { serializeJournal, serializeJournalTag } from './repository';
-import type { Journal, JournalCategory as JournalCategoryType, JournalTag, JournalsStats } from '../lib/types';
+import { getJournalCategory } from '../lib/utils';
+import type {
+  Journal,
+  JournalCategory as JournalCategoryType,
+  JournalTag,
+  JournalsStats,
+  JournalCategoryDefinition,
+} from '../lib/types';
 
 export type { JournalsStats };
 
@@ -89,4 +98,33 @@ export async function getJournalTagByIdQuery(
     const entity = await journalTag.findById(id, userId);
     return entity ? serializeJournalTag(entity) : null;
   });
+}
+
+export type JournalCategoryRouteParams = Promise<{ category: string }>;
+
+/**
+ * Resolves a journal category from route parameters, validating it and
+ * retrieving its localized translated title. Automatically triggers notFound() if invalid.
+ */
+export async function resolveJournalCategory(
+  params: JournalCategoryRouteParams,
+): Promise<{
+  category: JournalCategoryDefinition;
+  title: string;
+}> {
+  const { category: rawSlug } = await params;
+  if (!rawSlug) {
+    notFound();
+  }
+
+  const matched = getJournalCategory(rawSlug);
+  if (!matched) {
+    notFound();
+  }
+
+  const { t } = await getTranslations();
+  const title =
+    t(`journals.categories.${matched.name.toLowerCase()}`) || matched.name;
+
+  return { category: matched, title };
 }

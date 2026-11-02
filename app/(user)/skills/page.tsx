@@ -1,9 +1,7 @@
-import { Suspense } from "react";
-
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 import SkillsAreaList from "@/features/skills/components/statics/SkillsAreaList/SkillsAreaList";
@@ -20,9 +18,9 @@ export default async function SkillsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense fallback={<ConnectivityFallback message={t("common.loading")} />}>
+        <ContentSuspense fallbackMessage={t("common.loading")}>
           <SkillsAreaList />
-        </Suspense>
+        </ContentSuspense>
 
         <p className="sub-text w-full text-center">
           {t("skills.subtitle")}

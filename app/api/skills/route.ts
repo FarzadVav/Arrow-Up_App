@@ -4,7 +4,12 @@ import { withRequestContext } from '@/db';
 import { serializeSkill } from '@/features/skills/api/repository';
 import { CreateSkillSchema } from '@/features/skills/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
+import {
+  parseLifeAreaSlug,
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,33 +20,17 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const userId = await requireUserId();
-
     const searchParams = request.nextUrl.searchParams;
-    const lifeAreaIdParam = searchParams.get('lifeAreaId');
-    const lifeAreaId = lifeAreaIdParam ? Number(lifeAreaIdParam) : undefined;
+    const lifeAreaId = parseLifeAreaSlug(searchParams.get('lifeAreaId'));
 
     const skills = await withRequestContext(async ({ skill }) => {
-      const entities = await skill.findAllSkills(userId, lifeAreaId);
+      const entities = await skill.findAllSkills(userId, lifeAreaId ?? undefined);
       return entities.map(serializeSkill);
     });
 
-    return NextResponse.json(
-      { skills },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ skills });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get skills in GET /api/skills:', error);
-    return NextResponse.json(
-      { skills: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get skills:');
   }
 }
 
@@ -56,10 +45,7 @@ export async function POST(request: NextRequest) {
     const validation = CreateSkillSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const created = await withRequestContext(async ({ skill }) => {
@@ -71,12 +57,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create skill in POST /api/skills:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create skill:');
   }
 }

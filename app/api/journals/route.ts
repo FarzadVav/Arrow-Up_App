@@ -5,7 +5,11 @@ import { getJournalsQuery } from '@/features/journals/api/queries';
 import { serializeJournal } from '@/features/journals/api/repository';
 import { CreateJournalSchema } from '@/features/journals/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
+import {
+  jsonNoStore,
+  validationErrorResponse,
+  handleApiError,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,23 +25,9 @@ export async function GET(request: NextRequest) {
 
     const journals = await getJournalsQuery(categoryParam, tagParam);
 
-    return NextResponse.json(
-      { journals },
-      {
-        status: 200,
-        headers: {
-          'Cache-Control': 'no-store, max-age=0',
-        },
-      },
-    );
+    return jsonNoStore({ journals });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get journals in GET /api/journals:', error);
-    return NextResponse.json(
-      { journals: [], message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to get journals:');
   }
 }
 
@@ -52,10 +42,7 @@ export async function POST(request: NextRequest) {
     const validation = CreateJournalSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const created = await withRequestContext(async ({ journal }) => {
@@ -67,12 +54,6 @@ export async function POST(request: NextRequest) {
       { status: 201 },
     );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to create journal in POST /api/journals:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500 },
-    );
+    return handleApiError(error, 'Failed to create journal:');
   }
 }

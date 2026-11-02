@@ -1,16 +1,10 @@
-import { Suspense } from "react";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import { FrameworkForm } from "@/features/framework/components";
 
-export default async function NewHabitPage() {
-  const { t } = await getTranslations();
-
+export default function NewFrameworkPage() {
   return (
-    <Suspense
-      fallback={<ConnectivityFallback message={t("common.loading")} />}
-    >
+    <ContentSuspense>
       <FrameworkForm />
-    </Suspense>
+    </ContentSuspense>
   );
 }

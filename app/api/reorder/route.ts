@@ -4,7 +4,10 @@ import type { EntityClass } from '@mikro-orm/core';
 import { withRequestContext } from '@/db';
 import { Habit, Journal, Skill, Todo } from '@/db/entities';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
+import {
+  handleApiError,
+  validationErrorResponse,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,10 +43,7 @@ export async function POST(request: NextRequest) {
     const validation = ReorderSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     await withRequestContext(async ({ em }) => {
@@ -72,9 +72,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to reorder records:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to persist reorder in /api/reorder:');
   }
 }

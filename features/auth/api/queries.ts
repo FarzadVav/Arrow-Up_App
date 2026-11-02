@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import { withRequestContext } from '@/db';
 
 import type { AuthUser } from '../lib/types';
+import { SESSION_COOKIE_NAME } from '../lib/constants';
 import { decrypt, getUserId } from '../lib/utils';
 
 export type SessionQueryResult = {
@@ -16,7 +17,7 @@ export type SessionQueryResult = {
  */
 export async function getSessionQuery(): Promise<SessionQueryResult> {
   const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get('session')?.value;
+  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!sessionCookie) {
     return null;
   }

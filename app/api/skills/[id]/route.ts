@@ -4,107 +4,104 @@ import { withRequestContext } from '@/db';
 import { serializeSkill } from '@/features/skills/api/repository';
 import { UpdateSkillSchema } from '@/features/skills/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
-import { authzResponse } from '@/features/general/lib/utils';
+import {
+  parseRouteId,
+  invalidIdResponse,
+  notFoundResponse,
+  validationErrorResponse,
+  handleApiError,
+  type IdRouteParams,
+} from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
-
-interface RouteContext {
-  params: Promise<{ id: string }>;
-}
 
 /**
  * GET /api/skills/[id]
  */
-export async function GET(request: NextRequest, context: RouteContext) {
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id: rawId } = await context.params;
-    const id = Number(rawId);
-    if (isNaN(id)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const skillId = await parseRouteId(params);
+    if (!skillId) return invalidIdResponse();
 
     const item = await withRequestContext(async ({ skill }) => {
-      return await skill.findById(id, userId);
+      return await skill.findById(skillId, userId);
     });
 
     if (!item) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return notFoundResponse('Skill');
     }
 
-    return NextResponse.json({ skill: serializeSkill(item) }, { status: 200 });
+    return NextResponse.json(
+      { skill: serializeSkill(item) },
+      { status: 200 },
+    );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to get skill by ID:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to get skill by ID:');
   }
 }
 
 /**
  * PUT/PATCH /api/skills/[id]
  */
-export async function PUT(request: NextRequest, context: RouteContext) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id: rawId } = await context.params;
-    const id = Number(rawId);
-    if (isNaN(id)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const skillId = await parseRouteId(params);
+    if (!skillId) return invalidIdResponse();
 
     const body = await request.json();
     const validation = UpdateSkillSchema(body);
 
     if (validation instanceof type.errors) {
-      return NextResponse.json(
-        { errors: validation.summary, message: 'Validation failed' },
-        { status: 400 },
-      );
+      return validationErrorResponse(validation);
     }
 
     const updated = await withRequestContext(async ({ skill }) => {
-      return await skill.updateSkill(id, validation, userId);
+      return await skill.updateSkill(skillId, validation, userId);
     });
 
     if (!updated) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return notFoundResponse('Skill');
     }
 
-    return NextResponse.json({ skill: serializeSkill(updated) }, { status: 200 });
+    return NextResponse.json(
+      { skill: serializeSkill(updated) },
+      { status: 200 },
+    );
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to update skill:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to update skill:');
   }
 }
 
 /**
  * DELETE /api/skills/[id]
  */
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: IdRouteParams },
+) {
   try {
     const userId = await requireUserId();
-    const { id: rawId } = await context.params;
-    const id = Number(rawId);
-    if (isNaN(id)) {
-      return NextResponse.json({ message: 'Invalid ID' }, { status: 400 });
-    }
+    const skillId = await parseRouteId(params);
+    if (!skillId) return invalidIdResponse();
 
     const deleted = await withRequestContext(async ({ skill }) => {
-      return await skill.deleteSkill(id, userId);
+      return await skill.deleteSkill(skillId, userId);
     });
 
     if (!deleted) {
-      return NextResponse.json({ message: 'Not found' }, { status: 404 });
+      return notFoundResponse('Skill');
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    const authz = authzResponse(error);
-    if (authz) return authz;
-    console.error('Failed to delete skill:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return handleApiError(error, 'Failed to delete skill:');
   }
 }

@@ -1,16 +1,13 @@
-import { Suspense } from "react";
-
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
 import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
 import JournalsCategoryList from "@/features/journals/components/statics/JournalsCategoryList/JournalsCategoryList";
+import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
-import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
-
-async function JournalsPage() {
+export default async function JournalsPage() {
   const { t } = await getTranslations();
 
   return (
@@ -21,13 +18,9 @@ async function JournalsPage() {
       </TopBar>
 
       <PageItemsWrapper>
-        <Suspense
-          fallback={
-            <ConnectivityFallback message={t("journals.loading")} />
-          }
-        >
+        <ContentSuspense fallbackMessage={t("journals.loading")}>
           <JournalsCategoryList />
-        </Suspense>
+        </ContentSuspense>
 
         <p className="sub-text w-full text-center">
           {t("journals.subtitle")}
@@ -38,5 +31,3 @@ async function JournalsPage() {
     </PageWrapper>
   );
 }
-
-export default JournalsPage;

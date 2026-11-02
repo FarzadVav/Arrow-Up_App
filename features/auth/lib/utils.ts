@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { SignJWT, jwtVerify } from 'jose';
 
 import { AuthenticationError } from '@/features/general/lib/utils';
+import { SESSION_COOKIE_NAME, SESSION_EXPIRATION_DAYS } from './constants';
 import { getSessionQuery, getCurrentUserQuery } from '../api/queries';
 import type { AuthUser, SessionPayload } from './types';
 
@@ -82,11 +83,11 @@ export async function decrypt(session: string | undefined = '') {
 }
 
 export async function setSession(payload: Omit<SessionPayload, 'expiresAt'>) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + SESSION_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
   const session = await encrypt({ ...payload, expiresAt });
   const cookieStore = await cookies();
 
-  cookieStore.set('session', session, {
+  cookieStore.set(SESSION_COOKIE_NAME, session, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     expires: expiresAt,
@@ -97,16 +98,16 @@ export async function setSession(payload: Omit<SessionPayload, 'expiresAt'>) {
 
 export async function expandSession() {
   const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
+  const session = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   const payload = await decrypt(session);
 
   if (!session || !payload) {
     return null;
   }
 
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + SESSION_EXPIRATION_DAYS * 24 * 60 * 60 * 1000);
 
-  cookieStore.set('session', session, {
+  cookieStore.set(SESSION_COOKIE_NAME, session, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     expires: expiresAt,
@@ -117,7 +118,7 @@ export async function expandSession() {
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete('session');
+  cookieStore.delete(SESSION_COOKIE_NAME);
 }
 
 // ==========================================
