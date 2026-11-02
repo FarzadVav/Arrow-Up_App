@@ -2,16 +2,16 @@ import Link from "next/link";
 import { SearchIcon } from "lucide-react";
 import { ProfileLifeAreas } from "@/features/life-areas/components";
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import LogoutBtn from "@/features/auth/components/LogoutBtn/LogoutBtn";
-import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
-import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import ProfileStats from "@/features/auth/components/static/ProfileStats/ProfileStats";
-import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
-import ProfileAccount from "@/features/auth/components/static/ProfileAccount/ProfileAccount";
-import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
-import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import InstallAppDialog from "@/features/general/components/module/InstallAppDialog/InstallAppDialog";
+import TopBar from "@/features/general/components/statics/TopBar/TopBar";
+import LogoutBtn from "@/features/auth/components/modules/LogoutBtn/LogoutBtn";
+import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
+import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
+import ProfileStats from "@/features/auth/components/statics/ProfileStats/ProfileStats";
+import ThemeSwitcher from "@/features/general/components/modules/ThemeSwitcher/ThemeSwitcher";
+import ProfileAccount from "@/features/auth/components/statics/ProfileAccount/ProfileAccount";
+import LocaleSwitcher from "@/features/general/components/modules/LocaleSwitcher/LocaleSwitcher";
+import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
+import InstallAppDialog from "@/features/general/components/modules/InstallAppDialog/InstallAppDialog";
 
 async function UserProfilePage() {
   const { t } = await getTranslations();

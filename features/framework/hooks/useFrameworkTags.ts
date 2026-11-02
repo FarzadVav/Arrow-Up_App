@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { FrameworkTag } from '../types';
+import type { FrameworkTag } from '../lib/types';
 
 /**
  * lifeAreaId undefined fetches every tag, null scopes to the General area.

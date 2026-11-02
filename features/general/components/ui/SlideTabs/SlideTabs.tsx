@@ -6,7 +6,7 @@ import { AnimatePresence, motion, type Transition } from "motion/react";
 import { cn } from "cn";
 
 import { Button } from "../Button/Button";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
 export type SlideTabItem = {
   id: string;

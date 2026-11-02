@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withRequestContext } from '@/db';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

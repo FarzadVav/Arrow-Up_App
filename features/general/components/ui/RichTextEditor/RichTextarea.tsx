@@ -7,8 +7,8 @@ import { Maximize2Icon, PenLineIcon, TextIcon } from "lucide-react";
 import Field from "../Field";
 import { RichTextDialog } from "./RichTextDialog";
 import { RichTextResult } from "./RichTextResult";
-import { isRichTextEmpty, stripHtml } from "@/features/general/lib/richText";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { isRichTextEmpty, stripHtml } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
 export type RichTextareaProps = {
   value: string;

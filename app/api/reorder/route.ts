@@ -3,8 +3,8 @@ import { type } from 'arktype';
 import type { EntityClass } from '@mikro-orm/core';
 import { withRequestContext } from '@/db';
 import { Habit, Journal, Skill, Todo } from '@/db/entities';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

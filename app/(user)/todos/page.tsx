@@ -1,15 +1,15 @@
 import { Suspense } from "react";
 
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import TodosTabs from "@/features/todos/components/TodosTabs/TodosTabs";
-import TodosActionBtn from "@/features/todos/components/TodosActionBtn/TodosActionBtn";
-import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
-import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
+import TopBar from "@/features/general/components/statics/TopBar/TopBar";
+import TodosTabs from "@/features/todos/components/statics/TodosTabs/TodosTabs";
+import TodosActionBtn from "@/features/todos/components/modules/TodosActionBtn/TodosActionBtn";
+import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
+import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
+import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
+import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
 
-import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 
 async function TodosPage() {
   const { t } = await getTranslations();

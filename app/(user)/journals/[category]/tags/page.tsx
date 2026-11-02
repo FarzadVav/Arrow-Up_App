@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { JOURNAL_CATEGORIES } from "@/features/journals/types";
+import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import JournalTagsList from "@/features/journals/components/JournalTagsList/JournalTagsList";
+import { JournalTagsList } from "@/features/journals/components/modules/JournalTagsList/JournalTagsList";
 
 type PageProps = {
   params: Promise<{ category: string }>;

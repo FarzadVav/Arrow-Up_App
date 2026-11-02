@@ -1,8 +1,8 @@
 import { PropsWithChildren } from "react";
 import { redirect } from "next/navigation";
 
-import { getCurrentUserQuery } from "@/features/auth/queries";
-import Navigation from "@/features/general/components/static/Navigation/Navigation";
+import { getCurrentUserQuery } from "@/features/auth/api/queries";
+import Navigation from "@/features/general/components/statics/Navigation/Navigation";
 
 async function UserLayout({ children }: PropsWithChildren) {
   const user = await getCurrentUserQuery();

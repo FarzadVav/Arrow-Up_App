@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getTodosStatsQuery } from '@/features/todos/queries';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { getTodosStatsQuery } from '@/features/todos/api/queries';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

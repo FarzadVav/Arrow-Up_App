@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { serializeLifeArea } from '@/features/life-areas/repositories';
-import { CreateLifeAreaSchema } from '@/features/life-areas/types';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
-import { checkCostCapacity } from '@/features/general/lib/costCapacity';
+import { serializeLifeArea } from '@/features/life-areas/api/repository';
+import { CreateLifeAreaSchema } from '@/features/life-areas/lib/types';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
+import { checkCostCapacity } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

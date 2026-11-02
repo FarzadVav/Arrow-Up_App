@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 
-import type { LifeArea } from '../types';
+import type { LifeArea } from '../lib/types';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

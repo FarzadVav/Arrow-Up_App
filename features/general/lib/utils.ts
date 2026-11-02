@@ -1,3 +1,6 @@
+import { NextResponse } from 'next/server';
+import type { CapacityCheckResult } from './types';
+
 export const TEHRAN_TIMEZONE = "Asia/Tehran";
 
 const persianDateFormatter = new Intl.DateTimeFormat(
@@ -264,4 +267,172 @@ export function formatDeadline(
   }
 
   return formatPersianDate(deadline);
+}
+
+/* =========================================================================
+   Cost & Capacity
+   ========================================================================= */
+
+export const MAX_ENERGY_COST = 10;
+
+/**
+ * Checks if adding or updating an item with newCost exceeds the MAX_ENERGY_COST (10).
+ */
+export function checkCostCapacity(
+  items: Array<{ id?: number; difficulty?: number | null }>,
+  newCost: number,
+  excludeId?: number | null,
+): CapacityCheckResult {
+  const currentSum = items
+    .filter((item) => (excludeId ? item.id !== excludeId : true))
+    .reduce((acc, item) => acc + (item.difficulty ?? 0), 0);
+
+  const totalAfter = currentSum + newCost;
+
+  return {
+    valid: totalAfter <= MAX_ENERGY_COST,
+    currentSum,
+    totalAfter,
+    max: MAX_ENERGY_COST,
+  };
+}
+
+/* =========================================================================
+   Life Area Slug
+   ========================================================================= */
+
+export const UNSET_LIFE_AREA_SLUG = 'not-set';
+
+/**
+ * Absent or unparseable means every area,
+ * UNSET_LIFE_AREA_SLUG/'0'/'none' means no life area, otherwise the area id.
+ */
+export function parseLifeAreaSlug(
+  raw?: string | null,
+): number | null | undefined {
+  if (raw === null || raw === undefined) return undefined;
+  if (raw === '' || raw === 'none' || raw === '0' || raw === UNSET_LIFE_AREA_SLUG) {
+    return null;
+  }
+
+  const id = Number(raw);
+  return Number.isSafeInteger(id) && id > 0 ? id : undefined;
+}
+
+/* =========================================================================
+   Authorization Errors & Scope
+   ========================================================================= */
+
+export class AuthenticationError extends Error {
+  readonly code = 'UNAUTHENTICATED';
+
+  constructor(message = 'Authentication required.') {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class ForbiddenReferenceError extends Error {
+  readonly code = 'FORBIDDEN_REFERENCE';
+
+  constructor(
+    readonly field: string,
+    readonly id: number,
+    message?: string,
+  ) {
+    super(message ?? `You are not authorized to reference ${field} ${id}.`);
+    this.name = 'ForbiddenReferenceError';
+  }
+}
+
+export class InactiveReferenceError extends Error {
+  readonly code = 'INACTIVE_REFERENCE';
+
+  constructor(
+    readonly field: string,
+    readonly id: number,
+    message?: string,
+  ) {
+    super(message ?? `${field} ${id} is not active.`);
+    this.name = 'InactiveReferenceError';
+  }
+}
+
+/* =========================================================================
+   Rich Text (TipTap) Helpers
+   ========================================================================= */
+
+export function stripHtml(html: string | null | undefined): string {
+  if (!html) return "";
+  return html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function isRichTextEmpty(html: string | null | undefined): boolean {
+  if (!html) return true;
+  const stripped = stripHtml(html);
+  return stripped.length === 0;
+}
+
+export function toEditorHtml(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+
+  if (/<(p|h1|h2|h3|ul|ol|li|div|blockquote)[\s\S]*>/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return trimmed
+    .split(/\r?\n\r?\n+/)
+    .map((paragraph) => {
+      const formatted = paragraph.replace(/\r?\n/g, "<br>");
+      return `<p>${formatted}</p>`;
+    })
+    .join("");
+}
+
+/* =========================================================================
+   HTTP Authorization Response Helper
+   ========================================================================= */
+
+export function authzResponse(error: unknown): NextResponse | null {
+  if (error instanceof AuthenticationError) {
+    return NextResponse.json(
+      { message: 'Unauthenticated' },
+      { status: 401, headers: { 'Cache-Control': 'no-store, max-age=0' } },
+    );
+  }
+
+  if (error instanceof ForbiddenReferenceError) {
+    return NextResponse.json(
+      {
+        message: `Invalid ${error.field}`,
+        errors: { [error.field]: ['This value is not available to you.'] },
+      },
+      { status: 403 },
+    );
+  }
+
+  if (error instanceof InactiveReferenceError) {
+    return NextResponse.json(
+      {
+        message: `Inactive ${error.field}`,
+        errors: { [error.field]: ['This life area is not active.'] },
+      },
+      { status: 400 },
+    );
+  }
+
+  return null;
 }

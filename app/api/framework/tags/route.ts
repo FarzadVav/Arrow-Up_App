@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
-import { serializeFrameworkTag } from '@/features/framework/repositories';
-import { CreateFrameworkTagSchema } from '@/features/framework/types';
-import { parseLifeAreaSlug } from '@/features/general/lib/lifeAreaSlug';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
+import { serializeFrameworkTag } from '@/features/framework/api/repository';
+import { CreateFrameworkTagSchema } from '@/features/framework/lib/types';
+import { parseLifeAreaSlug } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

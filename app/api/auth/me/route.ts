@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCurrentUserQuery } from "@/features/auth/queries";
+import { getCurrentUserQuery } from "@/features/auth/api/queries";
 
 export async function GET() {
   try {

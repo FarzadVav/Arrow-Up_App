@@ -1,6 +1,6 @@
 import { WifiOff } from "lucide-react";
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import OfflineRetryBtn from "@/features/general/components/module/OfflineRetryBtn/OfflineRetryBtn";
+import OfflineRetryBtn from "@/features/general/components/modules/OfflineRetryBtn/OfflineRetryBtn";
 
 export default async function OfflinePage() {
   const { t } = await getTranslations();

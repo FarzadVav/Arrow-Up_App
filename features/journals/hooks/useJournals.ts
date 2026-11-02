@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { Journal, JournalCategory } from '../types';
+import type { Journal, JournalCategory } from '../lib/types';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

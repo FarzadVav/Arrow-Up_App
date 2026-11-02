@@ -5,7 +5,7 @@ import { type ReactNode } from "react";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import CardView from "@/features/general/components/ui/CardView/CardView";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { cn } from "cn";
 
 export interface CardDrawerProps {

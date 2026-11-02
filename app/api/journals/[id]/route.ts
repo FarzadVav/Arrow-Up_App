@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getJournalByIdQuery } from '@/features/journals/queries';
-import { serializeJournal } from '@/features/journals/repositories';
-import { UpdateJournalSchema } from '@/features/journals/types';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { getJournalByIdQuery } from '@/features/journals/api/queries';
+import { serializeJournal } from '@/features/journals/api/repository';
+import { UpdateJournalSchema } from '@/features/journals/lib/types';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { serializeFramework } from '@/features/framework/repositories';
-import { UpdateFrameworkSchema } from '@/features/framework/types';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { serializeFramework } from '@/features/framework/api/repository';
+import { UpdateFrameworkSchema } from '@/features/framework/lib/types';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

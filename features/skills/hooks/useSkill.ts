@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from 'swr';
-import type { Skill } from '../types';
+import type { Skill } from '../lib/types';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

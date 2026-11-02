@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "cn";
-import { toEditorHtml } from "@/features/general/lib/richText";
+import { toEditorHtml } from "@/features/general/lib/utils";
 
 type RichTextViewerProps = {
   content: string | null | undefined;

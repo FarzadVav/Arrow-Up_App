@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from 'swr';
-import type { Framework } from '../types';
+import type { Framework } from '../lib/types';
 
 const fetcher = async (url: string) => {
   const res = await fetch(url);

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { serializeSkill } from '@/features/skills/repositories';
-import { UpdateSkillSchema } from '@/features/skills/types';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { serializeSkill } from '@/features/skills/api/repository';
+import { UpdateSkillSchema } from '@/features/skills/lib/types';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

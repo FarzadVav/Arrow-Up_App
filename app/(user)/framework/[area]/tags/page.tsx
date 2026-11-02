@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-import FrameworkTagsList from "@/features/framework/components/FrameworkTagsList/FrameworkTagsList";
-import { parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import FrameworkTagsList from "@/features/framework/components/modules/FrameworkTagsList/FrameworkTagsList";
+import { parseLifeAreaSlug } from "@/features/general/lib/utils";
 
 type PageProps = {
   params: Promise<{ area: string }>;

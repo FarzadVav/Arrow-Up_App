@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { decrypt } from "@/features/auth/lib/session";
+import { decrypt } from "@/features/auth/lib/utils";
 
 const publicRoutes = ["/login", "/offline", "/language"];
 

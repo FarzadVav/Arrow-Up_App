@@ -1,7 +1,7 @@
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import LoginForm from "@/features/auth/components/LoginForm/LoginForm";
-import ThemeSwitcher from "@/features/general/components/module/ThemeSwitcher/ThemeSwitcher";
-import LocaleSwitcher from "@/features/general/components/module/LocaleSwitcher/LocaleSwitcher";
+import LoginForm from "@/features/auth/components/modules/LoginForm/LoginForm";
+import ThemeSwitcher from "@/features/general/components/modules/ThemeSwitcher/ThemeSwitcher";
+import LocaleSwitcher from "@/features/general/components/modules/LocaleSwitcher/LocaleSwitcher";
 
 export default async function LoginPage() {
   const { t } = await getTranslations();

@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { JournalsStats } from '../queries';
+import type { JournalsStats } from '../lib/types';
 
 const statsFetcher = async (url: string) => {
   const res = await fetch(url);

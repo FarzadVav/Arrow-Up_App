@@ -1,0 +1,1 @@
+export const DEFAULT_SKILL_PAGE_SIZE = 20;

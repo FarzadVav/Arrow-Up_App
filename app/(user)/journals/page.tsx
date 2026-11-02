@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 
-import TopBar from "@/features/general/components/static/TopBar/TopBar";
-import PageActionBtn from "@/features/general/components/module/PageActionBtn/PageActionBtn";
-import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import PageItemsWrapper from "@/features/general/components/static/PageItemsWrapper/PageItemsWrapper";
-import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
-import JournalsCategoryList from "@/features/journals/components/JournalsCategoryList/JournalsCategoryList";
+import TopBar from "@/features/general/components/statics/TopBar/TopBar";
+import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
+import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
+import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
+import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import JournalsCategoryList from "@/features/journals/components/statics/JournalsCategoryList/JournalsCategoryList";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
-import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 
 async function JournalsPage() {
   const { t } = await getTranslations();

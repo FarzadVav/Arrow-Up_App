@@ -22,22 +22,22 @@ import {
   HabitHistory,
   HabitTag,
 } from './entities';
-import { UserRepository } from '@/features/auth/repositories';
+import { UserRepository } from '@/features/auth/api/repository';
 import {
   TodoRepository,
   TodoActionRepository,
   TodoDisciplineRepository,
-} from '@/features/todos/repositories';
+} from '@/features/todos/api/repository';
 import {
   JournalRepository,
   JournalTagRepository,
-} from '@/features/journals/repositories';
-import { LifeAreaRepository } from '@/features/life-areas/repositories';
-import { SkillRepository, SkillTagRepository } from '@/features/skills/repositories';
+} from '@/features/journals/api/repository';
+import { LifeAreaRepository } from '@/features/life-areas/api/repository';
+import { SkillRepository, SkillTagRepository } from '@/features/skills/api/repository';
 import {
   FrameworkRepository,
   FrameworkTagRepository,
-} from '@/features/framework/repositories';
+} from '@/features/framework/api/repository';
 
 export interface Services {
   orm: MikroORM;

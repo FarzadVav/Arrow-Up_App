@@ -7,7 +7,7 @@ import Field from "../Field";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
 export type SelectDialogItem<T = string | number> = {
   value: T;

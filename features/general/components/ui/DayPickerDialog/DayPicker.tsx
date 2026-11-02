@@ -3,7 +3,7 @@
 import { ComponentProps } from "react";
 import { DayPicker as PersianDayPicker, enUS } from "@daypicker/persian";
 import { DayPicker as GregorianDayPicker } from "@daypicker/react";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import "@daypicker/react/style.css";
 import "./datepicker.css";
 

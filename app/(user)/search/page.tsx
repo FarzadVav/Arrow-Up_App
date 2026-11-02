@@ -1,8 +1,8 @@
-import PageWrapper from "@/features/general/components/static/PageWrapper/PageWrapper";
-import TopBar from "@/features/general/components/static/TopBar/TopBar";
+import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
+import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
-import HelpDialog from "@/features/general/components/module/HelpDialog/HelpDialog";
+import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 
 async function SearchPage() {
   const { t } = await getTranslations();

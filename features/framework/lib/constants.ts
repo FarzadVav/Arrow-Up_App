@@ -1,0 +1,1 @@
+export const DEFAULT_FRAMEWORK_PAGE_SIZE = 20;

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getJournalsStatsQuery } from '@/features/journals/queries';
-import { authzResponse } from '@/features/general/lib/api/respond';
+import { getJournalsStatsQuery } from '@/features/journals/api/queries';
+import { authzResponse } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

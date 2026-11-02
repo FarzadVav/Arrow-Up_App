@@ -7,7 +7,7 @@ import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import Placeholder from "@tiptap/extension-placeholder";
 
 import { RichTextToolbar } from "./RichTextToolbar";
-import { toEditorHtml } from "@/features/general/lib/richText";
+import { toEditorHtml } from "@/features/general/lib/utils";
 
 export type RichTextEditorProps = {
   value: string;

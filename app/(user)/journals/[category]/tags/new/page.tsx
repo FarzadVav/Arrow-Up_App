@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { JOURNAL_CATEGORIES } from "@/features/journals/types";
+import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
 import { getTranslations } from "@/features/general/lib/i18n/server";
-import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
-import JournalTagForm from "@/features/journals/components/JournalTagForm/JournalTagForm";
+import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import { JournalTagForm } from "@/features/journals/components/modules/JournalTagForm/JournalTagForm";
 
 type PageProps = {
   params: Promise<{ category: string }>;

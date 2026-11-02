@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { SkillTag } from '../types';
+import type { SkillTag } from '../lib/types';
 
 /**
  * lifeAreaId undefined fetches every tag, null scopes to the General area.

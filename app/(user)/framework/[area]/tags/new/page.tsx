@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
-import ConnectivityFallback from "@/features/general/components/module/ConnectivityFallback/ConnectivityFallback";
-import FrameworkTagForm from "@/features/framework/components/FrameworkTagForm/FrameworkTagForm";
-import { parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import ConnectivityFallback from "@/features/general/components/modules/ConnectivityFallback/ConnectivityFallback";
+import FrameworkTagForm from "@/features/framework/components/modules/FrameworkTagForm/FrameworkTagForm";
+import { parseLifeAreaSlug } from "@/features/general/lib/utils";
 import { getTranslations } from "@/features/general/lib/i18n/server";
 
 type PageProps = {

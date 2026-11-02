@@ -5,9 +5,9 @@ import { Dialog as BaseUIDialog } from "@base-ui/react";
 import { type Editor } from "@tiptap/react";
 import { Undo2Icon, Redo2Icon } from "lucide-react";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { RichTextEditor } from "./RichTextEditor";
-import { isRichTextEmpty } from "@/features/general/lib/richText";
+import { isRichTextEmpty } from "@/features/general/lib/utils";
 
 export type RichTextDialogProps = {
   open: boolean;

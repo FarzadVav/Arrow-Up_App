@@ -1,6 +1,6 @@
 'use client';
 
-import { useLocale } from "@/features/general/components/module/LocaleProvider/LocaleProvider";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { useLifeAreas } from "./useLifeAreas";
 
 /**

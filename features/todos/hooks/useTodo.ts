@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { Todo } from '../types';
+import type { Todo } from '../lib/types';
 
 const todoFetcher = async (url: string) => {
   const res = await fetch(url);

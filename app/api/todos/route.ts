@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { TodoType as DbTodoType } from '@/db/entities/enums';
-import { getTodosQuery } from '@/features/todos/queries';
-import { serializeTodo } from '@/features/todos/repositories';
-import { CreateTodoSchema, TodoType } from '@/features/todos/types';
-import { requireUserId } from '@/features/auth/lib/actor';
-import { authzResponse } from '@/features/general/lib/api/respond';
-import { checkCostCapacity } from '@/features/general/lib/costCapacity';
+import { getTodosQuery } from '@/features/todos/api/queries';
+import { serializeTodo } from '@/features/todos/api/repository';
+import { CreateTodoSchema, TodoType } from '@/features/todos/lib/types';
+import { requireUserId } from '@/features/auth/lib/utils';
+import { authzResponse } from '@/features/general/lib/utils';
+import { checkCostCapacity } from '@/features/general/lib/utils';
 
 export const dynamic = 'force-dynamic';
 

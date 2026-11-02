@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
-import SkillTagsList from "@/features/skills/components/SkillTagsList/SkillTagsList";
-import { parseLifeAreaSlug } from "@/features/general/lib/lifeAreaSlug";
+import SkillTagsList from "@/features/skills/components/modules/SkillTagsList/SkillTagsList";
+import { parseLifeAreaSlug } from "@/features/general/lib/utils";
 
 type PageProps = {
   params: Promise<{ area: string }>;

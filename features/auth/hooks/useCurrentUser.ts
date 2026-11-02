@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import type { AuthUser } from '../lib/definitions';
+import type { AuthUser } from '../lib/types';
 
 const fetcher = async (url: string): Promise<{ user: AuthUser | null }> => {
   const res = await fetch(url, {

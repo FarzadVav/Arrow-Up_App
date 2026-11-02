@@ -1,0 +1,1 @@
+export const LIFE_AREA_DEFAULT_DIFFICULTY = 1;

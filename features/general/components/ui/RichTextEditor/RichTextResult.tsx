@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "cn";
-import { isRichTextEmpty, toEditorHtml } from "@/features/general/lib/richText";
+import { isRichTextEmpty, toEditorHtml } from "@/features/general/lib/utils";
 
 export type RichTextResultProps = {
   content?: string | null;
