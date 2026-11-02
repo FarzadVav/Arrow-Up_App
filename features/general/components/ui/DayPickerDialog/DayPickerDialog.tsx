@@ -1,12 +1,13 @@
 "use client";
 
+import { cn } from "cn";
+import { enUS } from "@daypicker/persian";
 import { ReactElement, useState } from "react";
 import { CalendarDaysIcon } from "lucide-react";
-import { enUS } from "@daypicker/persian";
 
+import DayPicker, { DayPickerProps } from "./DayPicker";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import DayPicker, { DayPickerProps } from "./DayPicker";
 import { formatPersianDate as formatPersianDateUtil } from "@/features/general/lib/utils";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
@@ -17,7 +18,6 @@ export function formatPersianDate(date: Date | null): string {
 export type DayPickerDialogProps = {
   value: Date | null;
   onChange: (date: Date | null) => void;
-  allowClear?: boolean;
   trigger?: ReactElement;
   nativeButton?: boolean;
   open?: boolean;
@@ -35,7 +35,6 @@ export type DayPickerDialogProps = {
 function LocalDayPickerDialog({
   value,
   onChange,
-  allowClear = false,
   trigger,
   nativeButton,
   open,
@@ -44,7 +43,7 @@ function LocalDayPickerDialog({
   title,
   description,
   showIcon = false,
-  className = "w-full justify-start rounded-component",
+  className,
   dir,
   locale = enUS,
   formatDate,
@@ -74,9 +73,13 @@ function LocalDayPickerDialog({
   const computedTrigger = trigger || (
     <Button
       type="button"
+      size={"full"}
       variant="outline"
-      className={`${className} ${showIcon ? "gap-xs" : ""}`}>
-      {showIcon && <CalendarDaysIcon className="opacity-70" />}
+      className={cn(
+        "justify-between",
+        className
+      )}>
+      {showIcon && <CalendarDaysIcon />}
       <span>
         {resolvedLabel}: {formatDateValue(value)}
       </span>
@@ -86,8 +89,8 @@ function LocalDayPickerDialog({
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={handleOpenChange}
       trigger={computedTrigger}
+      onOpenChange={handleOpenChange}
       nativeButton={nativeButton}>
       {title ? (
         <>
@@ -105,31 +108,19 @@ function LocalDayPickerDialog({
       )}
 
       <DayPicker
-        dir={effectiveDir}
-        locale={locale}
         value={value}
+        locale={locale}
+        dir={effectiveDir}
         onChange={handleSelectDate}
       />
 
       <div className="actions-footer">
-        {allowClear && value !== null ? (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSelectDate(null)}>
-            {t("common.clear")}
-          </Button>
-        ) : (
-          <div />
-        )}
-
         <Dialog.Close
           render={
             <Button
               type="button"
-              variant="ghost"
               onClick={() => handleOpenChange(false)}>
-              {t("common.close")}
+              {t("common.confirm")}
             </Button>
           }
         />

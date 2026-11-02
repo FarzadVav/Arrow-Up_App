@@ -1,11 +1,13 @@
 "use client";
 
-import { ComponentProps } from "react";
-import { DayPicker as PersianDayPicker, enUS } from "@daypicker/persian";
-import { DayPicker as GregorianDayPicker } from "@daypicker/react";
-import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import "@daypicker/react/style.css";
+import { ComponentProps } from "react";
+import { DayPicker as GregorianDayPicker } from "@daypicker/react";
+import { DayPicker as PersianDayPicker, enUS } from "@daypicker/persian";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+
 import "./datepicker.css";
+import { cn } from "cn";
 
 export type DayPickerProps = Omit<
   ComponentProps<typeof PersianDayPicker>,
@@ -16,11 +18,11 @@ export type DayPickerProps = Omit<
 };
 
 export default function DayPicker({
+  dir,
   value,
   onChange,
-  animate = true,
-  dir,
   className,
+  animate = true,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   locale: _locale,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -38,7 +40,7 @@ export default function DayPicker({
     onSelect: (date: Date | undefined) => {
       onChange?.(date ?? null);
     },
-    className,
+    className: cn("mx-auto", className),
     ...rest,
   };
 

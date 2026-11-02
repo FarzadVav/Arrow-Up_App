@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useActionState } from "react";
+import { useEffect, useState, useActionState, useMemo } from "react";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
 import { Form } from "@base-ui/react";
@@ -87,21 +87,30 @@ function TagSelect({
   const { t } = useLocale();
   const { tags } = useFrameworkTags(lifeAreaId);
 
-  if (tags.length === 0) {
-    return null;
-  }
+  const items = useMemo(() => {
+    const list = [{ value: "none", label: t("common.notSet") }];
+    const seen = new Set<string>(["none"]);
 
-  const items = [
-    { value: "none", label: t("common.notSet") },
-    ...tags.map((tag) => ({ value: tag.title, label: tag.title })),
-  ];
+    for (const tag of tags) {
+      const lower = tag.title.toLowerCase();
+      if (!seen.has(lower)) {
+        seen.add(lower);
+        list.push({ value: tag.title, label: tag.title });
+      }
+    }
+
+    if (value && value !== "none" && !seen.has(value.toLowerCase())) {
+      list.push({ value, label: value });
+    }
+
+    return list;
+  }, [tags, value, t]);
 
   return (
     <Field.Root name="tag">
       <Field.Label className="mb-xs font-bold">{t("common.tag")}</Field.Label>
 
       <SelectDialog
-        name="tagSelect"
         items={items}
         value={value ?? "none"}
         onChange={(next) =>
@@ -237,8 +246,10 @@ export function FrameworkForm() {
           <LifeAreaSelect
             value={lifeAreaId}
             onChange={(next) => {
-              setLifeAreaId(next);
-              setTag(null);
+              if (next !== lifeAreaId) {
+                setLifeAreaId(next);
+                setTag(null);
+              }
             }}
           />
 

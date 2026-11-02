@@ -1,10 +1,11 @@
 "use client";
 
-import { ReactElement, useState } from "react";
 import { ClockIcon } from "lucide-react";
+import { ReactElement, useState } from "react";
+
+import TimePicker, { TimePickerProps } from "./TimePicker";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
-import TimePicker, { TimePickerProps } from "./TimePicker";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
 export type TimePickerDialogProps = {
@@ -87,44 +88,35 @@ function LocalTimePickerDialog({
       onOpenChange={handleOpenChange}
       trigger={computedTrigger}
       nativeButton={nativeButton}>
-      <div className="w-80 max-w-full space-y-sm">
-        <div>
-          <Dialog.Title className="title">{resolvedTitle}</Dialog.Title>
-          {resolvedDescription ? (
-            <Dialog.Description className="sub-text mt-xs">
-              {resolvedDescription}
-            </Dialog.Description>
-          ) : null}
-        </div>
+      <Dialog.Title className="title">{resolvedTitle}</Dialog.Title>
+      {resolvedDescription ? (
+        <Dialog.Description className="sub-text">
+          {resolvedDescription}
+        </Dialog.Description>
+      ) : null}
 
-        <TimePicker value={draftTime} onChange={setDraftTime} />
+      <TimePicker value={draftTime} onChange={setDraftTime} />
 
-        <div className="flex items-center justify-between gap-sm pt-xs">
-          {allowClear && value ? (
-            <Button type="button" variant="outline" onClick={handleClear}>
-              {t("common.clear")}
+      <div className="actions-footer">
+        {allowClear && value ? (
+          <Button type="button" variant="outline" onClick={handleClear}>
+            {t("common.clear")}
+          </Button>
+        ) : null}
+        <Dialog.Close
+          render={
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => handleOpenChange(false)}>
+              {t("common.cancel")}
             </Button>
-          ) : (
-            <div />
-          )}
+          }
+        />
 
-          <div className="flex items-center gap-xs">
-            <Dialog.Close
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => handleOpenChange(false)}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
-
-            <Button type="button" variant="primary" onClick={handleConfirm}>
-              {t("common.confirm")}
-            </Button>
-          </div>
-        </div>
+        <Button type="button" variant="primary" onClick={handleConfirm}>
+          {t("common.confirm")}
+        </Button>
       </div>
     </Dialog>
   );

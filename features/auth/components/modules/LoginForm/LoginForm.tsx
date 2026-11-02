@@ -45,7 +45,6 @@ export function LoginForm() {
         endAdornment={
           <Button
             type="button"
-            tabIndex={-1}
             variant="ghost"
             size={"square"}
             className="h-full w-auto aspect-square"

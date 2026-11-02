@@ -58,7 +58,6 @@ function TypeSelect({
       </Field.Label>
 
       <SelectDialog
-        name="typeSelect"
         items={items}
         value={value ?? undefined}
         onChange={(nextValue) => {
@@ -86,34 +85,37 @@ function TagSelect({
   onChange: (value: string | null) => void;
 }) {
   const { t } = useLocale();
-  const { tags: dbTags } = useJournalTags(category ?? undefined);
+  const { tags: dbTags } = useJournalTags(
+    category ?? undefined,
+  );
   const staticTags = getCategoryTags(category);
 
   const availableTags = useMemo(() => {
     const names = new Set<string>();
     staticTags.forEach((tg) => names.add(tg));
     dbTags.forEach((tg) => names.add(tg.title));
+    if (value && value !== "none") {
+      names.add(value);
+    }
     return Array.from(names);
-  }, [staticTags, dbTags]);
+  }, [staticTags, dbTags, value]);
 
-  if (availableTags.length === 0) {
-    return null;
-  }
-
-  const items = [
-    { value: "none", label: t("common.notSet") },
-    ...availableTags.map((tg) => ({
-      value: tg,
-      label: tg,
-    })),
-  ];
+  const items = useMemo(
+    () => [
+      { value: "none", label: t("common.notSet") },
+      ...availableTags.map((tg) => ({
+        value: tg,
+        label: tg,
+      })),
+    ],
+    [availableTags, t],
+  );
 
   return (
     <Field.Root name="tag">
       <Field.Label className="mb-xs font-bold">{t("common.tag")}</Field.Label>
 
       <SelectDialog
-        name="tagSelect"
         items={items}
         value={value ?? "none"}
         onChange={(nextValue) => {
@@ -265,9 +267,8 @@ export function JournalForm() {
           <TypeSelect
             value={type}
             onChange={(newType) => {
-              setType(newType);
-              const available = getCategoryTags(newType);
-              if (tag && !available.includes(tag)) {
+              if (newType !== type) {
+                setType(newType);
                 setTag(null);
               }
             }}

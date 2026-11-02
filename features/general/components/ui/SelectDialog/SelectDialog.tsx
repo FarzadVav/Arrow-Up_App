@@ -3,8 +3,8 @@
 import { cn } from "cn";
 import { ReactNode, useMemo, useState } from "react";
 import { CheckIcon, Maximize2Icon, SearchIcon, XIcon } from "lucide-react";
-import Field from "../Field";
 
+import Field from "../Field";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
@@ -59,9 +59,11 @@ function checkSelected<T>(
   if (target === null || target === undefined) return false;
   if (multiple) {
     if (!Array.isArray(target)) return false;
-    return target.some((v) => String(v) === String(val));
+    return target.some(
+      (v) => String(v).toLowerCase() === String(val).toLowerCase(),
+    );
   }
-  return String(target) === String(val);
+  return String(target).toLowerCase() === String(val).toLowerCase();
 }
 
 export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
@@ -137,9 +139,13 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
 
   const handleToggleMultiple = (itemValue: T) => {
     setStagedValues((prev) => {
-      const exists = prev.some((v) => String(v) === String(itemValue));
+      const exists = prev.some(
+        (v) => String(v).toLowerCase() === String(itemValue).toLowerCase(),
+      );
       if (exists) {
-        return prev.filter((v) => String(v) !== String(itemValue));
+        return prev.filter(
+          (v) => String(v).toLowerCase() !== String(itemValue).toLowerCase(),
+        );
       } else {
         return [...prev, itemValue];
       }
@@ -151,7 +157,6 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
     handleOpenChange(false);
   };
 
-  // Compute label shown in the trigger
   const displayLabel = useMemo(() => {
     if (renderValue) {
       return renderValue(value);
@@ -175,12 +180,14 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
       checkSelected(item.value, value as T | null | undefined, false),
     );
     if (!selected) {
+      if (value != null && String(value) !== "none" && String(value).trim() !== "") {
+        return String(value);
+      }
       return placeholder || t("common.select");
     }
     return selected.label;
   }, [items, value, multiple, renderValue, placeholder, t]);
 
-  // Filter items by search query
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return items;
     const q = searchQuery.toLowerCase().trim();
@@ -211,18 +218,6 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           {title || placeholder || t("common.select")}
         </Dialog.Title>
 
-        <Dialog.Close
-          render={
-            <Button
-              size={"square"}
-              type="button"
-              variant="ghost"
-              aria-label={t("common.close")}>
-              <XIcon />
-            </Button>
-          }
-        />
-
         {description ? (
           <Dialog.Description className="sub-text">
             {description}
@@ -233,17 +228,18 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
           <Field
             type="text"
             value={searchQuery}
+            startAdornment={<SearchIcon />}
             placeholder={t("common.search")}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startAdornment={<SearchIcon />}
             endAdornment={
               searchQuery ? (
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => setSearchQuery("")}
                   aria-label={t("common.clear")}
-                  className="h-auto w-auto p-xs rounded-none opacity-50 hover:opacity-100 hover:bg-transparent">
+                  onClick={() => setSearchQuery("")}
+                  className="h-full w-auto aspect-square"
+                >
                   <XIcon />
                 </Button>
               ) : null
@@ -252,7 +248,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         )}
 
         {multiple && items.length > 2 && (
-          <div className="flex items-center justify-between text-xs px-xs">
+          <div className="flex items-center justify-between">
             <span>
               {stagedValues.length} / {items.length} {t("common.selected")}
             </span>
@@ -264,16 +260,13 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   setStagedValues(
                     items.filter((i) => !i.disabled).map((i) => i.value),
                   )
-                }
-                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent">
+                }>
                 {t("common.all")}
               </Button>
-              <span>·</span>
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setStagedValues([])}
-                className="h-auto w-auto p-0 rounded-none underline hover:bg-transparent">
+                onClick={() => setStagedValues([])}>
                 {t("common.clear")}
               </Button>
             </div>
@@ -282,23 +275,26 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
 
         <div className="space-y-xs">
           {filteredItems.length === 0 ? (
-            <div className="text-center">{t("common.noResults")}</div>
+            <p className="text-center sub-text">
+              {t("common.noResults")}
+            </p>
           ) : (
             filteredItems.map((item) => {
               const isSelectedItem = multiple
                 ? checkSelected(item.value, stagedValues, true)
                 : checkSelected(
-                    item.value,
-                    value as T | null | undefined,
-                    false,
-                  );
+                  item.value,
+                  value as T | null | undefined,
+                  false,
+                );
 
               return (
                 <Button
                   type="button"
+                  size={"full"}
                   key={String(item.value)}
                   disabled={item.disabled}
-                  className={"w-full justify-between"}
+                  className={"justify-between"}
                   variant={isSelectedItem ? "primary" : "outline"}
                   onClick={() => {
                     if (multiple) {
@@ -308,30 +304,30 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                     }
                   }}>
                   <span className="truncate">{item.label}</span>
-                  {isSelectedItem && <CheckIcon className="shrink-0" />}
+                  {isSelectedItem && <CheckIcon />}
                 </Button>
               );
             })
           )}
         </div>
 
-        {multiple && (
-          <div className="flex items-center gap-sm *:w-1/2">
-            <Dialog.Close
-              render={
-                <Button
-                  type="button"
-                  variant="card"
-                  onClick={() => handleOpenChange(false)}>
-                  {t("common.cancel")}
-                </Button>
-              }
-            />
+        <div className="actions-footer">
+          <Dialog.Close
+            render={
+              <Button
+                type="button"
+                variant="card"
+                onClick={() => handleOpenChange(false)}>
+                {t("common.cancel")}
+              </Button>
+            }
+          />
+          {multiple && (
             <Button type="button" onClick={handleConfirmMultiple}>
               {t("common.confirm")}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </Dialog>
 
       {name ? (

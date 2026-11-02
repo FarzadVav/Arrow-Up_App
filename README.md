@@ -1,18 +1,12 @@
 # **Bug & Refactor**
 
-### AI
-
-- User can't set a tag in the framework, skills, journals create/edit form.
-- Review all translations; shorten or combine them where possible. Ensure the Persian and English items are perfectly aligned. Remove any unused elements, and replace any hard-coded text throughout the project with translations.
-
-### Manually
-
 - New Reusable components (Card, Text, Row, List)
 - Reusable components
 - Folder and file structured
 - Back redirection to prev active tab
 - Optimize translations
 - Optimize helps
+- Optimize UI
 
 ---
 
