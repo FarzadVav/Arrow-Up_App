@@ -243,7 +243,7 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
                   variant="ghost"
                   onClick={() => setSearchQuery("")}
                   aria-label={t("common.clear")}
-                  className="h-auto w-auto p-0.5 rounded-none opacity-50 hover:opacity-100 hover:bg-transparent">
+                  className="h-auto w-auto p-xs rounded-none opacity-50 hover:opacity-100 hover:bg-transparent">
                   <XIcon />
                 </Button>
               ) : null
@@ -252,11 +252,11 @@ export function SelectDialog<T = string | number>(props: SelectDialogProps<T>) {
         )}
 
         {multiple && items.length > 2 && (
-          <div className="flex items-center justify-between text-xs px-1">
+          <div className="flex items-center justify-between text-xs px-xs">
             <span>
               {stagedValues.length} / {items.length} {t("common.selected")}
             </span>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-xs">
               <Button
                 type="button"
                 variant="ghost"

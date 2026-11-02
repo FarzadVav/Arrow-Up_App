@@ -94,7 +94,7 @@ const LocalNumberField = forwardRef<HTMLDivElement, NumberFieldProps>(
         {...props}
       >
         {label ? (
-          <BaseUINumberField.ScrubArea className="mb-1 cursor-ew-resize font-bold select-none">
+          <BaseUINumberField.ScrubArea className="mb-xs cursor-ew-resize font-bold select-none">
             <label
               htmlFor={id}
               className={cn(

@@ -43,7 +43,7 @@ export function FrameworkCard({
       }
       editHref={`/framework/new?editId=${framework.id}`}
       content={
-        <div className="space-y-4">
+        <div className="space-y-sm">
           <div className="flex items-center gap-sm flex-wrap sub-text">
             <span className="flex items-center gap-xs">
               <CompassIcon />
@@ -61,13 +61,13 @@ export function FrameworkCard({
           {framework.description && (
             <RichTextResult
               content={framework.description}
-              containerClassName="rounded-component bg-background/60 p-4"
+              containerClassName="rounded-component bg-background/60 p-sm"
             />
           )}
 
           {/* Recent History summary */}
           {framework.history && framework.history.length > 0 && (
-            <div className="rounded-component bg-card p-4 space-y-sm">
+            <div className="rounded-component bg-card p-sm space-y-sm">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold">
                   {t("framework.historyTitle")}
@@ -85,10 +85,10 @@ export function FrameworkCard({
                   .map((entry) => (
                     <span
                       key={entry.id}
-                      className={`inline-flex items-center gap-1 px-xs py-1 rounded-md text-xs font-medium ${
+                      className={`inline-flex items-center gap-xs px-xs py-xs rounded-md text-xs font-medium ${
                         entry.isDone
                           ? "bg-foreground/10"
-                          : "bg-destructive/10 text-destructive line-through"
+                          : "bg-card-thick text-foreground/60 line-through"
                       }`}>
                       <CalendarDaysIcon />
                       <span>{formatDate(entry.date)}</span>
@@ -106,7 +106,7 @@ export function FrameworkCard({
           size={"square"}
           aria-label={t("common.delete")}
           onClick={() => onRequestDelete(framework.id)}>
-          <Trash2Icon className="text-destructive" />
+          <Trash2Icon />
         </Button>
       }
     />

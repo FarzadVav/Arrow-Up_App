@@ -139,10 +139,10 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               setActiveTag(id);
             }
           }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
-            <div className="w-full flex items-center justify-between pb-1 text-xs">
+            <div className="w-full flex items-center justify-between pb-xs text-xs">
               <span className="font-semibold">{title}</span>
               <span>
                 {filteredFrameworks.length} {t("profile.total")}
@@ -223,7 +223,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               type="submit"
               variant="primary"
               disabled={isDeleting || deleteTargetId === null}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              >
               {isDeleting ? (
                 <span className="flex items-center gap-xs">
                   <LoaderIcon className="animate-spin" />

@@ -55,7 +55,7 @@ function LifeAreaSelect({
 
   return (
     <Field.Root name="lifeAreaId">
-      <Field.Label className="mb-1 font-bold">
+      <Field.Label className="mb-xs font-bold">
         {t("lifeAreas.selectLifeArea")}
       </Field.Label>
 
@@ -70,7 +70,7 @@ function LifeAreaSelect({
         placeholder={t("lifeAreas.selectLifeArea")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -98,7 +98,7 @@ function TagSelect({
 
   return (
     <Field.Root name="tag">
-      <Field.Label className="mb-1 font-bold">{t("common.tag")}</Field.Label>
+      <Field.Label className="mb-xs font-bold">{t("common.tag")}</Field.Label>
 
       <SelectDialog
         name="tagSelect"
@@ -111,7 +111,7 @@ function TagSelect({
         placeholder={t("framework.selectTag")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -205,7 +205,7 @@ export function FrameworkForm() {
       </TopBar>
 
       {isEditMode && isHabitLoading && !framework ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-24" />
           <Skeleton className="h-12" />
@@ -247,7 +247,7 @@ export function FrameworkForm() {
           <Field.Root
             name="description"
             schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}>
-            <Field.Label className="mb-1 font-bold">
+            <Field.Label className="mb-xs font-bold">
               {t("common.description")}
             </Field.Label>
 
@@ -259,7 +259,7 @@ export function FrameworkForm() {
               title={t("common.description")}
             />
 
-            <Field.Error className="sub-text mt-0.5" />
+            <Field.Error className="sub-text mt-xs" />
           </Field.Root>
 
           <Field.FormError
@@ -293,7 +293,7 @@ export function FrameworkForm() {
               type="submit"
               variant="primary"
               disabled={isDeleting || !isEditMode}
-              className="bg-red-600">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

@@ -75,7 +75,7 @@ function LocalDayPickerDialog({
     <Button
       type="button"
       variant="outline"
-      className={`${className} ${showIcon ? "gap-2" : ""}`}>
+      className={`${className} ${showIcon ? "gap-xs" : ""}`}>
       {showIcon && <CalendarDaysIcon className="opacity-70" />}
       <span>
         {resolvedLabel}: {formatDateValue(value)}

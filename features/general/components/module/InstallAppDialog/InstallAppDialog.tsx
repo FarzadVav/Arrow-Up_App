@@ -89,38 +89,38 @@ export default function InstallAppDialog({
         </Dialog.Description>
 
         <div className="flex items-start gap-sm">
-          <Zap className="shrink-0 mt-0.5" />
+          <Zap className="shrink-0 mt-xs" />
           <div>
             <span className="font-medium">{t("install.standaloneTitle")}</span>
-            <span className=" ml-1">{t("install.standaloneDesc")}</span>
+            <span className=" ml-xs">{t("install.standaloneDesc")}</span>
           </div>
         </div>
 
         <div className="flex items-start gap-sm">
-          <Wifi className="shrink-0 mt-0.5" />
+          <Wifi className="shrink-0 mt-xs" />
           <div>
             <span className="font-medium">{t("install.offlineTitle")}</span>
-            <span className=" ml-1">{t("install.offlineDesc")}</span>
+            <span className=" ml-xs">{t("install.offlineDesc")}</span>
           </div>
         </div>
 
         <div className="flex items-start gap-sm">
-          <Sparkles className="shrink-0 mt-0.5" />
+          <Sparkles className="shrink-0 mt-xs" />
           <div>
             <span className="font-medium">{t("install.quickTitle")}</span>
-            <span className=" ml-1">{t("install.quickDesc")}</span>
+            <span className=" ml-xs">{t("install.quickDesc")}</span>
           </div>
         </div>
 
         {/* Device & Browser Specific Instructions / Status */}
         {installedSuccess ? (
-          <div className="flex items-center justify-center gap-2 py-sm rounded-component bg-card-thick font-semibold text-xs sm:text-sm">
+          <div className="flex items-center justify-center gap-xs py-sm rounded-component bg-card-thick font-semibold text-xs sm:text-sm">
             <CheckCircle2 className="shrink-0" />
             <span>{t("install.installedSuccess")}</span>
           </div>
         ) : isInstallable ? (
           <div className="rounded-component bg-card-thick/50 p-sm flex items-start gap-sm text-xs">
-            <Layers className="shrink-0 mt-0.5" />
+            <Layers className="shrink-0 mt-xs" />
             <p>
               {isMobile
                 ? t("install.mobileInstallReady")
@@ -128,7 +128,7 @@ export default function InstallAppDialog({
             </p>
           </div>
         ) : isIOS ? (
-          <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
+          <div className="rounded-component bg-background/60 p-sm space-y-xs text-xs">
             <p className="font-semibold text-xs">{t("install.iosTitle")}</p>
             <div className="flex items-center gap-sm">
               <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
@@ -144,7 +144,7 @@ export default function InstallAppDialog({
             </div>
           </div>
         ) : isAndroid || isMobile ? (
-          <div className="rounded-component bg-background/60 p-sm space-y-2 text-xs">
+          <div className="rounded-component bg-background/60 p-sm space-y-xs text-xs">
             <p className="font-semibold text-xs">{t("install.androidTitle")}</p>
             <div className="flex items-center gap-sm">
               <span className="size-6 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
@@ -161,7 +161,7 @@ export default function InstallAppDialog({
           </div>
         ) : (
           <div className="rounded-component bg-background/60 p-sm text-xs">
-            <p className="font-semibold mb-1">{t("install.desktopTitle")}</p>
+            <p className="font-semibold mb-xs">{t("install.desktopTitle")}</p>
             <p className="leading-relaxed">{t("install.desktopDesc")}</p>
           </div>
         )}

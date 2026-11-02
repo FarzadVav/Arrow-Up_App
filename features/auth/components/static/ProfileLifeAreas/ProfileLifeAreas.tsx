@@ -69,7 +69,7 @@ export function ProfileLifeAreas() {
           )}
 
           {notActiveLifeAreas.length > 0 && (
-            <div className="pt-1">
+            <div className="pt-xs">
               <CardDrawer
                 title={t("lifeAreas.notActiveTitle")}
                 icon={<ArchiveIcon />}

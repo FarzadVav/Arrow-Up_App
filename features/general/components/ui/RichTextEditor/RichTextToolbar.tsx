@@ -45,7 +45,7 @@ export function RichTextToolbar({ editor, className }: RichTextToolbarProps) {
   return (
     <div
       className={cn(
-        "sticky top-0 z-20 shrink-0 flex flex-wrap items-center gap-xs bg-card/90 px-sm py-2 backdrop-blur-md",
+        "sticky top-0 z-20 shrink-0 flex flex-wrap items-center gap-xs bg-card/90 px-sm py-xs backdrop-blur-md",
         className,
       )}
       role="toolbar"

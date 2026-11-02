@@ -53,7 +53,7 @@ function TypeSelect({
 
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">
+      <Field.Label className="mb-xs font-bold">
         {t("common.category")}
       </Field.Label>
 
@@ -71,7 +71,7 @@ function TypeSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -110,7 +110,7 @@ function TagSelect({
 
   return (
     <Field.Root name="tag">
-      <Field.Label className="mb-1 font-bold">{t("common.tag")}</Field.Label>
+      <Field.Label className="mb-xs font-bold">{t("common.tag")}</Field.Label>
 
       <SelectDialog
         name="tagSelect"
@@ -125,7 +125,7 @@ function TagSelect({
         placeholder={t("journals.selectTag")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -232,7 +232,7 @@ export function JournalForm() {
       </TopBar>
 
       {isEditMode && isJournalLoading && !journal ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-36" />
           <Skeleton className="h-12" />
@@ -325,7 +325,7 @@ export function JournalForm() {
               type="submit"
               variant="primary"
               disabled={isDeleting || !isEditMode}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

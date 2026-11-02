@@ -42,20 +42,20 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
         editHref={`/profile/new-life-area?editId=${lifeArea.id}`}
         badge={
           <span
-            className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
+            className="inline-flex items-center gap-xs rounded-full bg-card-thick px-xs py-xs text-xs font-semibold sub-text"
             title={`${t("lifeAreas.difficulty")}: ${costValue}`}>
             <GaugeIcon className="size-3.5" />
             <span>{costValue}</span>
           </span>
         }
         content={
-          <div className="space-y-4">
+          <div className="space-y-sm">
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="text-xs">{t("lifeAreas.difficulty")}</span>
               </div>
-              <p className="mt-2 font-medium">{costValue} / 10</p>
+              <p className="mt-xs font-medium">{costValue} / 10</p>
             </div>
 
             <RichTextResult
@@ -101,7 +101,7 @@ export function LifeAreaCard({ lifeArea }: LifeAreaCardProps) {
               type="submit"
               variant="primary"
               disabled={isDeleting}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? (
                 <span className="flex items-center gap-xs">
                   <LoaderIcon className="animate-spin" />

@@ -64,7 +64,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
           <div
             className={cn(
               "shrink-0 flex items-center justify-center",
-              (description || cardDate) && "mt-0.5",
+              (description || cardDate) && "mt-xs",
             )}>
             {icon}
           </div>
@@ -74,13 +74,13 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
           <div className="font-bold text-sm truncate leading-snug">{title}</div>
 
           {description && (
-            <div className="sub-text line-clamp-2 mt-0.5 leading-relaxed">
+            <div className="sub-text line-clamp-2 mt-xs leading-relaxed">
               {description}
             </div>
           )}
 
           {cardDate && (
-            <div className="sub-text mt-1 flex items-center gap-xs">
+            <div className="sub-text mt-xs flex items-center gap-xs">
               {cardDate}
             </div>
           )}

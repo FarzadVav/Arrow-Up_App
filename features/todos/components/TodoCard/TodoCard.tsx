@@ -60,14 +60,14 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       title={todo.title}
       description={todo.lifeArea?.title ?? t("common.notSet")}
       date={
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-xs">
           {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
           <span>{formatDeadline(todo.deadline, isDaily)}</span>
         </span>
       }
       badge={
         <span
-          className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
+          className="inline-flex items-center gap-xs rounded-full bg-card-thick px-xs py-xs text-xs font-semibold sub-text"
           title={`${costLabel}: ${costValue}`}>
           <GaugeIcon className="size-3.5" />
           <span>{costValue}</span>
@@ -80,66 +80,66 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
       }
       editHref={`/todos/new?editId=${todo.id}`}
       content={
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-sm">
+          <div className="grid grid-cols-2 gap-xs">
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <TagIcon />
                 <span>{t("common.type")}</span>
               </div>
-              <p className="mt-2 font-medium">{todo.type}</p>
+              <p className="mt-xs font-medium">{todo.type}</p>
             </div>
 
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
                 <span>{t("common.deadline")}</span>
               </div>
-              <p className="mt-2 font-medium">
+              <p className="mt-xs font-medium">
                 {formatDeadline(todo.deadline, isDaily)}
               </p>
             </div>
 
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <GaugeIcon className="size-4" />
                 <span className="truncate">{costLabel}</span>
               </div>
-              <p className="mt-2 font-medium">{costValue} / 10</p>
+              <p className="mt-xs font-medium">{costValue} / 10</p>
             </div>
 
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <CheckIcon />
                 <span>{t("common.status")}</span>
               </div>
               <p
-                className={`mt-2 font-medium ${todo.isDone ? "" : "sub-text"}`}>
+                className={`mt-xs font-medium ${todo.isDone ? "" : "sub-text"}`}>
                 {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
               </p>
             </div>
 
             <div className="col-span-2 rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <CompassIcon />
                 <span>{t("lifeAreas.title")}</span>
               </div>
-              <p className="mt-2 font-medium">
+              <p className="mt-xs font-medium">
                 {todo.lifeArea?.title ?? t("common.notSet")}
               </p>
             </div>
           </div>
 
           {todo.description && (
-            <section className="space-y-2">
-              <div className="flex items-center gap-2 sub-text">
+            <section className="space-y-xs">
+              <div className="flex items-center gap-xs sub-text">
                 <FileTextIcon />
                 <span className="font-bold">{t("common.description")}</span>
               </div>
 
               <RichTextResult
                 content={todo.description}
-                containerClassName="bg-background p-4"
+                containerClassName="bg-background p-sm"
               />
             </section>
           )}

@@ -72,7 +72,7 @@ function LocalTimePickerDialog({
     <Button
       type="button"
       variant="outline"
-      className={`${className} ${showIcon ? "gap-2" : ""}`}
+      className={`${className} ${showIcon ? "gap-xs" : ""}`}
     >
       {showIcon && <ClockIcon className="opacity-70" />}
       <span>
@@ -87,11 +87,11 @@ function LocalTimePickerDialog({
       onOpenChange={handleOpenChange}
       trigger={computedTrigger}
       nativeButton={nativeButton}>
-      <div className="w-80 max-w-full space-y-4">
+      <div className="w-80 max-w-full space-y-sm">
         <div>
           <Dialog.Title className="title">{resolvedTitle}</Dialog.Title>
           {resolvedDescription ? (
-            <Dialog.Description className="sub-text mt-1">
+            <Dialog.Description className="sub-text mt-xs">
               {resolvedDescription}
             </Dialog.Description>
           ) : null}
@@ -99,7 +99,7 @@ function LocalTimePickerDialog({
 
         <TimePicker value={draftTime} onChange={setDraftTime} />
 
-        <div className="flex items-center justify-between gap-sm pt-2">
+        <div className="flex items-center justify-between gap-sm pt-xs">
           {allowClear && value ? (
             <Button type="button" variant="outline" onClick={handleClear}>
               {t("common.clear")}
@@ -108,7 +108,7 @@ function LocalTimePickerDialog({
             <div />
           )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-xs">
             <Dialog.Close
               render={
                 <Button

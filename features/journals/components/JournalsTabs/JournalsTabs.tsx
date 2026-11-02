@@ -40,7 +40,7 @@ function JournalsTabs() {
     <SlideTabs
       tabs={tabs}
       activeId={activeTab}
-      headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
+      headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
       tabClassName="shrink-0 flex-none">
       <div className="w-full space-y-sm">
         {isLoading && currentJournals.length === 0 ? (

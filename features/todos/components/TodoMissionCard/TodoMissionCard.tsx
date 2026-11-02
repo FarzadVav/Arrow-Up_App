@@ -26,8 +26,8 @@ import { useLocale } from "@/features/general/components/module/LocaleProvider/L
 
 function Difficulty({ value }: { value: number }) {
   return (
-    <div className="space-y-1">
-      <div className="flex items-center gap-0.5">
+    <div className="space-y-xs">
+      <div className="flex items-center gap-xs">
         {Array.from({ length: 10 }).map((_, index) => (
           <div
             key={index}
@@ -92,7 +92,7 @@ function MissionActionRow({
             {action.title}
           </p>
 
-          <div className="mt-1 flex items-center gap-xs sub-text">
+          <div className="mt-xs flex items-center gap-xs sub-text">
             <CalendarIcon />
             <span>
               {action.deadline
@@ -152,7 +152,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
       title={todo.title}
       description={`${todo.lifeArea?.title ?? t("common.notSet")} • ${progress}%`}
       date={
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-xs">
           <CalendarDaysIcon />
           <span>
             {todo.deadline
@@ -163,7 +163,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
       }
       badge={
         <span
-          className="inline-flex items-center gap-1 rounded-full bg-card-thick px-2 py-0.5 text-xs font-semibold sub-text"
+          className="inline-flex items-center gap-xs rounded-full bg-card-thick px-xs py-xs text-xs font-semibold sub-text"
           title={`${t("missions.difficulty")}: ${todo.difficulty ?? 1}`}>
           <GaugeIcon className="size-3.5" />
           <span>{todo.difficulty ?? 1}</span>
@@ -176,7 +176,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
       }
       editHref={`/todos/new?editId=${todo.id}`}
       content={
-        <div className="space-y-4">
+        <div className="space-y-sm">
           <div className="rounded-component bg-background p-sm">
             <div className="flex items-center justify-between">
               <span className="font-bold">{t("common.progress")}</span>
@@ -197,19 +197,19 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
             <p className="sub-text mt-xs">{progress}% completed</p>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-xs">
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <CalendarDaysIcon />
                 <span className="text-xs">{t("common.deadline")}</span>
               </div>
-              <p className="mt-2 text-xs font-medium">
+              <p className="mt-xs text-xs font-medium">
                 {todo.deadline ? formatDate(todo.deadline) : t("common.notSet")}
               </p>
             </div>
 
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <GaugeIcon />
                 <span className="text-xs truncate">
                   {t("missions.difficulty")}
@@ -221,40 +221,40 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
             </div>
 
             <div className="rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <CheckIcon />
                 <span className="text-xs">{t("missions.actionsLabel")}</span>
               </div>
-              <p className="mt-2 text-xs font-medium">{totalActions}</p>
+              <p className="mt-xs text-xs font-medium">{totalActions}</p>
             </div>
 
             <div className="col-span-3 rounded-component bg-background p-sm">
-              <div className="flex items-center gap-2 sub-text">
+              <div className="flex items-center gap-xs sub-text">
                 <CompassIcon />
                 <span className="text-xs">{t("lifeAreas.title")}</span>
               </div>
-              <p className="mt-2 text-xs font-medium">
+              <p className="mt-xs text-xs font-medium">
                 {todo.lifeArea?.title ?? t("common.notSet")}
               </p>
             </div>
           </div>
 
           {todo.description && (
-            <section className="space-y-2">
-              <div className="flex items-center gap-2 sub-text">
+            <section className="space-y-xs">
+              <div className="flex items-center gap-xs sub-text">
                 <FileTextIcon />
                 <span className="font-bold">{t("common.description")}</span>
               </div>
 
               <RichTextResult
                 content={todo.description}
-                containerClassName="bg-background p-4"
+                containerClassName="bg-background p-sm"
               />
             </section>
           )}
 
           {totalActions > 0 && (
-            <section className="space-y-2">
+            <section className="space-y-xs">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold text-sm">
                   {t("missions.actionsLabel")}
@@ -264,7 +264,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
                 </span>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-xs">
                 {actions.map((action) => (
                   <MissionActionRow
                     key={action.id}
@@ -285,12 +285,12 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
                   </h3>
                   <span className="sub-text">{disciplines.length}</span>
                 </div>
-                <p className="sub-text mt-0.5">
+                <p className="sub-text mt-xs">
                   {t("missions.disciplinesSubtitle")}
                 </p>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-xs">
                 {disciplines.map((discipline) => (
                   <MissionDisciplineRow
                     key={discipline.id}

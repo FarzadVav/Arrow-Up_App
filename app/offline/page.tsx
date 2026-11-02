@@ -6,9 +6,9 @@ export default async function OfflinePage() {
   const { t } = await getTranslations();
 
   return (
-    <main className="min-h-screen w-full flex items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-container bg-card p-md sm:p-8 flex flex-col items-center text-center shadow-lg">
-        <div className="size-16 rounded-container bg-card-thick flex items-center justify-center mb-5">
+    <main className="min-h-screen w-full flex items-center justify-center p-sm">
+      <div className="w-full max-w-sm rounded-container bg-card p-md sm:p-md flex flex-col items-center text-center shadow-lg">
+        <div className="size-16 rounded-container bg-card-thick flex items-center justify-center mb-md">
           <WifiOff />
         </div>
 
@@ -16,7 +16,7 @@ export default async function OfflinePage() {
           {t("offline.title")}
         </h1>
 
-        <p className="mt-2 text-xs sm:text-sm leading-relaxed">
+        <p className="mt-xs text-xs sm:text-sm leading-relaxed">
           {t("offline.description")}
         </p>
 

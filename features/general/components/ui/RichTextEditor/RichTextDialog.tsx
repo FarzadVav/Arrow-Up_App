@@ -82,7 +82,7 @@ export function RichTextDialog({
         <BaseUIDialog.Popup className="fixed inset-0 z-big-overlay h-dvh w-screen bg-background transition-all duration-200 data-ending-style:opacity-0 data-ending-style:scale-95 data-starting-style:opacity-0 data-starting-style:scale-95">
           <div className="mx-auto max-w-3xl flex flex-col h-full overflow-hidden">
             {/* Header with Title and Undo/Redo in a justify-between flex */}
-            <header className="flex h-14 shrink-0 items-center justify-between bg-card/40 px-4 sm:px-md backdrop-blur-md">
+            <header className="flex h-14 shrink-0 items-center justify-between bg-card/40 px-sm sm:px-md backdrop-blur-md">
               <BaseUIDialog.Title className="text-base font-bold">
                 {title || t("editor.fullscreen") || t("common.content")}
               </BaseUIDialog.Title>
@@ -131,12 +131,12 @@ export function RichTextDialog({
             />
 
             {/* Footer with Close and Done actions */}
-            <footer className="flex h-14 shrink-0 items-center justify-end gap-sm bg-card/40 px-4 sm:px-md backdrop-blur-md [&>button]:w-1/2">
+            <footer className="flex h-14 shrink-0 items-center justify-end gap-sm bg-card/40 px-sm sm:px-md backdrop-blur-md [&>button]:w-1/2">
               <Button
                 type="button"
                 variant="card"
                 onClick={handleCancelAndClose}
-                className="h-9 px-4 text-sm font-medium">
+                className="h-9 px-sm text-sm font-medium">
                 <span>{t("common.close")}</span>
               </Button>
 
@@ -144,7 +144,7 @@ export function RichTextDialog({
                 type="button"
                 variant="primary"
                 onClick={handleSaveAndClose}
-                className="h-9 px-5 text-sm font-semibold">
+                className="h-9 px-md text-sm font-semibold">
                 <span>{t("common.done")}</span>
               </Button>
             </footer>

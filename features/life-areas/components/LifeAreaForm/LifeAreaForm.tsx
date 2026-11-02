@@ -44,7 +44,7 @@ function DifficultySelect({
 
   return (
     <Field.Root name="difficulty">
-      <Field.Label className="mb-1 font-bold">
+      <Field.Label className="mb-xs font-bold">
         {t("lifeAreas.difficulty")}
       </Field.Label>
 
@@ -58,7 +58,7 @@ function DifficultySelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -147,7 +147,7 @@ export function LifeAreaForm() {
       </TopBar>
 
       {isLoadingDetail ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-24" />
           <Skeleton className="h-12" />
@@ -247,7 +247,7 @@ export function LifeAreaForm() {
               type="submit"
               variant="primary"
               disabled={isDeleting || !editId}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

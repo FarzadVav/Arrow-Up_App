@@ -16,9 +16,9 @@ const switchTrackVariants = cva(
   {
     variants: {
       size: {
-        sm: "h-5 w-9 p-0.5",
-        md: "h-6 w-11 p-0.5",
-        lg: "h-7 w-13 p-0.5",
+        sm: "h-5 w-9 p-xs",
+        md: "h-6 w-11 p-xs",
+        lg: "h-7 w-13 p-xs",
       },
     },
     defaultVariants: {

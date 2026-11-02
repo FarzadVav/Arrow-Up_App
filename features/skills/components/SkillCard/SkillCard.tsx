@@ -32,7 +32,7 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
       }
       editHref={`/skills/new?editId=${skill.id}`}
       content={
-        <div className="space-y-4">
+        <div className="space-y-sm">
           <div className="flex items-center gap-sm flex-wrap sub-text">
             <span className="flex items-center gap-xs">
               <CompassIcon />
@@ -50,7 +50,7 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
           <RichTextResult
             content={skill.content}
             placeholder={t("skills.contentPlaceholder")}
-            containerClassName="bg-background/60 p-4"
+            containerClassName="bg-background/60 p-sm"
           />
         </div>
       }
@@ -61,7 +61,7 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
           size={"square"}
           aria-label={t("common.delete")}
           onClick={() => onRequestDelete(skill.id)}>
-          <Trash2Icon className="text-destructive" />
+          <Trash2Icon />
         </Button>
       }
     />

@@ -57,7 +57,7 @@ export function LifeAreaDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} className="w-full max-w-lg">
-      <Form action={formAction} errors={state?.errors} className="space-y-3">
+      <Form action={formAction} errors={state?.errors} className="space-y-sm">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="vision" value={vision} />
 

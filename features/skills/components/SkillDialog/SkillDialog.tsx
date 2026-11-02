@@ -85,7 +85,7 @@ export function SkillDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Form action={formAction} errors={state?.errors} className="space-y-3">
+      <Form action={formAction} errors={state?.errors} className="space-y-sm">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field type="hidden" name="content" value={content} />
         <Field

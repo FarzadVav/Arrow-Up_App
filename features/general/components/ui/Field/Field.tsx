@@ -115,11 +115,11 @@ const fieldInputVariants = cva(
           "h-10 rounded-component px-sm focus:rounded-[calc(var(--spacing)*10)]",
       },
       hasStartAdornment: {
-        true: "ps-12",
+        true: "ps-lg",
         false: "",
       },
       hasEndAdornment: {
-        true: "pe-12",
+        true: "pe-lg",
         false: "",
       },
     },
@@ -134,7 +134,7 @@ const fieldInputVariants = cva(
 const fieldLabelVariants = cva("block font-bold select-none", {
   variants: {
     size: {
-      sm: "text-xs mb-1",
+      sm: "text-xs mb-xs",
       md: "text-sm mb-xs",
     },
   },
@@ -144,7 +144,7 @@ const fieldLabelVariants = cva("block font-bold select-none", {
 });
 
 const fieldErrorVariants = cva(
-  "sub-text text-red-300 mt-1 block leading-normal [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-0.5",
+  "sub-text mt-xs block leading-normal [&_ul]:list-disc [&_ul]:list-inside [&_ul]:space-y-xs",
   {
     variants: {
       variant: {
@@ -301,7 +301,7 @@ const FieldDescription = forwardRef<HTMLDivElement, FieldDescriptionProps>(
     return (
       <BaseUIField.Description
         ref={ref}
-        className={cn("sub-text mt-1", className)}
+        className={cn("sub-text mt-xs", className)}
         {...props}
       />
     );
@@ -396,17 +396,17 @@ const FieldFormError = forwardRef<HTMLDivElement, FieldFormErrorProps>(
         ref={ref}
         role="alert"
         className={cn(
-          "p-sm rounded-component bg-red-300/10 border border-red-300/20 sub-text text-red-300 leading-relaxed space-y-1",
+          "p-sm rounded-component bg-card border border-card-thick sub-text leading-relaxed space-y-xs",
           className,
         )}
         {...props}>
         {children ??
           (messages.length === 1 ? (
-            <p className="sub-text text-red-300 leading-normal">
+            <p className="sub-text leading-normal">
               {messages[0]}
             </p>
           ) : (
-            <ul className="list-disc list-inside space-y-0.5 sub-text text-red-300 leading-normal">
+            <ul className="list-disc list-inside space-y-xs sub-text leading-normal">
               {messages.map((msg, i) => (
                 <li key={i}>{msg}</li>
               ))}
@@ -588,7 +588,7 @@ const LocalField = forwardRef<
             (startAdornment || endAdornment) && "flex items-center",
           )}>
           {startAdornment ? (
-            <div className="absolute inset-s-3 top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
+            <div className="absolute inset-s-sm top-1/2 -translate-y-1/2 flex items-center pointer-events-none z-10">
               {startAdornment}
             </div>
           ) : null}
@@ -627,7 +627,7 @@ const LocalField = forwardRef<
           )}
 
           {endAdornment ? (
-            <div className="h-[calc(100%-(--spacing(3)))] absolute inset-e-1.5 top-1/2 -translate-y-1/2 flex items-center z-10 scale-85">
+            <div className="h-[calc(100%-(--spacing(3)))] absolute inset-e-xs top-1/2 -translate-y-1/2 flex items-center z-10 scale-85">
               {endAdornment}
             </div>
           ) : null}

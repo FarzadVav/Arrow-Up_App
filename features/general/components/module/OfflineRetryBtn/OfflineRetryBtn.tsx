@@ -32,7 +32,7 @@ export function OfflineRetryBtn({ retryText }: OfflineRetryBtnProps) {
       variant="primary"
       onClick={handleRetry}
       disabled={isRetrying}
-      className="mt-md w-full h-10 rounded-component text-xs sm:text-sm font-semibold flex items-center justify-center gap-2">
+      className="mt-md w-full h-10 rounded-component text-xs sm:text-sm font-semibold flex items-center justify-center gap-xs">
       <RefreshCw className={`size-4 ${isRetrying ? "animate-spin" : ""}`} />
       <span>{retryText || t("offline.retry")}</span>
     </Button>

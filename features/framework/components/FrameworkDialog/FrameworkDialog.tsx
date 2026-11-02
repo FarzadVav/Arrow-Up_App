@@ -87,7 +87,7 @@ export function FrameworkDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <Form action={formAction} errors={state?.errors} className="space-y-3">
+      <Form action={formAction} errors={state?.errors} className="space-y-sm">
         <Field type="hidden" name="id" value={initialData?.id ?? ""} />
         <Field
           type="hidden"
@@ -147,7 +147,7 @@ export function FrameworkDialog({
           knownFields={["title", "description", "lifeAreaId"]}
         />
 
-        <div className="flex items-center justify-end gap-2 pt-2">
+        <div className="flex items-center justify-end gap-xs pt-xs">
           <Dialog.Close
             render={
               <Button type="button" variant="ghost" disabled={isSubmitting}>

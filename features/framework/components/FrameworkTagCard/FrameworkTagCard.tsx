@@ -21,7 +21,7 @@ export function FrameworkTagCard({
   const areaSlug = tag.lifeAreaId ?? UNSET_LIFE_AREA_SLUG;
 
   return (
-    <div className="w-full flex items-center gap-2">
+    <div className="w-full flex items-center gap-xs">
       <div className="flex-1 min-w-0">
         <CardView
           title={tag.title}
@@ -54,7 +54,7 @@ export function FrameworkTagCard({
           className="size-10 justify-center"
           aria-label={t("common.delete")}
           onClick={() => onRequestDelete(tag.id)}>
-          <Trash2Icon className="text-destructive" />
+          <Trash2Icon />
         </Button>
       </div>
     </div>

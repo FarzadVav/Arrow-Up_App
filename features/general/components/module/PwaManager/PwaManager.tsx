@@ -97,7 +97,7 @@ export default function PwaManager() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="fixed bottom-20 inset-x-4 max-w-sm mx-auto z-important p-4 rounded-component bg-card shadow-2xl flex items-center justify-between gap-sm">
+          className="fixed bottom-20 inset-x-sm max-w-sm mx-auto z-important p-sm rounded-component bg-card shadow-2xl flex items-center justify-between gap-sm">
           <div className="flex items-center gap-sm">
             <Sparkles className="shrink-0" />
             <div className="text-xs">

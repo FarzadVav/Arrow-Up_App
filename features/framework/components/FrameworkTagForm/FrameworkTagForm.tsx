@@ -95,7 +95,7 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
       </TopBar>
 
       {isEditMode && isTagLoading && !tag ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
         </div>
       ) : (
@@ -160,7 +160,7 @@ export function FrameworkTagForm({ lifeAreaId }: FrameworkTagFormProps) {
               type="submit"
               variant="primary"
               disabled={isDeleting || !isEditMode}
-              className="bg-red-600 hover:bg-red-700">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

@@ -58,7 +58,7 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
       </TopBar>
 
       <PageItemsWrapper>
-        <div className="w-full flex items-center justify-between pb-1 text-xs">
+        <div className="w-full flex items-center justify-between pb-xs text-xs">
           <span className="font-semibold">{areaTitle}</span>
           <span>
             {tags.length} {t("profile.total")}
@@ -121,7 +121,7 @@ export function SkillTagsList({ lifeAreaId }: SkillTagsListProps) {
               type="submit"
               variant="primary"
               disabled={isDeleting || deleteTargetId === null}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? (
                 <span className="flex items-center gap-xs">
                   <LoaderIcon className="animate-spin" />

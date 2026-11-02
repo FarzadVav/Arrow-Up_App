@@ -52,7 +52,7 @@ function LifeAreaSelect({
 
   return (
     <Field.Root name="lifeAreaId">
-      <Field.Label className="mb-1 font-bold">
+      <Field.Label className="mb-xs font-bold">
         {t("lifeAreas.selectLifeArea")}
       </Field.Label>
 
@@ -67,7 +67,7 @@ function LifeAreaSelect({
         placeholder={t("lifeAreas.selectLifeArea")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -95,7 +95,7 @@ function TagSelect({
 
   return (
     <Field.Root name="tag">
-      <Field.Label className="mb-1 font-bold">{t("common.tag")}</Field.Label>
+      <Field.Label className="mb-xs font-bold">{t("common.tag")}</Field.Label>
 
       <SelectDialog
         name="tagSelect"
@@ -108,7 +108,7 @@ function TagSelect({
         placeholder={t("skills.selectTag")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -202,7 +202,7 @@ export function SkillForm() {
       </TopBar>
 
       {isEditMode && isSkillLoading && !skill ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-28" />
           <Skeleton className="h-12" />
@@ -290,7 +290,7 @@ export function SkillForm() {
               type="submit"
               variant="primary"
               disabled={isDeleting || !isEditMode}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

@@ -58,7 +58,7 @@ function TypeSelect({
 
   return (
     <Field.Root name="type">
-      <Field.Label className="mb-1 font-bold">{t("common.type")}</Field.Label>
+      <Field.Label className="mb-xs font-bold">{t("common.type")}</Field.Label>
 
       <SelectDialog
         name="typeSelect"
@@ -70,7 +70,7 @@ function TypeSelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -107,7 +107,7 @@ function DifficultySelect({
 
   return (
     <Field.Root name="difficulty">
-      <Field.Label className="mb-1 font-bold">{label}</Field.Label>
+      <Field.Label className="mb-xs font-bold">{label}</Field.Label>
 
       <SelectDialog
         name="difficultySelect"
@@ -119,7 +119,7 @@ function DifficultySelect({
         required
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -144,7 +144,7 @@ function LifeAreaSelect({
 
   return (
     <Field.Root name="lifeAreaId">
-      <Field.Label className="mb-1 font-bold">
+      <Field.Label className="mb-xs font-bold">
         {t("lifeAreas.title")}
       </Field.Label>
 
@@ -159,7 +159,7 @@ function LifeAreaSelect({
         placeholder={t("lifeAreas.selectLifeArea")}
       />
 
-      <Field.Error className="sub-text mt-0.5" />
+      <Field.Error className="sub-text mt-xs" />
     </Field.Root>
   );
 }
@@ -425,7 +425,7 @@ export function TodoForm() {
       </TopBar>
 
       {isEditMode && isTodoLoading && !todo ? (
-        <div className="w-full space-y-4">
+        <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-32" />
           <Skeleton className="h-12" />
@@ -486,7 +486,7 @@ export function TodoForm() {
           <Field.Root
             name="description"
             schema={isEditMode ? UpdateTodoSchema : CreateTodoSchema}>
-            <Field.Label className="mb-1 font-bold">
+            <Field.Label className="mb-xs font-bold">
               {t("common.description")}
             </Field.Label>
 
@@ -498,7 +498,7 @@ export function TodoForm() {
               title={t("common.description")}
             />
 
-            <Field.Error className="sub-text mt-0.5" />
+            <Field.Error className="sub-text mt-xs" />
           </Field.Root>
 
           <TypeSelect
@@ -514,10 +514,10 @@ export function TodoForm() {
           <LifeAreaSelect value={lifeAreaId} onChange={setLifeAreaId} />
 
           <Field.Root name="deadline">
-            <Field.Label className="mb-1 font-bold">
+            <Field.Label className="mb-xs font-bold">
               {t("common.deadline")}
               {type === "Mission" && (
-                <span className="text-red-500 ms-1">*</span>
+                <span className="text-foreground/60 ms-xs">*</span>
               )}
             </Field.Label>
 
@@ -535,7 +535,7 @@ export function TodoForm() {
               />
             )}
 
-            <Field.Error className="sub-text mt-0.5" />
+            <Field.Error className="sub-text mt-xs" />
           </Field.Root>
 
           <DifficultySelect
@@ -548,7 +548,7 @@ export function TodoForm() {
             <>
               {/* Actions Section */}
               <Field.Root name="actions">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-xs">
                   <Field.Label className="font-bold">
                     {t("missions.actionsLabel")}
                   </Field.Label>
@@ -568,7 +568,7 @@ export function TodoForm() {
                 </Button>
 
                 {actions.length > 0 && (
-                  <div className="mt-sm space-y-2">
+                  <div className="mt-sm space-y-xs">
                     {actions.map((act) => (
                       <div
                         key={act.id}
@@ -584,7 +584,7 @@ export function TodoForm() {
                           </p>
                         </div>
 
-                        <div className="flex shrink-0 items-center gap-1">
+                        <div className="flex shrink-0 items-center gap-xs">
                           <Button
                             type="button"
                             variant="ghost"
@@ -612,7 +612,7 @@ export function TodoForm() {
 
               {/* Disciplines Section */}
               <Field.Root name="disciplines">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-xs">
                   <Field.Label className="font-bold">
                     {t("missions.disciplines")}
                   </Field.Label>
@@ -632,7 +632,7 @@ export function TodoForm() {
                 </Button>
 
                 {disciplines.length > 0 && (
-                  <div className="mt-sm space-y-2">
+                  <div className="mt-sm space-y-xs">
                     {disciplines.map((d) => (
                       <div
                         key={d.id}
@@ -643,7 +643,7 @@ export function TodoForm() {
                           </p>
                         </div>
 
-                        <div className="flex shrink-0 items-center gap-1">
+                        <div className="flex shrink-0 items-center gap-xs">
                           <Button
                             type="button"
                             variant="ghost"
@@ -820,7 +820,7 @@ export function TodoForm() {
               type="submit"
               variant="primary"
               disabled={isDeleting || !isEditMode}
-              className="bg-red-600 text-white hover:bg-red-700">
+              >
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

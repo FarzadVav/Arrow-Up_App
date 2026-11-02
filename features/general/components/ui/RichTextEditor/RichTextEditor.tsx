@@ -86,7 +86,7 @@ export function RichTextEditor({
       {showToolbar ? <RichTextToolbar editor={editor} /> : null}
 
       <div
-        className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-md py-4 cursor-text"
+        className="flex-1 min-h-0 overflow-y-auto px-sm sm:px-md py-sm cursor-text"
         onClick={() => {
           if (editor && !editor.isFocused) {
             editor.commands.focus("end");

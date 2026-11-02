@@ -95,24 +95,24 @@ export default function HelpDialog({
 
         <div className="space-y-xs">
           <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-            <Lightbulb className="shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-0.5">
+            <Lightbulb className="shrink-0 mt-xs" />
+            <div className="flex flex-col gap-xs">
               <span className="font-semibold text-xs">{tip1Title}</span>
               <span className="sub-text leading-relaxed">{tip1Desc}</span>
             </div>
           </div>
 
           <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-            <CheckCircle2 className="shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-0.5">
+            <CheckCircle2 className="shrink-0 mt-xs" />
+            <div className="flex flex-col gap-xs">
               <span className="font-semibold text-xs">{tip2Title}</span>
               <span className="sub-text leading-relaxed">{tip2Desc}</span>
             </div>
           </div>
 
           <div className="flex items-start gap-sm rounded-component bg-background/50 p-sm">
-            <Sparkles className="shrink-0 mt-0.5" />
-            <div className="flex flex-col gap-0.5">
+            <Sparkles className="shrink-0 mt-xs" />
+            <div className="flex flex-col gap-xs">
               <span className="font-semibold text-xs">{tip3Title}</span>
               <span className="sub-text leading-relaxed">{tip3Desc}</span>
             </div>

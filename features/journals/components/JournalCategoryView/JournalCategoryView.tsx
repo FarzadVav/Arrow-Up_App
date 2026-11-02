@@ -106,10 +106,10 @@ export default function JournalCategoryView({
               setActiveTag(id);
             }
           }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-0.5 gap-xs"
+          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
-            <div className="w-full flex items-center justify-between pb-1 text-xs">
+            <div className="w-full flex items-center justify-between pb-xs text-xs">
               <span className="font-semibold">{title}</span>
               <span>
                 {filteredJournals.length} {t("profile.total")}

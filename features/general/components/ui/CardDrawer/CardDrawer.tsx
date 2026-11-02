@@ -58,12 +58,12 @@ export function CardDrawer({
     >
       <Drawer.Title className="title">{title}</Drawer.Title>
 
-      <div className={cn("space-y-4", drawerContentClassName)}>
+      <div className={cn("space-y-sm", drawerContentClassName)}>
         {content}
         {children}
       </div>
 
-      <div className="flex items-center gap-2 pt-2">
+      <div className="flex items-center gap-xs pt-xs">
         {actions}
 
         <Drawer.Close

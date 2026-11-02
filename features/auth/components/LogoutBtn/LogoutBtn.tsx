@@ -28,7 +28,7 @@ function LogoutBtn({ children, ...p }: ButtonProps) {
           {children || <LogOutIcon className="-scale-x-100" />}
         </Button>
       }>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-xs">
         <Dialog.Title className="title">
           {t("profile.logoutTitle")}
         </Dialog.Title>
