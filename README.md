@@ -1,6 +1,8 @@
 # **Bug & Refactor**
 
 - Explore and fix ui and logics
+  - Backlinks, specially on back to the active tag/category
+
 - New Reusable components (Card, Text, Row, List)
 - Reusable components
 - Folder and file structured
