@@ -4,10 +4,9 @@ export enum TodoType {
   MISSION = 'Mission',
 }
 
-export enum JournalCategory {
+export enum JournalCategoryEnum {
   LOGS = 'Logs',
   THOUGHTS = 'Thoughts',
   FEELINGS = 'Feelings',
-  IDEAS = 'Ideas',
   NOTES = 'Notes',
 }

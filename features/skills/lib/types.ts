@@ -8,6 +8,7 @@ export type {
 } from './schemas';
 export {
   SkillLifeAreaSummarySchema,
+  SkillTagSummarySchema,
   SkillSchema,
   CreateSkillSchema,
   UpdateSkillSchema,
@@ -22,12 +23,14 @@ export type SkillFormState = {
     content?: string[];
     lifeAreaId?: string[];
     tag?: string[];
+    tagId?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
     content?: string;
     lifeAreaId?: number | null;
+    tagId?: number | null;
     tag?: string | null;
   };
   success?: boolean;

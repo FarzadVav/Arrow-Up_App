@@ -1,4 +1,4 @@
-import { JournalTagsList } from "@/features/journals/components/modules/JournalTagsList/JournalTagsList";
+import { redirect } from "next/navigation";
 import {
   resolveJournalCategory,
   type JournalCategoryRouteParams,
@@ -9,12 +9,6 @@ export default async function JournalTagsPage({
 }: {
   params: JournalCategoryRouteParams;
 }) {
-  const { category, title } = await resolveJournalCategory(params);
-
-  return (
-    <JournalTagsList
-      category={category.name}
-      categoryTitle={title}
-    />
-  );
+  const { category } = await resolveJournalCategory(params);
+  redirect(`/journals/${category.slug || category.name.toLowerCase()}`);
 }

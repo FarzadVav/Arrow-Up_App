@@ -13,7 +13,6 @@ import {
 
 import type { Journal } from "@/features/journals/lib/types";
 import { deleteJournalMutation } from "@/features/journals/api/mutations";
-import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
@@ -26,7 +25,7 @@ type JournalCardProps = {
 };
 
 function JournalCard({ journal, onDeleted }: JournalCardProps) {
-  const { formatDate, formatTime, t } = useLocale();
+  const { formatDate, formatTime, t, locale } = useLocale();
 
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteJournalMutation,
@@ -38,6 +37,24 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       onDeleted?.();
     }
   }, [deleteState, onDeleted]);
+
+  const tagName = journal.tag
+    ? typeof journal.tag === "object"
+      ? locale === "fa"
+        ? journal.tag.nameFa
+        : journal.tag.nameEn
+      : String(journal.tag)
+    : null;
+
+  const categoryName = journal.category
+    ? typeof journal.category === "object"
+      ? locale === "fa"
+        ? journal.category.nameFa
+        : journal.category.nameEn
+      : String(journal.category)
+    : journal.type
+      ? t(`journals.categories.${journal.type.toLowerCase()}`) || journal.type
+      : t("common.general");
 
   return (
     <CardDrawer
@@ -54,12 +71,12 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             <ClockIcon />
             {formatTime(journal.createdAt)}
           </span>
-          {journal.tag && (
+          {tagName && (
             <>
               <span>•</span>
               <span className="flex items-center gap-xs font-medium">
                 <TagIcon />
-                {journal.tag}
+                {tagName}
               </span>
             </>
           )}
@@ -76,7 +93,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
           <div
             className={cn(
               "grid gap-xs",
-              journal.tag ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3",
+              tagName ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3",
             )}>
             <div className="rounded-component bg-background p-sm">
               <div className="flex items-center gap-xs sub-text">
@@ -84,17 +101,17 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
                 <span>{t("common.category")}</span>
               </div>
               <p className="mt-xs font-medium">
-                {journal.type || t("common.general")}
+                {categoryName}
               </p>
             </div>
 
-            {journal.tag && (
+            {tagName && (
               <div className="rounded-component bg-background p-sm">
                 <div className="flex items-center gap-xs sub-text">
                   <TagIcon />
                   <span>{t("common.tag")}</span>
                 </div>
-                <p className="mt-xs font-medium">{journal.tag}</p>
+                <p className="mt-xs font-medium">{tagName}</p>
               </div>
             )}
 
@@ -119,36 +136,20 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
             </div>
           </div>
 
-          <section className="space-y-xs">
-            <div className="flex items-center gap-xs sub-text">
-              <FileTextIcon />
-              <span className="font-bold">{t("common.content")}</span>
-            </div>
-
-            <RichTextResult
-              content={journal.content}
-              placeholder={t("journals.contentPlaceholder")}
-              containerClassName="bg-background p-sm"
-            />
-          </section>
+          <RichTextResult content={journal.content} />
         </div>
       }
       actions={
-        <form action={deleteAction}>
+        <form action={deleteAction} className="flex-1">
           <Field type="hidden" name="id" value={journal.id} />
-          <Drawer.Close
-            render={
-              <Button
-                type="submit"
-                variant="card"
-                size={"square"}
-                disabled={isDeleting}
-                className="size-10 justify-center"
-                aria-label={t("common.delete")}>
-                <Trash2Icon />
-              </Button>
-            }
-          />
+          <Button
+            type="submit"
+            variant="card"
+            className="w-full justify-center text-destructive"
+            disabled={isDeleting}>
+            <Trash2Icon />
+            <span>{isDeleting ? t("common.loading") : t("common.delete")}</span>
+          </Button>
         </form>
       }
     />

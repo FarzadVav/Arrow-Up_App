@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import { withRequestContext } from '@/db';
 import { requireUserId } from '@/features/auth/lib/utils';
 import { getTranslations } from '@/features/general/lib/i18n/server';
-import { JournalCategory } from '@/db/entities/enums';
 import { serializeJournal, serializeJournalTag } from './repository';
 import { getJournalCategory } from '../lib/utils';
 import type {
@@ -44,14 +43,9 @@ export async function getJournalsQuery(
   const userId = await requireUserId();
 
   return withRequestContext(async ({ journal }) => {
-    let entities;
+    let entities: import('@/db/entities').Journal[];
     if (category && category !== 'all') {
       entities = await journal.findByCategory(category, userId, tag);
-    } else if (tag && tag.toLowerCase() !== 'all') {
-      entities = await journal.find(
-        { user: userId, tag, deletedAt: null },
-        { orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }] },
-      );
     } else {
       entities = await journal.findAllJournals(userId);
     }
@@ -82,7 +76,10 @@ export async function getJournalsStatsQuery(): Promise<JournalsStats> {
   const userId = await requireUserId();
 
   return withRequestContext(async ({ journal }) => {
-    const counts = await journal.getCategoryCounts(userId);
+    const counts = (await journal.getCategoryCounts(userId)) as Record<
+      JournalCategoryType,
+      number
+    >;
     const total = Object.values(counts).reduce((acc, count) => acc + count, 0);
 
     return { counts, total };
@@ -92,12 +89,10 @@ export async function getJournalsStatsQuery(): Promise<JournalsStats> {
 export async function getJournalTagsQuery(
   category?: JournalCategoryType | string,
 ): Promise<JournalTag[]> {
-  const userId = await requireUserId();
-
   return withRequestContext(async ({ journalTag }) => {
     const entities = category
-      ? await journalTag.findByCategory(category, userId)
-      : await journalTag.findAllTags(userId);
+      ? await journalTag.findByCategory(category)
+      : await journalTag.findAllTags();
 
     return entities.map((item) => serializeJournalTag(item));
   });
@@ -106,10 +101,8 @@ export async function getJournalTagsQuery(
 export async function getJournalTagByIdQuery(
   id: number,
 ): Promise<JournalTag | null> {
-  const userId = await requireUserId();
-
   return withRequestContext(async ({ journalTag }) => {
-    const entity = await journalTag.findById(id, userId);
+    const entity = await journalTag.findById(id);
     return entity ? serializeJournalTag(entity) : null;
   });
 }

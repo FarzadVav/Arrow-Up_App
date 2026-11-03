@@ -34,6 +34,7 @@ type FrameworkAreaViewProps = {
 };
 
 export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
+  const isAbandoned = lifeAreaId === null;
   const { t } = useLocale();
   const searchParams = useSearchParams();
   const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
@@ -46,7 +47,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
     isLoading,
     mutate: revalidateFrameworks,
   } = useFrameworks();
-  const { tags } = useFrameworkTags(lifeAreaId);
+  const { tags } = useFrameworkTags(isAbandoned ? undefined : lifeAreaId);
   const { lifeAreas } = useLifeAreas();
 
   const isArchivedArea =
@@ -63,7 +64,9 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
 
   useEffect(() => {
     if (!deleteState?.success) return;
-    setDeleteDialogOpen(false);
+    queueMicrotask(() => {
+      setDeleteDialogOpen(false);
+    });
     revalidateFrameworks();
   }, [deleteState, revalidateFrameworks]);
 
@@ -131,71 +134,107 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
       </TopBar>
 
       <PageItemsWrapper>
-        <SlideTabs
-          tabs={filterTabs}
-          activeId={activeTag}
-          onTabChange={(id) => {
-            if (id !== "tags-page") {
-              setActiveTag(id);
-            }
-          }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
-          tabClassName="shrink-0 flex-none"
-          between={
+        {isAbandoned ? (
+          <div className="w-full space-y-sm">
             <div className="w-full flex items-center justify-between pb-xs text-xs">
               <span className="font-semibold">{title}</span>
               <span>
-                {filteredFrameworks.length} {t("profile.total")}
+                {areaFrameworks.length} {t("profile.total")}
               </span>
             </div>
-          }>
-          <div className="w-full space-y-sm">
+
             {isLoading && frameworks.length === 0 ? (
               <Skeleton count={3} />
+            ) : areaFrameworks.length === 0 ? (
+              <EmptyAlert
+                alert={t("framework.noAbandonedFrameworks")}
+                className="p-md"
+              />
             ) : (
-              <>
-                {filteredFrameworks.length === 0 ? (
-                  <EmptyAlert
-                    alert={
-                      activeTag !== "all"
-                        ? t("framework.noFrameworksWithTag")
-                        : t("framework.noFrameworksInArea")
-                    }
-                    description={t("framework.addFirst")}
-                    href={isArchivedArea ? undefined : createHref()}
-                    className="p-md"
-                  />
-                ) : (
-                  <ReorderList
-                    items={filteredFrameworks}
-                    entity="habits"
-                    revalidate={revalidateFrameworks}
-                    renderItem={(framework) => (
-                      <FrameworkCard
-                        framework={framework}
-                        onEdit={handleOpenEdit}
-                        onRequestDelete={(id) => {
-                          setDeleteTargetId(id);
-                          setDeleteDialogOpen(true);
-                        }}
-                      />
-                    )}
+              <ReorderList
+                items={areaFrameworks}
+                entity="habits"
+                revalidate={revalidateFrameworks}
+                renderItem={(framework) => (
+                  <FrameworkCard
+                    framework={framework}
+                    onEdit={handleOpenEdit}
+                    onRequestDelete={(id) => {
+                      setDeleteTargetId(id);
+                      setDeleteDialogOpen(true);
+                    }}
                   />
                 )}
-              </>
+              />
             )}
           </div>
-        </SlideTabs>
+        ) : (
+          <SlideTabs
+            tabs={filterTabs}
+            activeId={activeTag}
+            onTabChange={(id) => {
+              if (id !== "tags-page") {
+                setActiveTag(id);
+              }
+            }}
+            headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
+            tabClassName="shrink-0 flex-none"
+            between={
+              <div className="w-full flex items-center justify-between pb-xs text-xs">
+                <span className="font-semibold">{title}</span>
+                <span>
+                  {filteredFrameworks.length} {t("profile.total")}
+                </span>
+              </div>
+            }>
+            <div className="w-full space-y-sm">
+              {isLoading && frameworks.length === 0 ? (
+                <Skeleton count={3} />
+              ) : (
+                <>
+                  {filteredFrameworks.length === 0 ? (
+                    <EmptyAlert
+                      alert={
+                        activeTag !== "all"
+                          ? t("framework.noFrameworksWithTag")
+                          : t("framework.noFrameworksInArea")
+                      }
+                      description={t("framework.addFirst")}
+                      href={isArchivedArea ? undefined : createHref()}
+                      className="p-md"
+                    />
+                  ) : (
+                    <ReorderList
+                      items={filteredFrameworks}
+                      entity="habits"
+                      revalidate={revalidateFrameworks}
+                      renderItem={(framework) => (
+                        <FrameworkCard
+                          framework={framework}
+                          onEdit={handleOpenEdit}
+                          onRequestDelete={(id) => {
+                            setDeleteTargetId(id);
+                            setDeleteDialogOpen(true);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </SlideTabs>
+        )}
 
         {isArchivedArea ? (
           <p className="sub-text w-full text-center">
             {t("lifeAreas.inactiveDesc")}
           </p>
-        ) : (
+        ) : !isAbandoned ? (
           <PageActionBtn href={createHref()}>
             {t("framework.new")}
           </PageActionBtn>
-        )}
+        ) : null}
       </PageItemsWrapper>
 
       {/* Delete Confirmation Dialog */}

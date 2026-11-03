@@ -8,6 +8,7 @@ export type {
 } from './schemas';
 export {
   FrameworkLifeAreaSummarySchema,
+  FrameworkTagSummarySchema,
   FrameworkHistoryItemSchema,
   FrameworkSchema,
   CreateFrameworkSchema,
@@ -23,12 +24,14 @@ export type FrameworkFormState = {
     description?: string[];
     lifeAreaId?: string[];
     tag?: string[];
+    tagId?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
     description?: string;
     lifeAreaId?: number | null;
+    tagId?: number | null;
     tag?: string | null;
   };
   success?: boolean;

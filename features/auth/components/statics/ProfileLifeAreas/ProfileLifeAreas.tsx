@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArchiveIcon, GaugeIcon, PlusIcon } from "lucide-react";
+import { ArchiveIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLifeAreas } from "@/features/life-areas/hooks/useLifeAreas";

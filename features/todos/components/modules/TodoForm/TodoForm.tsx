@@ -6,7 +6,7 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 
 import { Form } from "@base-ui/react";
 import Field from "@/features/general/components/ui/Field";
-import { EditIcon, LoaderIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
 
 import { TODO_TYPES } from "@/features/todos/lib/constants";
 import {
@@ -134,13 +134,10 @@ function LifeAreaSelect({
   const { t } = useLocale();
   const { lifeAreas = [] } = useLifeAreas();
 
-  const items = [
-    { value: "none", label: t("common.notSet") },
-    ...selectableLifeAreas(lifeAreas, value).map((la) => ({
-      value: String(la.id),
-      label: la.title,
-    })),
-  ];
+  const items = selectableLifeAreas(lifeAreas, value).map((la) => ({
+    value: String(la.id),
+    label: la.title,
+  }));
 
   return (
     <Field.Root name="lifeAreaId">
@@ -151,12 +148,13 @@ function LifeAreaSelect({
       <SelectDialog
         name="lifeAreaSelect"
         items={items}
-        value={value ? String(value) : "none"}
+        value={value ? String(value) : undefined}
         onChange={(next) =>
-          onChange(next === "none" || !next ? null : Number(next))
+          onChange(next ? Number(next) : null)
         }
         title={t("lifeAreas.selectLifeArea")}
         placeholder={t("lifeAreas.selectLifeArea")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -452,6 +450,7 @@ export function TodoForm() {
           />
           <Field type="hidden" name="isDone" value={String(isDone)} />
           <Field type="hidden" name="difficulty" value={difficulty} />
+          <Field type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : ""} />
           {type === "Mission" && (
             <>
               <Field

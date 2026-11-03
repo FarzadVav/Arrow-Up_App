@@ -20,17 +20,18 @@ export function SkillsAreaList() {
 
   const countByArea = useMemo(() => {
     const counts = new Map<number, number>();
-    let general = 0;
+    let abandoned = 0;
 
     skills.forEach((skill) => {
-      if (skill.lifeAreaId) {
-        counts.set(skill.lifeAreaId, (counts.get(skill.lifeAreaId) ?? 0) + 1);
+      const areaId = skill.lifeAreaId ?? skill.lifeArea?.id;
+      if (areaId) {
+        counts.set(areaId, (counts.get(areaId) ?? 0) + 1);
       } else {
-        general += 1;
+        abandoned += 1;
       }
     });
 
-    return { counts, general };
+    return { counts, abandoned };
   }, [skills]);
 
   const isLoading =
@@ -92,14 +93,14 @@ export function SkillsAreaList() {
         ),
       )}
 
-      {countByArea.general > 0 &&
+      {countByArea.abandoned > 0 &&
         renderCard(
           UNSET_LIFE_AREA_SLUG,
           `/skills/${UNSET_LIFE_AREA_SLUG}`,
           FolderOpenIcon,
-          t("common.general"),
-          t("skills.generalDesc"),
-          countByArea.general,
+          t("common.abandoned"),
+          t("skills.abandonedDesc"),
+          countByArea.abandoned,
         )}
     </div>
   );

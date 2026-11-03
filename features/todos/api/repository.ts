@@ -130,11 +130,12 @@ export class TodoRepository extends EntityRepository<Todo> {
   }
 
   async createTodo(data: CreateTodoData, userId: number): Promise<Todo> {
+    if (!data.lifeAreaId || data.lifeAreaId <= 0) {
+      throw new Error('Life area is required for todo');
+    }
     await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
-    const lifeArea = data.lifeAreaId
-      ? this.em.getReference(LifeArea, data.lifeAreaId)
-      : undefined;
+    const lifeArea = this.em.getReference(LifeArea, data.lifeAreaId);
 
     const todo = this.create({
       title: data.title.trim(),
@@ -185,6 +186,9 @@ export class TodoRepository extends EntityRepository<Todo> {
     }
 
     if (data.lifeAreaId !== undefined) {
+      if (!data.lifeAreaId || data.lifeAreaId <= 0) {
+        throw new Error('Life area is required for todo');
+      }
       await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId], {
         keepInactiveId: todo.lifeArea?.id ?? null,
       });
@@ -192,9 +196,7 @@ export class TodoRepository extends EntityRepository<Todo> {
 
     const lifeArea =
       data.lifeAreaId !== undefined
-        ? data.lifeAreaId
-          ? this.em.getReference(LifeArea, data.lifeAreaId)
-          : undefined
+        ? this.em.getReference(LifeArea, data.lifeAreaId)
         : todo.lifeArea;
 
     this.assign(todo, {

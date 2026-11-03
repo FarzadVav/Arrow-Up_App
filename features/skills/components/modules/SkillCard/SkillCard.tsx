@@ -36,10 +36,10 @@ export function SkillCard({ skill, onRequestDelete }: SkillCardProps) {
           <div className="flex items-center gap-sm flex-wrap sub-text">
             <span className="flex items-center gap-xs">
               <CompassIcon />
-              <span>{skill.lifeArea?.title ?? t("common.notSet")}</span>
+              <span>{skill.lifeArea?.title ?? t("common.abandoned")}</span>
             </span>
 
-            {skill.tag && (
+            {skill.lifeAreaId && skill.tag && (
               <span className="flex items-center gap-xs">
                 <TagIcon />
                 <span>{skill.tag}</span>

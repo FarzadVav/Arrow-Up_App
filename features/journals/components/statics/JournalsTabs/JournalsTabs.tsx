@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
+import { STATIC_JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
 import { useJournals } from "@/features/journals/hooks";
 import JournalCard from "@/features/journals/components/modules/JournalCard/JournalCard";
 import SlideTabs, {
@@ -21,7 +21,7 @@ function JournalsTabs() {
     isLoading,
     mutate: revalidateJournals,
   } = useJournals(activeTab);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   const tabs: SlideTabItem[] = [
     {
@@ -29,10 +29,13 @@ function JournalsTabs() {
       label: t("common.all"),
       href: "?tab=all",
     },
-    ...JOURNAL_CATEGORIES.map((cat) => ({
-      id: cat.name.toLowerCase(),
-      label: t(`journals.categories.${cat.name.toLowerCase()}`),
-      href: `?tab=${encodeURIComponent(cat.name.toLowerCase())}`,
+    ...STATIC_JOURNAL_CATEGORIES.map((cat) => ({
+      id: cat.slug,
+      label:
+        locale === "fa"
+          ? cat.nameFa
+          : cat.nameEn || t(`journals.categories.${cat.slug}`),
+      href: `?tab=${encodeURIComponent(cat.slug)}`,
     })),
   ];
 

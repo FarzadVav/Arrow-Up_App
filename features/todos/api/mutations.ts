@@ -41,6 +41,13 @@ export async function createTodoMutation(
       ? Number(lifeAreaIdRaw)
       : null;
 
+  const errors: NonNullable<TodoFormState>['errors'] = {};
+
+  if (!lifeAreaId || lifeAreaId <= 0) {
+    const { t } = await getTranslations();
+    errors.lifeAreaId = [t('lifeAreas.selectLifeArea')];
+  }
+
   let actions: CreateTodoData['actions'] = undefined;
   const actionsRaw = formData.get('actions');
   if (actionsRaw) {
@@ -64,6 +71,7 @@ export async function createTodoMutation(
   if (typeValue === 'Mission' && !deadline) {
     return {
       errors: {
+        ...errors,
         deadline: ['Deadline is required for missions.'],
       },
       inputs: {
@@ -84,28 +92,28 @@ export async function createTodoMutation(
     type: typeValue,
     deadline,
     difficulty,
-    ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
+    lifeAreaId: lifeAreaId ?? 0,
     ...(actions && actions.length > 0 ? { actions } : {}),
     ...(disciplines && disciplines.length > 0 ? { disciplines } : {}),
   });
 
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<TodoFormState>['errors'] = {};
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'description'
+          | 'type'
+          | 'deadline'
+          | 'difficulty'
+          | 'lifeAreaId'
+          | 'general';
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'description'
-        | 'type'
-        | 'deadline'
-        | 'difficulty'
-        | 'lifeAreaId'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return {
@@ -174,7 +182,7 @@ export async function createTodoMutation(
           type: typeValue,
           deadline,
           difficulty,
-          lifeAreaId,
+          lifeAreaId: lifeAreaId!,
           actions,
           disciplines,
         },
@@ -232,14 +240,28 @@ export async function updateTodoMutation(
     : undefined;
   const isDone = formData.has('isDone') ? formData.get('isDone') === 'true' : undefined;
 
-  let lifeAreaId: number | null | undefined = undefined;
+  let lifeAreaId: number | undefined = undefined;
   if (formData.has('lifeAreaId')) {
     const rawVal = formData.get('lifeAreaId');
-    if (rawVal === '' || rawVal === '0' || rawVal === 'none' || rawVal === null) {
-      lifeAreaId = null;
-    } else {
-      lifeAreaId = Number(rawVal);
+    if (!rawVal || rawVal === '' || rawVal === '0' || rawVal === 'none') {
+      const { t } = await getTranslations();
+      return {
+        errors: {
+          lifeAreaId: [t('lifeAreas.selectLifeArea')],
+        },
+        inputs: {
+          id,
+          title,
+          description,
+          type: typeValue,
+          deadline,
+          difficulty,
+          lifeAreaId: null,
+        },
+        success: false,
+      };
     }
+    lifeAreaId = Number(rawVal);
   }
 
   let actions: UpdateTodoData['actions'] = undefined;

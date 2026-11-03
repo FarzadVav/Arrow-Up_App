@@ -23,14 +23,30 @@ import { stripHtml } from "@/features/general/lib/utils";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { cn } from "cn";
 
+export type HistoryItem = {
+  id: number;
+  title: string;
+  description?: string;
+  content?: string;
+  deadline?: string | null;
+  difficulty?: number;
+  deletedAt?: string | null;
+  lifeArea?: { title: string };
+  category?: string | { nameEn: string; nameFa: string; slug?: string };
+  tag?: string | { nameEn: string; nameFa: string; title?: string };
+  actions?: Array<{ id: number; title: string; isDone: boolean }>;
+  disciplines?: Array<{ id: number; title: string }>;
+  [key: string]: unknown;
+};
+
 export interface HistoryCardProps {
-  item: any;
+  item: HistoryItem;
   type: "daily" | "upcoming" | "missions" | "framework" | "skills" | "journals";
   onMutated?: () => void;
 }
 
 export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
-  const { t, formatDateTime, formatDeadline } = useLocale();
+  const { t, formatDateTime, formatDeadline, locale } = useLocale();
   const [isRestoring, setIsRestoring] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -99,8 +115,22 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
   } else if (type === "journals") {
     icon = <FileTextIcon />;
     descriptionPreview = stripHtml(item.content || "");
-    subtitle = item.type ?? "";
+    subtitle = item.category
+      ? typeof item.category === "object"
+        ? locale === "fa"
+          ? item.category.nameFa
+          : item.category.nameEn
+        : String(item.category)
+      : String(item.type ?? "");
   }
+
+  const tagLabel = item.tag
+    ? typeof item.tag === "object"
+      ? locale === "fa"
+        ? item.tag.nameFa
+        : item.tag.nameEn
+      : String(item.tag)
+    : "";
 
   const deletedDateStr = item.deletedAt ? formatDateTime(item.deletedAt) : "";
 
@@ -132,10 +162,10 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
                       <span>{item.lifeArea.title}</span>
                     </span>
                   )}
-                  {item.tag && (
+                  {tagLabel && (
                     <span className="flex items-center gap-xs">
                       <TagIcon className="size-3.5" />
-                      <span>{item.tag}</span>
+                      <span>{tagLabel}</span>
                     </span>
                   )}
                   {item.deadline && (
@@ -165,7 +195,7 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
                   <div className="space-y-xs">
                     <span className="font-semibold text-xs sub-text">{t("missions.actions")}</span>
                     <div className="space-y-xs">
-                      {item.actions.map((act: any) => (
+                      {item.actions.map((act) => (
                         <div
                           key={act.id}
                           className="flex items-center gap-xs rounded-component bg-background/40 p-xs text-xs"

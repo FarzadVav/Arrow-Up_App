@@ -77,7 +77,7 @@ export const CreateTodoSchema = type({
   type: TodoTypeSchema,
   'deadline?': 'string | null',
   'difficulty?': 'number',
-  'lifeAreaId?': 'number | null',
+  lifeAreaId: 'number >= 1',
   'isDone?': 'boolean',
   'actions?': type({
     'id?': 'number',
@@ -100,7 +100,7 @@ export const UpdateTodoSchema = type({
   'deadline?': 'string | null',
   'isDone?': 'boolean',
   'difficulty?': 'number',
-  'lifeAreaId?': 'number | null',
+  'lifeAreaId?': 'number >= 1',
   'actions?': type({
     'id?': 'number',
     title: 'string >= 1',

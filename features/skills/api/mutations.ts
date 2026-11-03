@@ -25,31 +25,41 @@ export async function createSkillMutation(
   const title = String(formData.get('title') ?? '').trim();
   const content = String(formData.get('content') ?? '');
   const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
-  const rawTag = formData.get('tag');
-  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
+  const rawTag = formData.get('tagId') ?? formData.get('tag');
+  const tagId = rawTag && !isNaN(Number(rawTag)) && Number(rawTag) > 0 ? Number(rawTag) : undefined;
+  const tag = rawTag && String(rawTag).trim() && String(rawTag).trim() !== 'none' ? String(rawTag).trim() : null;
+
+  const errors: NonNullable<SkillFormState>['errors'] = {};
+
+  if (!lifeAreaId || lifeAreaId <= 0) {
+    errors.lifeAreaId = ['Please select a life area.'];
+  }
+  if (!tagId && !tag) {
+    errors.tag = ['Please select a tag.'];
+  }
 
   const validation = CreateSkillSchema({
     title,
     content,
-    lifeAreaId,
-    tag,
+    lifeAreaId: lifeAreaId ?? 0,
+    ...(tagId ? { tagId } : tag ? { tag } : {}),
   });
 
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<SkillFormState>['errors'] = {};
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'content'
+          | 'lifeAreaId'
+          | 'tag'
+          | 'general';
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'content'
-        | 'lifeAreaId'
-        | 'tag'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return {
@@ -58,6 +68,7 @@ export async function createSkillMutation(
         title,
         content,
         lifeAreaId,
+        tagId: tagId ?? null,
         tag,
       },
       success: false,
@@ -68,16 +79,16 @@ export async function createSkillMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, content, lifeAreaId, tag },
+      inputs: { title, content, lifeAreaId, tagId: tagId ?? null, tag },
       success: false,
     };
   }
 
-  const inputs = { title, content, lifeAreaId, tag };
+  const inputs = { title, content, lifeAreaId, tagId: tagId ?? null, tag };
 
   try {
     const created = await withRequestContext(async ({ skill }) => {
-      return await skill.createSkill({ title, content, lifeAreaId, tag }, userId);
+      return await skill.createSkill({ title, content, lifeAreaId: lifeAreaId!, tagId, tag: tag ?? undefined }, userId);
     });
 
     return {
@@ -103,8 +114,9 @@ export async function updateSkillMutation(
   const title = String(formData.get('title') ?? '').trim();
   const content = String(formData.get('content') ?? '');
   const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
-  const rawTag = formData.get('tag');
-  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
+  const rawTag = formData.get('tagId') ?? formData.get('tag');
+  const tagId = rawTag && !isNaN(Number(rawTag)) && Number(rawTag) > 0 ? Number(rawTag) : undefined;
+  const tag = rawTag && String(rawTag).trim() && String(rawTag).trim() !== 'none' ? String(rawTag).trim() : null;
 
   if (!id || Number.isNaN(id)) {
     return {
@@ -113,29 +125,38 @@ export async function updateSkillMutation(
     };
   }
 
+  const errors: NonNullable<SkillFormState>['errors'] = {};
+
+  if (!lifeAreaId || lifeAreaId <= 0) {
+    errors.lifeAreaId = ['Please select a life area.'];
+  }
+  if (!tagId && !tag) {
+    errors.tag = ['Please select a tag.'];
+  }
+
   const validation = UpdateSkillSchema({
     id,
     title: title || undefined,
     content,
-    lifeAreaId,
-    tag,
+    lifeAreaId: lifeAreaId ?? undefined,
+    ...(tagId ? { tagId } : tag ? { tag } : {}),
   });
 
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<SkillFormState>['errors'] = {};
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'content'
+          | 'lifeAreaId'
+          | 'tag'
+          | 'general';
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'content'
-        | 'lifeAreaId'
-        | 'tag'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return {
@@ -144,6 +165,7 @@ export async function updateSkillMutation(
         title,
         content,
         lifeAreaId,
+        tagId: tagId ?? null,
         tag,
       },
       success: false,
@@ -154,12 +176,12 @@ export async function updateSkillMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, content, lifeAreaId, tag },
+      inputs: { title, content, lifeAreaId, tagId: tagId ?? null, tag },
       success: false,
     };
   }
 
-  const inputs = { title, content, lifeAreaId, tag };
+  const inputs = { title, content, lifeAreaId, tagId: tagId ?? null, tag };
 
   try {
     const updated = await withRequestContext(async ({ skill }) => {
@@ -168,8 +190,9 @@ export async function updateSkillMutation(
         {
           ...(title ? { title } : {}),
           content,
-          lifeAreaId,
-          tag,
+          lifeAreaId: lifeAreaId ?? undefined,
+          tagId,
+          tag: tag ?? undefined,
         },
         userId,
       );
@@ -282,21 +305,27 @@ export async function createSkillTagMutation(
   const title = String(formData.get('title') ?? '').trim();
   const lifeAreaId = readLifeAreaId(formData);
 
-  const validation = CreateSkillTagSchema({ title, lifeAreaId });
+  const errors: NonNullable<SkillTagFormState>['errors'] = {};
 
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<SkillTagFormState>['errors'] = {};
+  if (!lifeAreaId || lifeAreaId <= 0) {
+    errors.lifeAreaId = ['Please select a life area.'];
+  }
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'lifeAreaId'
-        | 'general';
+  const validation = CreateSkillTagSchema({ title, lifeAreaId: lifeAreaId ?? 0 });
 
-      if (!errors[field]) {
-        errors[field] = [];
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'lifeAreaId'
+          | 'general';
+
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return { errors, inputs: { title, lifeAreaId }, success: false };
@@ -313,7 +342,7 @@ export async function createSkillTagMutation(
 
   try {
     const tag = await withRequestContext(async ({ skillTag }) => {
-      return await skillTag.createTag({ title, lifeAreaId }, userId);
+      return await skillTag.createTag({ title, lifeAreaId: lifeAreaId! }, userId);
     });
 
     return {
@@ -350,6 +379,14 @@ export async function updateSkillTagMutation(
   const lifeAreaId = formData.has('lifeAreaId')
     ? readLifeAreaId(formData)
     : undefined;
+
+  if (lifeAreaId === null) {
+    return {
+      errors: { lifeAreaId: ['Please select a life area.'] },
+      inputs: { id, ...(title !== undefined ? { title } : {}) },
+      success: false,
+    };
+  }
 
   const validation = UpdateSkillTagSchema({
     id,
@@ -403,7 +440,7 @@ export async function updateSkillTagMutation(
         {
           id,
           ...(title !== undefined ? { title } : {}),
-          ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
+          ...(lifeAreaId !== undefined ? { lifeAreaId: lifeAreaId! } : {}),
         },
         userId,
       );
@@ -415,7 +452,7 @@ export async function updateSkillTagMutation(
         inputs: {
           id,
           ...(title !== undefined ? { title } : {}),
-          ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
+          ...(lifeAreaId !== undefined ? { lifeAreaId: lifeAreaId! } : {}),
         },
         success: false,
       };
@@ -438,7 +475,7 @@ export async function updateSkillTagMutation(
         inputs: {
           id,
           ...(title !== undefined ? { title } : {}),
-          ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
+          ...(lifeAreaId !== undefined ? { lifeAreaId: lifeAreaId! } : {}),
         },
         success: false,
       };

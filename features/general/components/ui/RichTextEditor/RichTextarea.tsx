@@ -2,7 +2,7 @@
 
 import { cn } from "cn";
 import { useState } from "react";
-import { Maximize2Icon, PenLineIcon, TextIcon } from "lucide-react";
+import { Maximize2Icon, TextIcon } from "lucide-react";
 
 import Field from "../Field";
 import { RichTextDialog } from "./RichTextDialog";

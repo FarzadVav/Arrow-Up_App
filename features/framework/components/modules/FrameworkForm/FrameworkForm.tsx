@@ -2,36 +2,31 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useActionState, useMemo } from "react";
-import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
-
 import { Form } from "@base-ui/react";
-import Field from "@/features/general/components/ui/Field";
-import {
-  CreateFrameworkSchema,
-  UpdateFrameworkSchema,
-} from "@/features/framework/lib/types";
-import {
-  UNSET_LIFE_AREA_SLUG,
-  parseLifeAreaSlug,
-} from "@/features/general/lib/utils";
 import { Trash2Icon } from "lucide-react";
+
+import Field from "@/features/general/components/ui/Field";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
-import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
-
-import { useFramework } from "@/features/framework/hooks";
-import { useFrameworkTags } from "@/features/framework/hooks";
+import { parseLifeAreaSlug, UNSET_LIFE_AREA_SLUG } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import { useFramework, useFrameworkTags } from "@/features/framework/hooks";
 import {
   createFrameworkMutation,
   deleteFrameworkMutation,
   updateFrameworkMutation,
 } from "@/features/framework/api/mutations";
+import {
+  CreateFrameworkSchema,
+  UpdateFrameworkSchema,
+} from "@/features/framework/lib/types";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
+import { RichTextarea } from "@/features/general/components/ui/RichTextEditor";
 import { useLifeAreas } from "@/features/life-areas/hooks";
 import { selectableLifeAreas } from "@/features/life-areas/lib/utils";
 
@@ -45,13 +40,10 @@ function LifeAreaSelect({
   const { t } = useLocale();
   const { lifeAreas = [] } = useLifeAreas();
 
-  const items = [
-    { value: "none", label: t("common.notSet") },
-    ...selectableLifeAreas(lifeAreas, value).map((la) => ({
-      value: String(la.id),
-      label: la.title,
-    })),
-  ];
+  const items = selectableLifeAreas(lifeAreas, value).map((la) => ({
+    value: String(la.id),
+    label: la.title,
+  }));
 
   return (
     <Field.Root name="lifeAreaId">
@@ -62,12 +54,13 @@ function LifeAreaSelect({
       <SelectDialog
         name="lifeAreaSelect"
         items={items}
-        value={value ? String(value) : "none"}
+        value={value ? String(value) : undefined}
         onChange={(next) =>
-          onChange(next === "none" || !next ? null : Number(next))
+          onChange(next ? Number(next) : null)
         }
         title={t("lifeAreas.selectLifeArea")}
         placeholder={t("lifeAreas.selectLifeArea")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -81,30 +74,18 @@ function TagSelect({
   onChange,
 }: {
   lifeAreaId: number | null;
-  value: string | null;
-  onChange: (value: string | null) => void;
+  value: number | null;
+  onChange: (value: number | null) => void;
 }) {
   const { t } = useLocale();
   const { tags } = useFrameworkTags(lifeAreaId);
 
   const items = useMemo(() => {
-    const list = [{ value: "none", label: t("common.notSet") }];
-    const seen = new Set<string>(["none"]);
-
-    for (const tag of tags) {
-      const lower = tag.title.toLowerCase();
-      if (!seen.has(lower)) {
-        seen.add(lower);
-        list.push({ value: tag.title, label: tag.title });
-      }
-    }
-
-    if (value && value !== "none" && !seen.has(value.toLowerCase())) {
-      list.push({ value, label: value });
-    }
-
-    return list;
-  }, [tags, value, t]);
+    return tags.map((tag) => ({
+      value: String(tag.id),
+      label: tag.title,
+    }));
+  }, [tags]);
 
   return (
     <Field.Root name="tag">
@@ -112,12 +93,13 @@ function TagSelect({
 
       <SelectDialog
         items={items}
-        value={value ?? "none"}
+        value={value ? String(value) : undefined}
         onChange={(next) =>
-          onChange(next === "none" || !next ? null : String(next))
+          onChange(next ? Number(next) : null)
         }
         title={t("common.tag")}
         placeholder={t("framework.selectTag")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -143,8 +125,10 @@ export function FrameworkForm() {
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     () => parseLifeAreaSlug(lifeAreaParam) ?? null,
   );
-  const [tag, setTag] = useState<string | null>(() => tagParam || null);
+  const [tagId, setTagId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const { tags } = useFrameworkTags(lifeAreaId);
 
   const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
 
@@ -161,15 +145,13 @@ export function FrameworkForm() {
   useEffect(() => {
     if (state?.success) {
       router.push(`/framework/${areaSlug}`);
-      router.refresh();
     }
-  }, [state?.success, areaSlug, router]);
+  }, [state, areaSlug, router]);
 
   useEffect(() => {
-    if (!deleteState?.success) return;
-
-    router.push(`/framework/${areaSlug}`);
-    router.refresh();
+    if (deleteState?.success) {
+      router.push(`/framework/${areaSlug}`);
+    }
   }, [deleteState, areaSlug, router]);
 
   useEffect(() => {
@@ -177,8 +159,14 @@ export function FrameworkForm() {
       queueMicrotask(() => {
         setTitle("");
         setDescription("");
-        setTag(tagParam || null);
-        setLifeAreaId(parseLifeAreaSlug(lifeAreaParam) ?? null);
+        const parsedArea = parseLifeAreaSlug(lifeAreaParam) ?? null;
+        setLifeAreaId(parsedArea);
+        if (tagParam && tags.length > 0) {
+          const found = tags.find(
+            (t) => String(t.id) === tagParam || t.title.toLowerCase() === tagParam.toLowerCase(),
+          );
+          if (found) setTagId(found.id);
+        }
       });
       return;
     }
@@ -188,10 +176,10 @@ export function FrameworkForm() {
         setTitle(framework.title);
         setDescription(framework.description || "");
         setLifeAreaId(framework.lifeAreaId ?? null);
-        setTag(framework.tag ?? null);
+        setTagId(framework.tagId ?? null);
       });
     }
-  }, [editId, framework, lifeAreaParam, tagParam]);
+  }, [editId, framework, lifeAreaParam, tagParam, tags]);
 
   return (
     <PageWrapper>
@@ -216,7 +204,7 @@ export function FrameworkForm() {
       {isEditMode && isHabitLoading && !framework ? (
         <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
-          <Skeleton className="h-24" />
+          <Skeleton className="h-28" />
           <Skeleton className="h-12" />
         </div>
       ) : (
@@ -227,8 +215,9 @@ export function FrameworkForm() {
           action={formAction}
           errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
-          <Field type="hidden" name="lifeAreaId" value={areaSlug} />
-          <Field type="hidden" name="tag" value={tag ?? ""} />
+          <Field type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : ""} />
+          <Field type="hidden" name="tagId" value={tagId ? String(tagId) : ""} />
+          <Field type="hidden" name="tag" value={tagId ? String(tagId) : ""} />
           <Field type="hidden" name="description" value={description} />
 
           <Field
@@ -248,40 +237,34 @@ export function FrameworkForm() {
             onChange={(next) => {
               if (next !== lifeAreaId) {
                 setLifeAreaId(next);
-                setTag(null);
+                setTagId(null);
               }
             }}
           />
 
-          <TagSelect lifeAreaId={lifeAreaId} value={tag} onChange={setTag} />
+          <TagSelect lifeAreaId={lifeAreaId} value={tagId} onChange={setTagId} />
 
           <Field.Root
             name="description"
             schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}>
-            <Field.Label className="mb-xs font-bold">
-              {t("common.description")}
-            </Field.Label>
+            <Field.Label>{t("framework.descriptionLabel")}</Field.Label>
 
             <RichTextarea
               name="description"
               value={description}
               onChange={setDescription}
-              placeholder={t("framework.descPlaceholder")}
-              title={t("common.description")}
+              placeholder={t("framework.descriptionPlaceholder")}
+              title={t("framework.descriptionLabel")}
             />
 
             <Field.Error className="sub-text mt-xs" />
           </Field.Root>
 
-          <Field.FormError
-            errors={state?.errors}
-            knownFields={["title", "description", "lifeAreaId", "tag"]}
-          />
-
           <PageActionBtn submit disabled={pending} form="framework-form" />
         </Form>
       )}
 
+      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
         <Dialog.Description className="sub-text">
@@ -303,9 +286,8 @@ export function FrameworkForm() {
             <Button
               type="submit"
               variant="primary"
-              disabled={isDeleting || !isEditMode}
-              >
-              {isDeleting ? t("common.loading") : t("common.delete")}
+              disabled={isDeleting || !editId}>
+              {t("common.delete")}
             </Button>
           </form>
         </div>
@@ -313,5 +295,3 @@ export function FrameworkForm() {
     </PageWrapper>
   );
 }
-
-export default FrameworkForm;

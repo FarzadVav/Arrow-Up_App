@@ -3,10 +3,11 @@ import { Entity, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { LifeArea } from './LifeArea';
+import { SkillTag } from './SkillTag';
 
 @Entity({ tableName: 'skills' })
 export class Skill extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt' | 'lifeArea';
 
   @Property({ type: 'string' })
   title!: string;
@@ -20,8 +21,8 @@ export class Skill extends BaseEntity {
   @Property({ type: 'text' })
   content!: string;
 
-  @Property({ type: 'string', nullable: true })
-  tag?: string | null;
+  @ManyToOne(() => SkillTag, { nullable: true, deleteRule: 'set null' })
+  tag?: Rel<SkillTag> | null;
 
   @Property({ type: 'datetime', nullable: true })
   deletedAt?: Date | null;

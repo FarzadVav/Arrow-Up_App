@@ -9,6 +9,14 @@ export const FrameworkLifeAreaSummarySchema = type({
 });
 
 /**
+ * Summary schema for Tag referenced in Framework.
+ */
+export const FrameworkTagSummarySchema = type({
+  id: 'number',
+  title: 'string',
+});
+
+/**
  * Schema for framework check-in completion history.
  */
 export const FrameworkHistoryItemSchema = type({
@@ -26,6 +34,7 @@ export const FrameworkSchema = type({
   description: 'string',
   'lifeAreaId?': 'number | null',
   'lifeArea?': FrameworkLifeAreaSummarySchema,
+  'tagId?': 'number | null',
   'tag?': 'string | null',
   'history?': FrameworkHistoryItemSchema.array(),
   'createdAt?': 'string',
@@ -36,12 +45,14 @@ export type Framework = typeof FrameworkSchema.infer;
 
 /**
  * ArkType schema for creating a Framework.
+ * LifeArea and Tag are mandatory; users cannot send null.
  */
 export const CreateFrameworkSchema = type({
   title: 'string >= 1',
   'description?': 'string',
-  'lifeAreaId?': 'number | null',
-  'tag?': 'string | null',
+  lifeAreaId: 'number >= 1',
+  'tagId?': 'number >= 1',
+  'tag?': 'string | number',
 });
 export type CreateFrameworkData = typeof CreateFrameworkSchema.infer;
 
@@ -52,14 +63,15 @@ export const UpdateFrameworkSchema = type({
   'id?': 'number',
   'title?': 'string >= 1',
   'description?': 'string',
-  'lifeAreaId?': 'number | null',
-  'tag?': 'string | null',
+  'lifeAreaId?': 'number >= 1',
+  'tagId?': 'number >= 1',
+  'tag?': 'string | number',
 });
 export type UpdateFrameworkData = typeof UpdateFrameworkSchema.infer;
 
 /**
  * ArkType schema and inferred type for the FrameworkTag entity.
- * A tag belongs to one life area; lifeAreaId null scopes it to the General area.
+ * A tag belongs to a mandatory life area.
  */
 export const FrameworkTagSchema = type({
   id: 'number',
@@ -72,13 +84,13 @@ export type FrameworkTag = typeof FrameworkTagSchema.infer;
 
 export const CreateFrameworkTagSchema = type({
   title: 'string >= 1',
-  lifeAreaId: 'number | null',
+  lifeAreaId: 'number >= 1',
 });
 export type CreateFrameworkTagData = typeof CreateFrameworkTagSchema.infer;
 
 export const UpdateFrameworkTagSchema = type({
   id: 'number',
   'title?': 'string >= 1',
-  'lifeAreaId?': 'number | null',
+  'lifeAreaId?': 'number >= 1',
 });
 export type UpdateFrameworkTagData = typeof UpdateFrameworkTagSchema.infer;

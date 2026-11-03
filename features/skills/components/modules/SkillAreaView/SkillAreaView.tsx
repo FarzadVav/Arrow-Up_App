@@ -34,6 +34,7 @@ type SkillAreaViewProps = {
 };
 
 export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
+  const isAbandoned = lifeAreaId === null;
   const { t } = useLocale();
   const searchParams = useSearchParams();
   const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
@@ -42,7 +43,7 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
   const title = useLifeAreaTitle(lifeAreaId, t("skills.unknownArea"));
   const router = useRouter();
   const { skills, isLoading, mutate: revalidateSkills } = useSkills();
-  const { tags } = useSkillTags(lifeAreaId);
+  const { tags } = useSkillTags(isAbandoned ? undefined : lifeAreaId);
 
   const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
 
@@ -61,7 +62,9 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
 
   useEffect(() => {
     if (!deleteState?.success) return;
-    setDeleteDialogOpen(false);
+    queueMicrotask(() => {
+      setDeleteDialogOpen(false);
+    });
     revalidateSkills();
   }, [deleteState, revalidateSkills]);
 
@@ -123,69 +126,105 @@ export function SkillAreaView({ lifeAreaId }: SkillAreaViewProps) {
       </TopBar>
 
       <PageItemsWrapper>
-        <SlideTabs
-          tabs={filterTabs}
-          activeId={activeTag}
-          onTabChange={(id) => {
-            if (id !== "tags-page") {
-              setActiveTag(id);
-            }
-          }}
-          headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
-          tabClassName="shrink-0 flex-none"
-          between={
+        {isAbandoned ? (
+          <div className="w-full space-y-sm">
             <div className="w-full flex items-center justify-between pb-xs text-xs">
               <span className="font-semibold">{title}</span>
               <span>
-                {filteredSkills.length} {t("profile.total")}
+                {areaSkills.length} {t("profile.total")}
               </span>
             </div>
-          }>
-          <div className="w-full space-y-sm">
+
             {isLoading && skills.length === 0 ? (
               <Skeleton count={3} />
+            ) : areaSkills.length === 0 ? (
+              <EmptyAlert
+                alert={t("skills.noAbandonedSkills")}
+                className="p-md"
+              />
             ) : (
-              <>
-                {filteredSkills.length === 0 ? (
-                  <EmptyAlert
-                    alert={
-                      activeTag !== "all"
-                        ? t("skills.noSkillsWithTag")
-                        : t("skills.noSkillsInArea")
-                    }
-                    description={t("skills.addFirst")}
-                    href={isArchivedArea ? undefined : createHref()}
-                    className="p-md"
-                  />
-                ) : (
-                  <ReorderList
-                    items={filteredSkills}
-                    entity="skills"
-                    revalidate={revalidateSkills}
-                    renderItem={(skill) => (
-                      <SkillCard
-                        skill={skill}
-                        onEdit={handleOpenEdit}
-                        onRequestDelete={(id) => {
-                          setDeleteTargetId(id);
-                          setDeleteDialogOpen(true);
-                        }}
-                      />
-                    )}
+              <ReorderList
+                items={areaSkills}
+                entity="skills"
+                revalidate={revalidateSkills}
+                renderItem={(skill) => (
+                  <SkillCard
+                    skill={skill}
+                    onEdit={handleOpenEdit}
+                    onRequestDelete={(id) => {
+                      setDeleteTargetId(id);
+                      setDeleteDialogOpen(true);
+                    }}
                   />
                 )}
-              </>
+              />
             )}
           </div>
-        </SlideTabs>
+        ) : (
+          <SlideTabs
+            tabs={filterTabs}
+            activeId={activeTag}
+            onTabChange={(id) => {
+              if (id !== "tags-page") {
+                setActiveTag(id);
+              }
+            }}
+            headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
+            tabClassName="shrink-0 flex-none"
+            between={
+              <div className="w-full flex items-center justify-between pb-xs text-xs">
+                <span className="font-semibold">{title}</span>
+                <span>
+                  {filteredSkills.length} {t("profile.total")}
+                </span>
+              </div>
+            }>
+            <div className="w-full space-y-sm">
+              {isLoading && skills.length === 0 ? (
+                <Skeleton count={3} />
+              ) : (
+                <>
+                  {filteredSkills.length === 0 ? (
+                    <EmptyAlert
+                      alert={
+                        activeTag !== "all"
+                          ? t("skills.noSkillsWithTag")
+                          : t("skills.noSkillsInArea")
+                      }
+                      description={t("skills.addFirst")}
+                      href={isArchivedArea ? undefined : createHref()}
+                      className="p-md"
+                    />
+                  ) : (
+                    <ReorderList
+                      items={filteredSkills}
+                      entity="skills"
+                      revalidate={revalidateSkills}
+                      renderItem={(skill) => (
+                        <SkillCard
+                          skill={skill}
+                          onEdit={handleOpenEdit}
+                          onRequestDelete={(id) => {
+                            setDeleteTargetId(id);
+                            setDeleteDialogOpen(true);
+                          }}
+                        />
+                      )}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </SlideTabs>
+        )}
 
         {isArchivedArea ? (
           <p className="sub-text w-full text-center">
             {t("lifeAreas.inactiveDesc")}
           </p>
-        ) : (
+        ) : !isAbandoned ? (
           <PageActionBtn href={createHref()}>{t("skills.new")}</PageActionBtn>
-        )}
+        ) : null}
       </PageItemsWrapper>
 
       {/* Delete Confirmation Dialog */}

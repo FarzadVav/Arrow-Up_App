@@ -2,6 +2,7 @@ import { EntityRepository } from '@mikro-orm/postgresql';
 import { User } from '@/db/entities/User';
 import type { LifeArea } from '@/db/entities/LifeArea';
 import type { CreateLifeAreaData, UpdateLifeAreaData, LifeArea as LifeAreaDto } from '../lib/types';
+import { DEFAULT_LIFE_AREAS, getDefaultLifeAreaTitle } from '../lib/constants';
 
 export type { CreateLifeAreaData, UpdateLifeAreaData };
 
@@ -41,6 +42,30 @@ export class LifeAreaRepository extends EntityRepository<LifeArea> {
     });
     await this.em.flush();
     return lifeArea;
+  }
+
+  /**
+   * Creates the 4 default life areas (lifestyle, health, career, social connections)
+   * for a newly created user in their active locale.
+   */
+  async createDefaultLifeAreasForUser(user: User, locale?: string): Promise<LifeArea[]> {
+    const areas: LifeArea[] = [];
+    const targetLocale = locale ?? user.locale ?? 'fa';
+
+    for (const def of DEFAULT_LIFE_AREAS) {
+      const title = getDefaultLifeAreaTitle(def, targetLocale);
+      const lifeArea = this.create({
+        title,
+        vision: '',
+        active: true,
+        difficulty: def.defaultDifficulty,
+        user,
+      });
+      areas.push(lifeArea);
+    }
+
+    await this.em.flush();
+    return areas;
   }
 
   async updateLifeArea(

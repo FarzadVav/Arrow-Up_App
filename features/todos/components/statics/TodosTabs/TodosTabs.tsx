@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
-import { GaugeIcon } from "lucide-react";
 import { useTodos } from "@/features/todos/hooks";
 import TodoCard from "../../modules/TodoCard/TodoCard";
 import TodoMissionCard from "../../modules/TodoMissionCard/TodoMissionCard";
@@ -34,21 +33,21 @@ function TodosTabs() {
   const completedCount =
     activeTab === "missions"
       ? currentTodos.reduce((acc, mission) => {
-          const acts = mission.actions || [];
-          return acc + acts.filter((a) => a.isDone).length;
-        }, 0)
+        const acts = mission.actions || [];
+        return acc + acts.filter((a) => a.isDone).length;
+      }, 0)
       : currentTodos.filter((item) => item.isDone).length;
 
   const totalCount =
     activeTab === "missions"
       ? currentTodos.reduce(
-          (acc, mission) => acc + (mission.actions?.length || 0),
-          0,
-        )
+        (acc, mission) => acc + (mission.actions?.length || 0),
+        0,
+      )
       : currentTodos.length;
 
   const progressPercent =
-    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+    totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 6;
 
   const totalCost = currentTodos.reduce(
     (acc, item) => acc + (item.difficulty ?? 0),
@@ -73,13 +72,12 @@ function TodosTabs() {
     },
   ];
 
-  const newTodoHref = `/todos/new?type=${
-    activeTab === "missions"
-      ? "mission"
-      : activeTab === "upcoming"
-        ? "upcoming"
-        : "daily"
-  }`;
+  const newTodoHref = `/todos/new?type=${activeTab === "missions"
+    ? "mission"
+    : activeTab === "upcoming"
+      ? "upcoming"
+      : "daily"
+    }`;
 
   return (
     <SlideTabs tabs={tabs} activeId={activeTab}>
@@ -111,7 +109,7 @@ function TodosTabs() {
 
                 <div className="h-1.5 overflow-hidden rounded-full bg-card-thick">
                   <motion.div
-                    initial={{ width: 0 }}
+                    initial={{ width: 6 }}
                     className="h-full rounded-full bg-foreground"
                     transition={{ duration: 0.6, ease: "easeOut" }}
                     animate={{ width: `${progressPercent}%` }}

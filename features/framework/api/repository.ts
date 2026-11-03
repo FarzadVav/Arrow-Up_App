@@ -2,10 +2,10 @@ import { EntityRepository } from '@mikro-orm/postgresql';
 import type { FilterQuery } from '@mikro-orm/core';
 import { User } from '@/db/entities/User';
 import { LifeArea } from '@/db/entities/LifeArea';
-import { Habit } from '@/db/entities/Habit';
-import { HabitHistory } from '@/db/entities/HabitHistory';
 import { HabitTag } from '@/db/entities/HabitTag';
+import { HabitHistory } from '@/db/entities/HabitHistory';
 import { assertOwnedLifeAreas } from '@/features/general/api/repository';
+import type { Habit } from '@/db/entities/Habit';
 import type {
   CreateFrameworkData,
   UpdateFrameworkData,
@@ -31,6 +31,9 @@ export function serializeFramework(habit: Habit): FrameworkDto {
       }))
     : [];
 
+  const tagTitle = habit.tag && typeof habit.tag === 'object' && 'title' in habit.tag ? habit.tag.title : null;
+  const tagId = habit.tag && typeof habit.tag === 'object' && 'id' in habit.tag ? habit.tag.id : null;
+
   return {
     id: habit.id,
     title: habit.title,
@@ -42,7 +45,8 @@ export function serializeFramework(habit: Habit): FrameworkDto {
           title: habit.lifeArea.title,
         }
       : undefined,
-    tag: habit.tag ?? null,
+    tagId,
+    tag: tagTitle,
     history: historyList,
     createdAt:
       habit.createdAt instanceof Date
@@ -88,31 +92,40 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     }
 
     return this.find(where, {
-      populate: ['lifeArea', 'history'],
+      populate: ['lifeArea', 'tag', 'history'],
       orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
     });
   }
 
   async findById(id: number, userId: number): Promise<Habit | null> {
-    return this.findOne({ id, user: userId, deletedAt: null }, { populate: ['lifeArea', 'history'] });
+    return this.findOne({ id, user: userId, deletedAt: null }, { populate: ['lifeArea', 'tag', 'history'] });
   }
 
   async createFramework(data: CreateFrameworkData, userId: number): Promise<Habit> {
     await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
+    let tagEntity: HabitTag | null = null;
+    const rawTagId = data.tagId ?? (typeof data.tag === 'number' ? data.tag : data.tag && !isNaN(Number(data.tag)) ? Number(data.tag) : undefined);
+    if (rawTagId) {
+      tagEntity = await this.em.findOne(HabitTag, { id: rawTagId, user: userId }) ?? null;
+    } else if (typeof data.tag === 'string' && data.tag.trim()) {
+      tagEntity = await this.em.findOne(HabitTag, { title: data.tag.trim(), user: userId }) ?? null;
+    }
+
+    if (!tagEntity) {
+      throw new Error('Tag is required for framework');
+    }
+
     const habit = this.create({
       title: data.title.trim(),
       description: data.description?.trim() || '',
-      tag: data.tag?.trim() || null,
-      lifeArea:
-        data.lifeAreaId && data.lifeAreaId > 0
-          ? this.em.getReference(LifeArea, data.lifeAreaId)
-          : undefined,
+      tag: tagEntity,
+      lifeArea: this.em.getReference(LifeArea, data.lifeAreaId),
       user: this.em.getReference(User, userId),
     });
 
     await this.em.flush();
-    await this.em.populate(habit, ['lifeArea', 'history']);
+    await this.em.populate(habit, ['lifeArea', 'tag', 'history']);
     return habit;
   }
 
@@ -121,7 +134,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     data: UpdateFrameworkData,
     userId: number,
   ): Promise<Habit | null> {
-    const habit = await this.findOne({ id, user: userId }, { populate: ['lifeArea', 'history'] });
+    const habit = await this.findOne({ id, user: userId }, { populate: ['lifeArea', 'tag', 'history'] });
     if (!habit) {
       return null;
     }
@@ -138,14 +151,27 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     if (data.description !== undefined) {
       habit.description = data.description.trim();
     }
-    if (data.tag !== undefined) {
-      habit.tag = data.tag?.trim() || null;
+
+    const rawTagId = data.tagId ?? (typeof data.tag === 'number' ? data.tag : data.tag && !isNaN(Number(data.tag)) ? Number(data.tag) : undefined);
+    if (rawTagId !== undefined) {
+      const foundTag = rawTagId ? (await this.em.findOne(HabitTag, { id: rawTagId, user: userId }) ?? null) : null;
+      if (!foundTag) {
+        throw new Error('Tag is required for framework');
+      }
+      habit.tag = foundTag;
+    } else if (typeof data.tag === 'string') {
+      const foundTag = data.tag.trim() ? (await this.em.findOne(HabitTag, { title: data.tag.trim(), user: userId }) ?? null) : null;
+      if (!foundTag) {
+        throw new Error('Tag is required for framework');
+      }
+      habit.tag = foundTag;
     }
+
     if (data.lifeAreaId !== undefined) {
-      habit.lifeArea =
-        data.lifeAreaId && data.lifeAreaId > 0
-          ? this.em.getReference(LifeArea, data.lifeAreaId)
-          : undefined;
+      if (!data.lifeAreaId || data.lifeAreaId <= 0) {
+        throw new Error('Life area is required for framework');
+      }
+      habit.lifeArea = this.em.getReference(LifeArea, data.lifeAreaId);
     }
 
     await this.em.flush();
@@ -189,7 +215,7 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     return this.find(
       { user: userId, deletedAt: { $ne: null } },
       {
-        populate: ['lifeArea', 'history'],
+        populate: ['lifeArea', 'tag', 'history'],
         orderBy: [{ deletedAt: 'DESC' }],
       },
     );
@@ -234,17 +260,23 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
   async findAllTags(userId: number): Promise<HabitTag[]> {
     return this.find({ user: userId }, { orderBy: { createdAt: 'DESC' } });
   }
+  async findByLifeArea(lifeAreaId: number | null, userId: number): Promise<HabitTag[]> {
+    return this.find(
+      { lifeArea: lifeAreaId, user: userId },
+      { orderBy: { title: 'ASC' } },
+    );
+  }
 
-  async findByLifeArea(
+  async findByTitle(
+    title: string,
     lifeAreaId: number | null,
     userId: number,
-  ): Promise<HabitTag[]> {
-    const where: FilterQuery<HabitTag> = {
-      user: userId,
+  ): Promise<HabitTag | null> {
+    return this.findOne({
+      title: title.trim(),
       lifeArea: lifeAreaId,
-    };
-
-    return this.find(where, { orderBy: { createdAt: 'ASC' } });
+      user: userId,
+    });
   }
 
   async findById(id: number, userId: number): Promise<HabitTag | null> {
@@ -259,9 +291,7 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
 
     const tag = this.create({
       title: data.title.trim(),
-      lifeArea: data.lifeAreaId
-        ? this.em.getReference(LifeArea, data.lifeAreaId)
-        : undefined,
+      lifeArea: this.em.getReference(LifeArea, data.lifeAreaId),
       user: this.em.getReference(User, userId),
     });
     await this.em.flush();
@@ -286,9 +316,7 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
 
     const lifeArea =
       data.lifeAreaId !== undefined
-        ? data.lifeAreaId
-          ? this.em.getReference(LifeArea, data.lifeAreaId)
-          : undefined
+        ? (data.lifeAreaId ? this.em.getReference(LifeArea, data.lifeAreaId) : undefined)
         : tag.lifeArea;
 
     this.assign(tag, {

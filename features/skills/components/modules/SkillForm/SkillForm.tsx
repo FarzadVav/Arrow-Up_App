@@ -2,28 +2,26 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useActionState, useMemo } from "react";
-import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
-
 import { Form } from "@base-ui/react";
-import Field from "@/features/general/components/ui/Field";
-import { CreateSkillSchema, UpdateSkillSchema } from "@/features/skills/lib/types";
-import {
-  UNSET_LIFE_AREA_SLUG,
-  parseLifeAreaSlug,
-} from "@/features/general/lib/utils";
 import { Trash2Icon } from "lucide-react";
+
+import Field from "@/features/general/components/ui/Field";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
-
-import { useSkill } from "@/features/skills/hooks";
-import { useSkillTags } from "@/features/skills/hooks";
+import { parseLifeAreaSlug, UNSET_LIFE_AREA_SLUG } from "@/features/general/lib/utils";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import { useSkill, useSkillTags } from "@/features/skills/hooks";
 import {
   createSkillMutation,
   deleteSkillMutation,
   updateSkillMutation,
 } from "@/features/skills/api/mutations";
+import {
+  CreateSkillSchema,
+  UpdateSkillSchema,
+} from "@/features/skills/lib/types";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
 import PageActionBtn from "@/features/general/components/modules/PageActionBtn/PageActionBtn";
@@ -42,13 +40,10 @@ function LifeAreaSelect({
   const { t } = useLocale();
   const { lifeAreas = [] } = useLifeAreas();
 
-  const items = [
-    { value: "none", label: t("common.notSet") },
-    ...selectableLifeAreas(lifeAreas, value).map((la) => ({
-      value: String(la.id),
-      label: la.title,
-    })),
-  ];
+  const items = selectableLifeAreas(lifeAreas, value).map((la) => ({
+    value: String(la.id),
+    label: la.title,
+  }));
 
   return (
     <Field.Root name="lifeAreaId">
@@ -59,12 +54,13 @@ function LifeAreaSelect({
       <SelectDialog
         name="lifeAreaSelect"
         items={items}
-        value={value ? String(value) : "none"}
+        value={value ? String(value) : undefined}
         onChange={(next) =>
-          onChange(next === "none" || !next ? null : Number(next))
+          onChange(next ? Number(next) : null)
         }
         title={t("lifeAreas.selectLifeArea")}
         placeholder={t("lifeAreas.selectLifeArea")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -78,30 +74,18 @@ function TagSelect({
   onChange,
 }: {
   lifeAreaId: number | null;
-  value: string | null;
-  onChange: (value: string | null) => void;
+  value: number | null;
+  onChange: (value: number | null) => void;
 }) {
   const { t } = useLocale();
   const { tags } = useSkillTags(lifeAreaId);
 
   const items = useMemo(() => {
-    const list = [{ value: "none", label: t("common.notSet") }];
-    const seen = new Set<string>(["none"]);
-
-    for (const tag of tags) {
-      const lower = tag.title.toLowerCase();
-      if (!seen.has(lower)) {
-        seen.add(lower);
-        list.push({ value: tag.title, label: tag.title });
-      }
-    }
-
-    if (value && value !== "none" && !seen.has(value.toLowerCase())) {
-      list.push({ value, label: value });
-    }
-
-    return list;
-  }, [tags, value, t]);
+    return tags.map((tag) => ({
+      value: String(tag.id),
+      label: tag.title,
+    }));
+  }, [tags]);
 
   return (
     <Field.Root name="tag">
@@ -109,12 +93,13 @@ function TagSelect({
 
       <SelectDialog
         items={items}
-        value={value ?? "none"}
+        value={value ? String(value) : undefined}
         onChange={(next) =>
-          onChange(next === "none" || !next ? null : String(next))
+          onChange(next ? Number(next) : null)
         }
         title={t("common.tag")}
         placeholder={t("skills.selectTag")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -140,8 +125,10 @@ export function SkillForm() {
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     () => parseLifeAreaSlug(lifeAreaParam) ?? null,
   );
-  const [tag, setTag] = useState<string | null>(() => tagParam || null);
+  const [tagId, setTagId] = useState<number | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const { tags } = useSkillTags(lifeAreaId);
 
   const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
 
@@ -158,15 +145,13 @@ export function SkillForm() {
   useEffect(() => {
     if (state?.success) {
       router.push(`/skills/${areaSlug}`);
-      router.refresh();
     }
-  }, [state?.success, areaSlug, router]);
+  }, [state, areaSlug, router]);
 
   useEffect(() => {
-    if (!deleteState?.success) return;
-
-    router.push(`/skills/${areaSlug}`);
-    router.refresh();
+    if (deleteState?.success) {
+      router.push(`/skills/${areaSlug}`);
+    }
   }, [deleteState, areaSlug, router]);
 
   useEffect(() => {
@@ -174,8 +159,14 @@ export function SkillForm() {
       queueMicrotask(() => {
         setTitle("");
         setContent("");
-        setTag(tagParam || null);
-        setLifeAreaId(parseLifeAreaSlug(lifeAreaParam) ?? null);
+        const parsedArea = parseLifeAreaSlug(lifeAreaParam) ?? null;
+        setLifeAreaId(parsedArea);
+        if (tagParam && tags.length > 0) {
+          const found = tags.find(
+            (t) => String(t.id) === tagParam || t.title.toLowerCase() === tagParam.toLowerCase(),
+          );
+          if (found) setTagId(found.id);
+        }
       });
       return;
     }
@@ -185,10 +176,10 @@ export function SkillForm() {
         setTitle(skill.title);
         setContent(skill.content || "");
         setLifeAreaId(skill.lifeAreaId ?? null);
-        setTag(skill.tag ?? null);
+        setTagId(skill.tagId ?? null);
       });
     }
-  }, [editId, skill, lifeAreaParam, tagParam]);
+  }, [editId, skill, lifeAreaParam, tagParam, tags]);
 
   return (
     <PageWrapper>
@@ -224,8 +215,9 @@ export function SkillForm() {
           action={formAction}
           errors={state?.errors}>
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
-          <Field type="hidden" name="lifeAreaId" value={areaSlug} />
-          <Field type="hidden" name="tag" value={tag ?? ""} />
+          <Field type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : ""} />
+          <Field type="hidden" name="tagId" value={tagId ? String(tagId) : ""} />
+          <Field type="hidden" name="tag" value={tagId ? String(tagId) : ""} />
           <Field type="hidden" name="content" value={content} />
 
           <Field
@@ -245,12 +237,12 @@ export function SkillForm() {
             onChange={(next) => {
               if (next !== lifeAreaId) {
                 setLifeAreaId(next);
-                setTag(null);
+                setTagId(null);
               }
             }}
           />
 
-          <TagSelect lifeAreaId={lifeAreaId} value={tag} onChange={setTag} />
+          <TagSelect lifeAreaId={lifeAreaId} value={tagId} onChange={setTagId} />
 
           <Field.Root
             name="content"
@@ -263,22 +255,16 @@ export function SkillForm() {
               onChange={setContent}
               placeholder={t("skills.contentPlaceholder")}
               title={t("skills.contentLabel")}
-              required
-              minLength={1}
             />
 
-            <Field.Error />
+            <Field.Error className="sub-text mt-xs" />
           </Field.Root>
-
-          <Field.FormError
-            errors={state?.errors}
-            knownFields={["title", "content", "lifeAreaId", "tag"]}
-          />
 
           <PageActionBtn submit disabled={pending} form="skill-form" />
         </Form>
       )}
 
+      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <Dialog.Title className="title">{t("common.delete")}</Dialog.Title>
         <Dialog.Description className="sub-text">
@@ -300,9 +286,8 @@ export function SkillForm() {
             <Button
               type="submit"
               variant="primary"
-              disabled={isDeleting || !isEditMode}
-              >
-              {isDeleting ? t("common.loading") : t("common.delete")}
+              disabled={isDeleting || !editId}>
+              {t("common.delete")}
             </Button>
           </form>
         </div>
@@ -310,5 +295,3 @@ export function SkillForm() {
     </PageWrapper>
   );
 }
-
-export default SkillForm;

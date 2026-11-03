@@ -71,12 +71,12 @@ export function JournalTagForm({
 
   useEffect(() => {
     if (!editId) {
-      setTitle("");
+      queueMicrotask(() => setTitle(""));
       return;
     }
 
     if (tag) {
-      setTitle(tag.title);
+      queueMicrotask(() => setTitle(tag.title ?? ""));
     }
   }, [editId, tag]);
 
@@ -84,7 +84,7 @@ export function JournalTagForm({
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>
-          {isEditMode ? t("journals.editTag") : t("journals.newTag")}
+          {isEditMode ? `${categoryTitle ?? ""} - ${t("journals.editTag")}` : `${categoryTitle ?? ""} - ${t("journals.newTag")}`}
         </TopBar.Title>
         <TopBar.Btn
           backIcon

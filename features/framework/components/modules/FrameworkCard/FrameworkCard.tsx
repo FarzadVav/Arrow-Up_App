@@ -47,10 +47,10 @@ export function FrameworkCard({
           <div className="flex items-center gap-sm flex-wrap sub-text">
             <span className="flex items-center gap-xs">
               <CompassIcon />
-              <span>{framework.lifeArea?.title ?? t("common.notSet")}</span>
+              <span>{framework.lifeArea?.title ?? t("common.abandoned")}</span>
             </span>
 
-            {framework.tag && (
+            {framework.lifeAreaId && framework.tag && (
               <span className="flex items-center gap-xs">
                 <TagIcon />
                 <span>{framework.tag}</span>

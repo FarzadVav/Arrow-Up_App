@@ -9,7 +9,7 @@ export type {
   UpdateJournalTagData,
 } from './schemas';
 export {
-  JournalCategorySchema,
+  JournalCategoryNameSchema as JournalCategorySchema,
   JournalTypeSchema,
   JournalSchema,
   CreateJournalSchema,
@@ -31,6 +31,9 @@ export type JournalsStats = {
  */
 export type JournalCategoryDefinition = {
   name: JournalCategory;
+  slug?: string;
+  nameEn?: string;
+  nameFa?: string;
   tags: string[];
 };
 
@@ -42,6 +45,7 @@ export type JournalFormState = {
     title?: string[];
     content?: string[];
     type?: string[];
+    category?: string[];
     tag?: string[];
     general?: string[];
   };
@@ -50,8 +54,11 @@ export type JournalFormState = {
     id?: number;
     title?: string;
     content?: string;
-    type?: JournalCategory;
-    tag?: string | null;
+    type?: string;
+    category?: string;
+    categoryId?: number;
+    tag?: string | number | null;
+    tagId?: number;
   };
   success?: boolean;
   journalId?: number;
@@ -67,7 +74,7 @@ export type JournalTagFormState = {
   inputs?: {
     id?: number;
     title?: string;
-    category?: JournalCategory;
+    category?: string;
   };
   success?: boolean;
   tagId?: number;

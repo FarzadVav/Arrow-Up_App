@@ -14,6 +14,7 @@ import {
   TodoDiscipline,
   DisciplineHistory,
   Journal,
+  JournalCategory,
   JournalTag,
   LifeArea,
   Skill,
@@ -48,6 +49,7 @@ export interface Services {
   todoDiscipline: TodoDisciplineRepository;
   disciplineHistory: EntityRepository<DisciplineHistory>;
   journal: JournalRepository;
+  journalCategory: EntityRepository<JournalCategory>;
   journalTag: JournalTagRepository;
   lifeArea: LifeAreaRepository;
   skill: SkillRepository;
@@ -71,6 +73,7 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     todoDiscipline: new TodoDisciplineRepository(em, TodoDiscipline),
     disciplineHistory: em.getRepository(DisciplineHistory),
     journal: new JournalRepository(em, Journal),
+    journalCategory: em.getRepository(JournalCategory),
     journalTag: new JournalTagRepository(em, JournalTag),
     lifeArea: new LifeAreaRepository(em, LifeArea),
     skill: new SkillRepository(em, Skill),
@@ -104,25 +107,16 @@ export async function initORM(options?: Partial<Options>): Promise<Services> {
 }
 
 /**
- * Executes a callback within a request-isolated context using RequestContext.create.
- * Essential for Server Components, Route Handlers, and Server Actions in Next.js.
+ * Runs a transactional unit of work inside an active MikroORM RequestContext.
  */
 export async function withRequestContext<T>(
   callback: (services: Services) => Promise<T>,
 ): Promise<T> {
-  const { orm } = await initORM();
-  return RequestContext.create(orm.em, () => {
-    const scopedServices = createServices(orm, orm.em);
-    return callback(scopedServices);
+  const services = await initORM();
+
+  return RequestContext.create(services.em, async () => {
+    const forkEm = services.em.fork();
+    const forkedServices = createServices(services.orm, forkEm);
+    return callback(forkedServices);
   });
 }
-
-/**
- * Returns a fresh or current EntityManager for queries.
- */
-export async function getEntityManager(): Promise<EntityManager> {
-  const services = await initORM();
-  return services.em;
-}
-
-export default initORM;

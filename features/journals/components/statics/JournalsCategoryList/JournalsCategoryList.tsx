@@ -4,62 +4,61 @@ import Link from "next/link";
 import {
   Brain,
   Heart,
-  Lightbulb,
   PenLine,
   ScrollText,
   type LucideIcon,
 } from "lucide-react";
 
-import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
-import type { JournalType } from "@/features/journals/lib/types";
+import { STATIC_JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import CardView from "@/features/general/components/ui/CardView/CardView";
 
 const CATEGORY_META: Record<
-  JournalType,
+  string,
   {
     icon: LucideIcon;
     descriptionKey: string;
   }
 > = {
-  Logs: {
+  logs: {
     icon: ScrollText,
     descriptionKey: "journals.categoryDesc.logs",
   },
-  Thoughts: {
+  thoughts: {
     icon: Brain,
     descriptionKey: "journals.categoryDesc.thoughts",
   },
-  Feelings: {
+  feelings: {
     icon: Heart,
     descriptionKey: "journals.categoryDesc.feelings",
   },
-  Ideas: {
-    icon: Lightbulb,
-    descriptionKey: "journals.categoryDesc.ideas",
-  },
-  Notes: {
+  notes: {
     icon: PenLine,
     descriptionKey: "journals.categoryDesc.notes",
   },
 };
 
 export default function JournalsCategoryList() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   return (
     <div className="w-full flex flex-col gap-sm">
-      {JOURNAL_CATEGORIES.map((cat) => {
-        const categoryName = cat.name;
-        const meta = CATEGORY_META[categoryName];
+      {STATIC_JOURNAL_CATEGORIES.map((cat) => {
+        const meta = CATEGORY_META[cat.slug] ?? {
+          icon: ScrollText,
+          descriptionKey: `journals.categoryDesc.${cat.slug}`,
+        };
         const Icon = meta.icon;
-        const label = t(`journals.categories.${categoryName.toLowerCase()}`);
+        const label =
+          locale === "fa"
+            ? cat.nameFa
+            : cat.nameEn || t(`journals.categories.${cat.slug}`);
         const desc = t(meta.descriptionKey);
 
         return (
           <Link
-            key={categoryName}
-            href={`/journals/${categoryName.toLowerCase()}`}
+            key={cat.slug}
+            href={`/journals/${cat.slug}`}
             className="block"
           >
             <CardView

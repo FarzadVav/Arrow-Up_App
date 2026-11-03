@@ -11,7 +11,7 @@ export { TodoType };
 
 @Entity({ tableName: 'todos' })
 export class Todo extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description' | 'deadline' | 'sortNumber' | 'deletedAt';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone' | 'type' | 'description' | 'deadline' | 'sortNumber' | 'deletedAt' | 'lifeArea';
 
   @Property({ type: 'string' })
   title!: string;

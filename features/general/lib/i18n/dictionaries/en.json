@@ -20,6 +20,7 @@
     "deadline": "Deadline",
     "progress": "Progress",
     "general": "General",
+    "abandoned": "Abandoned",
     "submit": "Submit",
     "selectDate": "Select Date",
     "notSet": "Not set",
@@ -140,14 +141,12 @@
       "logs": "Logs",
       "thoughts": "Thoughts",
       "feelings": "Feelings",
-      "ideas": "Ideas",
       "notes": "Notes"
     },
     "categoryDesc": {
       "logs": "Daily activity, execution notes, and progress logs",
       "thoughts": "Reflections, mental models, and deep contemplations",
       "feelings": "Emotional awareness, gratitude, and inner state",
-      "ideas": "Sparks of creativity, projects, and future concepts",
       "notes": "Quick references, checklists, and working memos"
     }
   },
@@ -355,6 +354,8 @@
     "noSkillsWithTag": "You haven't any skills with this tag",
     "areaDesc": "Skills linked to this life area",
     "generalDesc": "Skills that are not linked to a life area yet",
+    "abandonedDesc": "Skills that are not linked to a life area",
+    "noAbandonedSkills": "No abandoned skills",
     "unknownArea": "Unknown life area",
     "countSuffix": "skills"
   },
@@ -382,6 +383,8 @@
     "noFrameworksWithTag": "You haven't any frameworks with this tag",
     "areaDesc": "Frameworks linked to this life area",
     "generalDesc": "Frameworks that are not linked to a life area yet",
+    "abandonedDesc": "Frameworks that are not linked to a life area",
+    "noAbandonedFrameworks": "No abandoned frameworks",
     "unknownArea": "Unknown life area",
     "countSuffix": "frameworks"
   },

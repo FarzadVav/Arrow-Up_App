@@ -18,9 +18,11 @@ import Dialog from "@/features/general/components/ui/Dialog/Dialog";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 
-import type { JournalType } from "@/features/journals/lib/types";
-import { JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
-import { getCategoryTags } from "@/features/journals/lib/utils";
+import { STATIC_JOURNAL_CATEGORIES } from "@/features/journals/lib/constants";
+import {
+  getCategoryStaticTags,
+  getJournalCategory,
+} from "@/features/journals/lib/utils";
 import {
   CreateJournalSchema,
   UpdateJournalSchema,
@@ -41,14 +43,17 @@ function TypeSelect({
   value,
   onChange,
 }: {
-  value: JournalType | null;
-  onChange: (value: JournalType) => void;
+  value: string;
+  onChange: (value: string) => void;
 }) {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
-  const items = JOURNAL_CATEGORIES.map((cat) => ({
-    value: cat.name,
-    label: t(`journals.categories.${cat.name.toLowerCase()}`) || cat.name,
+  const items = STATIC_JOURNAL_CATEGORIES.map((cat) => ({
+    value: cat.slug,
+    label:
+      (locale === "fa" ? cat.nameFa : cat.nameEn) ||
+      t(`journals.categories.${cat.slug}`) ||
+      cat.nameEn,
   }));
 
   return (
@@ -59,10 +64,10 @@ function TypeSelect({
 
       <SelectDialog
         items={items}
-        value={value ?? undefined}
+        value={value}
         onChange={(nextValue) => {
           if (nextValue) {
-            onChange(nextValue as JournalType);
+            onChange(String(nextValue));
           }
         }}
         title={t("common.category")}
@@ -80,36 +85,28 @@ function TagSelect({
   value,
   onChange,
 }: {
-  category: JournalType | null;
+  category: string;
   value: string | null;
-  onChange: (value: string | null) => void;
+  onChange: (value: string) => void;
 }) {
-  const { t } = useLocale();
-  const { tags: dbTags } = useJournalTags(
-    category ?? undefined,
+  const { t, locale } = useLocale();
+  const { tags: dbTags } = useJournalTags(category);
+  const staticFallback = useMemo(
+    () => getCategoryStaticTags(category),
+    [category],
   );
-  const staticTags = getCategoryTags(category);
 
-  const availableTags = useMemo(() => {
-    const names = new Set<string>();
-    staticTags.forEach((tg) => names.add(tg));
-    dbTags.forEach((tg) => names.add(tg.title));
-    if (value && value !== "none") {
-      names.add(value);
-    }
-    return Array.from(names);
-  }, [staticTags, dbTags, value]);
+  const tagsList = useMemo(() => {
+    if (dbTags && dbTags.length > 0) return dbTags;
+    return staticFallback;
+  }, [dbTags, staticFallback]);
 
-  const items = useMemo(
-    () => [
-      { value: "none", label: t("common.notSet") },
-      ...availableTags.map((tg) => ({
-        value: tg,
-        label: tg,
-      })),
-    ],
-    [availableTags, t],
-  );
+  const items = useMemo(() => {
+    return tagsList.map((tg) => ({
+      value: tg.slug,
+      label: locale === "fa" ? tg.nameFa : tg.nameEn,
+    }));
+  }, [tagsList, locale]);
 
   return (
     <Field.Root name="tag">
@@ -117,14 +114,15 @@ function TagSelect({
 
       <SelectDialog
         items={items}
-        value={value ?? "none"}
+        value={value ?? (items[0]?.value || "")}
         onChange={(nextValue) => {
-          onChange(
-            nextValue === "none" || !nextValue ? null : String(nextValue),
-          );
+          if (nextValue) {
+            onChange(String(nextValue));
+          }
         }}
         title={t("common.tag")}
         placeholder={t("journals.selectTag")}
+        required
       />
 
       <Field.Error className="sub-text mt-xs" />
@@ -146,19 +144,21 @@ export function JournalForm() {
     editId ? Number(editId) : null,
   );
 
-  const resolveCategory = useCallback((param: string | null): JournalType => {
-    if (!param) return "Logs";
-    const matched = JOURNAL_CATEGORIES.find(
-      (c) => c.name.toLowerCase() === param.toLowerCase(),
-    );
-    return matched?.name ?? "Logs";
+  const resolveCategorySlug = useCallback((param: string | null): string => {
+    if (!param) return "logs";
+    const found = getJournalCategory(param);
+    return found?.slug ?? "logs";
   }, []);
 
   const [title, setTitle] = useState("");
-  const [type, setType] = useState<JournalType>(() =>
-    resolveCategory(categoryParam),
+  const [category, setCategory] = useState<string>(() =>
+    resolveCategorySlug(categoryParam),
   );
-  const [tag, setTag] = useState<string | null>(() => tagParam || null);
+  const [tag, setTag] = useState<string | null>(() => {
+    if (tagParam) return tagParam;
+    const initialTags = getCategoryStaticTags(resolveCategorySlug(categoryParam));
+    return initialTags[0]?.slug ?? null;
+  });
   const [content, setContent] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -176,28 +176,29 @@ export function JournalForm() {
   // Navigate back to category upon success
   useEffect(() => {
     if (state?.success) {
-      const targetCategory = type ?? "Logs";
+      const targetCategory = category || "logs";
       router.push(`/journals/${targetCategory.toLowerCase()}`);
       router.refresh();
     }
-  }, [state?.success, type, router]);
+  }, [state?.success, category, router]);
 
   useEffect(() => {
     if (!deleteState?.success) return;
 
-    const targetCategory = type ?? "Logs";
+    const targetCategory = category || "logs";
     router.push(`/journals/${targetCategory.toLowerCase()}`);
     router.refresh();
-  }, [deleteState, type, router]);
+  }, [deleteState, category, router]);
 
   // Load existing journal details if in edit mode
   useEffect(() => {
     if (!editId) {
-      const resolved = resolveCategory(categoryParam);
+      const resolved = resolveCategorySlug(categoryParam);
       queueMicrotask(() => {
         setTitle("");
-        setType(resolved);
-        setTag(tagParam || null);
+        setCategory(resolved);
+        const tags = getCategoryStaticTags(resolved);
+        setTag(tagParam || tags[0]?.slug || null);
         setContent("");
       });
       return;
@@ -206,12 +207,18 @@ export function JournalForm() {
     if (journal) {
       queueMicrotask(() => {
         setTitle(journal.title);
-        setType((journal.type as JournalType) ?? "Logs");
-        setTag(journal.tag ?? null);
+        const resolved =
+          journal.category?.slug ??
+          (journal.type ? journal.type.toLowerCase() : "logs");
+        setCategory(resolved);
+        setTag(
+          journal.tag?.slug ??
+            (journal.tag?.nameEn ? journal.tag.nameEn.toLowerCase() : null),
+        );
         setContent(journal.content);
       });
     }
-  }, [editId, journal, categoryParam, tagParam, resolveCategory]);
+  }, [editId, journal, categoryParam, tagParam, resolveCategorySlug]);
 
   return (
     <PageWrapper>
@@ -248,7 +255,8 @@ export function JournalForm() {
           errors={state?.errors}>
           {/* Hidden fields to pass data to Server Action */}
           {isEditMode && <Field type="hidden" name="id" value={editId ?? ""} />}
-          <Field type="hidden" name="type" value={type ?? "Logs"} />
+          <Field type="hidden" name="category" value={category} />
+          <Field type="hidden" name="type" value={category} />
           <Field type="hidden" name="tag" value={tag ?? ""} />
           <Field type="hidden" name="content" value={content} />
 
@@ -265,16 +273,21 @@ export function JournalForm() {
           />
 
           <TypeSelect
-            value={type}
-            onChange={(newType) => {
-              if (newType !== type) {
-                setType(newType);
-                setTag(null);
+            value={category}
+            onChange={(newCategory) => {
+              if (newCategory !== category) {
+                setCategory(newCategory);
+                const newCatTags = getCategoryStaticTags(newCategory);
+                setTag(newCatTags[0]?.slug ?? null);
               }
             }}
           />
 
-          <TagSelect category={type} value={tag} onChange={setTag} />
+          <TagSelect
+            category={category}
+            value={tag}
+            onChange={(nextTag) => setTag(nextTag)}
+          />
 
           <Field.Root
             name="content"
@@ -296,7 +309,7 @@ export function JournalForm() {
 
           <Field.FormError
             errors={state?.errors}
-            knownFields={["title", "content", "type", "tag"]}
+            knownFields={["title", "content", "category", "type", "tag"]}
           />
 
           <PageActionBtn submit disabled={pending} form="journal-form" />
@@ -325,8 +338,7 @@ export function JournalForm() {
             <Button
               type="submit"
               variant="primary"
-              disabled={isDeleting || !isEditMode}
-              >
+              disabled={isDeleting || !isEditMode}>
               {isDeleting ? t("common.loading") : t("common.delete")}
             </Button>
           </form>

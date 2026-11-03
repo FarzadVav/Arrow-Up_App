@@ -119,7 +119,7 @@
 }
 
 @utility skeleton {
-  @apply w-full flex gap-sm p-0 rounded-container bg-card animate-pulse;
+  @apply w-full flex gap-sm p-0 rounded-component bg-card animate-pulse;
 }
 
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline

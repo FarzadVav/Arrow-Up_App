@@ -7,11 +7,7 @@ import type { ActionResult } from '@/features/general/lib/types';
 import {
   CreateJournalSchema,
   UpdateJournalSchema,
-  CreateJournalTagSchema,
-  UpdateJournalTagSchema,
   type JournalFormState,
-  type JournalTagFormState,
-  type JournalCategory,
 } from '../lib/types';
 
 /**
@@ -23,33 +19,43 @@ export async function createJournalMutation(
 ): Promise<JournalFormState> {
   const title = String(formData.get('title') ?? '').trim();
   const content = String(formData.get('content') ?? '').trim();
-  const category = String(formData.get('type') ?? 'Logs') as JournalCategory;
-  const rawTag = formData.get('tag');
-  const tag = rawTag && String(rawTag).trim() ? String(rawTag).trim() : null;
+  const categoryRaw = formData.get('category') || formData.get('type') || formData.get('categoryId');
+  const category = categoryRaw && String(categoryRaw).trim() !== 'none' ? String(categoryRaw).trim() : null;
+  const tagRaw = formData.get('tag') || formData.get('tagId');
+  const tag = tagRaw && String(tagRaw).trim() && String(tagRaw).trim() !== 'none' ? String(tagRaw).trim() : null;
+
+  const errors: NonNullable<JournalFormState>['errors'] = {};
+
+  if (!category) {
+    errors.type = ['Please select a category.'];
+  }
+  if (!tag) {
+    errors.tag = ['Please select a tag.'];
+  }
 
   // Validate form inputs using ArkType CreateJournalSchema
   const validation = CreateJournalSchema({
     title,
     content,
-    type: category,
-    tag,
+    ...(category ? { type: category, category } : {}),
+    ...(tag ? { tag } : {}),
   });
 
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<JournalFormState>['errors'] = {};
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'content'
+          | 'type'
+          | 'tag'
+          | 'general';
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'content'
-        | 'type'
-        | 'tag'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return {
@@ -57,8 +63,9 @@ export async function createJournalMutation(
       inputs: {
         title,
         content,
-        type: category,
-        tag,
+        type: category ?? undefined,
+        category: category ?? undefined,
+        tag: tag ?? undefined,
       },
       success: false,
     };
@@ -71,8 +78,9 @@ export async function createJournalMutation(
       inputs: {
         title,
         content,
-        type: category,
-        tag,
+        type: category ?? undefined,
+        category: category ?? undefined,
+        tag: tag ?? undefined,
       },
       success: false,
     };
@@ -83,8 +91,8 @@ export async function createJournalMutation(
       {
         title,
         content,
-        type: category,
-        tag,
+        category: category!,
+        tag: tag!,
       },
       userId,
     );
@@ -96,8 +104,9 @@ export async function createJournalMutation(
     inputs: {
       title,
       content,
-      type: category,
-      tag,
+      type: category ?? undefined,
+      category: category ?? undefined,
+      tag: tag ?? undefined,
     },
   };
 }
@@ -123,35 +132,49 @@ export async function updateJournalMutation(
 
   const title = formData.has('title') ? String(formData.get('title') ?? '').trim() : undefined;
   const content = formData.has('content') ? String(formData.get('content') ?? '').trim() : undefined;
-  const category = formData.has('type') ? (String(formData.get('type')) as JournalCategory) : undefined;
-  const tag = formData.has('tag')
-    ? (formData.get('tag') ? String(formData.get('tag')).trim() : null)
-    : undefined;
+  const categoryRaw = formData.get('category') || formData.get('type') || formData.get('categoryId');
+  const category = categoryRaw !== null && categoryRaw !== undefined ? String(categoryRaw).trim() : undefined;
+  const tagRaw = formData.get('tag') || formData.get('tagId');
+  const tag = tagRaw !== null && tagRaw !== undefined ? String(tagRaw).trim() : undefined;
+
+  const errors: NonNullable<JournalFormState>['errors'] = {};
+
+  if (categoryRaw !== null && categoryRaw !== undefined) {
+    if (!category || category === 'none') {
+      errors.type = ['Please select a category.'];
+    }
+  }
+
+  if (tagRaw !== null && tagRaw !== undefined) {
+    if (!tag || tag === 'none') {
+      errors.tag = ['Please select a tag.'];
+    }
+  }
 
   const updatePayload = {
     id,
     ...(title !== undefined ? { title } : {}),
     ...(content !== undefined ? { content } : {}),
-    ...(category !== undefined ? { type: category } : {}),
-    ...(tag !== undefined ? { tag } : {}),
+    ...(category && category !== 'none' ? { category, type: category } : {}),
+    ...(tag && tag !== 'none' ? { tag } : {}),
   };
 
   const validation = UpdateJournalSchema(updatePayload);
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<JournalFormState>['errors'] = {};
+  if (validation instanceof type.errors || Object.keys(errors).length > 0) {
+    if (validation instanceof type.errors) {
+      for (const problem of validation) {
+        const field = String(problem.path[0] ?? 'general') as
+          | 'title'
+          | 'content'
+          | 'type'
+          | 'tag'
+          | 'general';
 
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'content'
-        | 'type'
-        | 'tag'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
+        if (!errors[field]) {
+          errors[field] = [];
+        }
+        errors[field]?.push(problem.message);
       }
-      errors[field]?.push(problem.message);
     }
 
     return {
@@ -188,7 +211,7 @@ export async function updateJournalMutation(
       {
         title,
         content,
-        type: category,
+        category,
         tag,
       },
       userId,
@@ -290,206 +313,25 @@ export async function hardDeleteJournalMutation(
 }
 
 /**
- * Server Action mutation for creating a new Journal tag.
+ * Tag CRUD is disabled because journal tags are static system definitions.
  */
-export async function createJournalTagMutation(
-  prevState: JournalTagFormState,
-  formData: FormData,
-): Promise<JournalTagFormState> {
-  const title = String(formData.get('title') ?? '').trim();
-  const category = String(formData.get('category') ?? 'Logs') as JournalCategory;
-
-  const validation = CreateJournalTagSchema({
-    title,
-    category,
-  });
-
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<JournalTagFormState>['errors'] = {};
-
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'category'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
-      }
-      errors[field]?.push(problem.message);
-    }
-
-    return {
-      errors,
-      inputs: {
-        title,
-        category,
-      },
-      success: false,
-    };
-  }
-
-  const userId = await tryGetUserId();
-  if (userId === null) {
-    return {
-      errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: {
-        title,
-        category,
-      },
-      success: false,
-    };
-  }
-
-  const created = await withRequestContext(async ({ journalTag }) => {
-    return await journalTag.createTag(
-      {
-        title,
-        category,
-      },
-      userId,
-    );
-  });
-
+export async function createJournalTagMutation(): Promise<{ success: false; errors: { general: string[] } }> {
   return {
-    success: true,
-    tagId: created.id,
-    inputs: {
-      title,
-      category,
-    },
+    success: false,
+    errors: { general: ['Journal tags are static and cannot be created.'] },
   };
 }
 
-/**
- * Server Action mutation for updating a Journal tag.
- */
-export async function updateJournalTagMutation(
-  prevState: JournalTagFormState,
-  formData: FormData,
-): Promise<JournalTagFormState> {
-  const idRaw = formData.get('id') || formData.get('editId');
-  const id = Number(idRaw);
-
-  if (!id || isNaN(id)) {
-    return {
-      errors: {
-        general: ['Invalid or missing tag ID.'],
-      },
-      success: false,
-    };
-  }
-
-  const title = formData.has('title')
-    ? String(formData.get('title') ?? '').trim()
-    : undefined;
-  const category = formData.has('category')
-    ? (String(formData.get('category')) as JournalCategory)
-    : undefined;
-
-  const updatePayload = {
-    id,
-    ...(title !== undefined ? { title } : {}),
-    ...(category !== undefined ? { category } : {}),
-  };
-
-  const validation = UpdateJournalTagSchema(updatePayload);
-  if (validation instanceof type.errors) {
-    const errors: NonNullable<JournalTagFormState>['errors'] = {};
-
-    for (const problem of validation) {
-      const field = String(problem.path[0] ?? 'general') as
-        | 'title'
-        | 'category'
-        | 'general';
-
-      if (!errors[field]) {
-        errors[field] = [];
-      }
-      errors[field]?.push(problem.message);
-    }
-
-    return {
-      errors,
-      inputs: {
-        id,
-        title,
-        category,
-      },
-      success: false,
-    };
-  }
-
-  const userId = await tryGetUserId();
-  if (userId === null) {
-    return {
-      errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: {
-        id,
-        title,
-        category,
-      },
-      success: false,
-    };
-  }
-
-  const updated = await withRequestContext(async ({ journalTag }) => {
-    return await journalTag.updateTag(
-      id,
-      {
-        id,
-        title,
-        category,
-      },
-      userId,
-    );
-  });
-
-  if (!updated) {
-    return {
-      errors: {
-        general: ['Tag not found or unauthorized.'],
-      },
-      success: false,
-    };
-  }
-
+export async function updateJournalTagMutation(): Promise<{ success: false; errors: { general: string[] } }> {
   return {
-    success: true,
-    tagId: id,
-    inputs: {
-      id,
-      title,
-      category,
-    },
+    success: false,
+    errors: { general: ['Journal tags are static and cannot be modified.'] },
   };
 }
 
-/**
- * Server Action mutation for deleting a Journal tag.
- */
-export async function deleteJournalTagMutation(
-  prevState: ActionResult,
-  formData: FormData,
-): Promise<ActionResult> {
-  const id = Number(formData.get('id'));
-
-  if (!id || Number.isNaN(id)) {
-    return { success: false, error: 'Invalid tag id' };
-  }
-
-  const userId = await tryGetUserId();
-  if (userId === null) {
-    return {
-      success: false,
-      error: 'Your session has expired. Please sign in again.',
-    };
-  }
-
-  return withRequestContext(async ({ journalTag }) => {
-    const success = await journalTag.deleteTag(id, userId);
-    return success
-      ? { success: true }
-      : { success: false, error: 'Tag not found' };
-  });
+export async function deleteJournalTagMutation(): Promise<ActionResult> {
+  return {
+    success: false,
+    error: 'Journal tags are static and cannot be deleted.',
+  };
 }

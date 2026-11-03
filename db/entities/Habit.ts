@@ -3,11 +3,12 @@ import { Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/decorators/le
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { LifeArea } from './LifeArea';
+import { HabitTag } from './HabitTag';
 import { HabitHistory } from './HabitHistory';
 
 @Entity({ tableName: 'habits' })
 export class Habit extends BaseEntity {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt';
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt' | 'lifeArea';
 
   @Property({ type: 'string' })
   title!: string;
@@ -18,12 +19,11 @@ export class Habit extends BaseEntity {
   @Property({ type: 'text', default: '' })
   description: string = '';
 
-  @Property({ type: 'string', nullable: true })
-  tag?: string | null;
+  @ManyToOne(() => HabitTag, { nullable: true, deleteRule: 'set null' })
+  tag?: Rel<HabitTag> | null;
 
   @Property({ type: 'datetime', nullable: true })
   deletedAt?: Date | null;
-
 
   @ManyToOne(() => LifeArea, { nullable: true, deleteRule: 'set null' })
   lifeArea?: Rel<LifeArea>;

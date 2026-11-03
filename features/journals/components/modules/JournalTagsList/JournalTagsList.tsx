@@ -4,7 +4,7 @@ import { useState, useActionState, useEffect } from "react";
 import { LoaderIcon } from "lucide-react";
 import { useJournalTags } from "@/features/journals/hooks";
 import { deleteJournalTagMutation } from "@/features/journals/api/mutations";
-import type { JournalCategory, JournalTag } from "@/features/journals/lib/types";
+import type { JournalCategory } from "@/features/journals/lib/types";
 import JournalTagCard from "../JournalTagCard/JournalTagCard";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
@@ -42,9 +42,7 @@ export function JournalTagsList({
     revalidateTags();
   }, [deleteState, revalidateTags]);
 
-  const targetTag = tags.find((item) => item.id === deleteTargetId);
-
-  return (
+    return (
     <PageWrapper>
       <TopBar>
         <TopBar.Title asTitle>

@@ -1,7 +1,9 @@
 import { EntityRepository } from '@mikro-orm/postgresql';
 import type { User } from '@/db/entities';
+import { LifeArea } from '@/db/entities/LifeArea';
 import { verifyPassword, hashPassword } from '../lib/utils';
 import type { CreateUserData, UpdateUserData } from '../lib/types';
+import { DEFAULT_LIFE_AREAS, getDefaultLifeAreaTitle } from '@/features/life-areas/lib/constants';
 
 export type { CreateUserData, UpdateUserData };
 
@@ -47,7 +49,7 @@ export class UserRepository extends EntityRepository<User> {
    * Attempts to authenticate an existing user or creates a new user if not found.
    * - If user exists and password matches: returns { user, status: 'LOGGED_IN' }
    * - If user exists and password fails: returns { user: null, status: 'INVALID_CREDENTIALS' }
-   * - If user does not exist: creates a new user and returns { user, status: 'CREATED' }
+   * - If user does not exist: creates a new user with default life areas and returns { user, status: 'CREATED' }
    */
   async loginOrCreate(
     username: string,
@@ -75,12 +77,26 @@ export class UserRepository extends EntityRepository<User> {
 
     try {
       const hashedPassword = hashPassword(password);
+      const userLocale = options?.locale ?? 'fa';
       const newUser = this.create({
         username: cleanUsername,
         password: hashedPassword,
-        locale: options?.locale ?? 'fa',
+        locale: userLocale,
         colorScheme: options?.colorScheme ?? 'system',
       });
+
+      // Create default life areas for new user: lifestyle, health, career, social connections
+      for (const def of DEFAULT_LIFE_AREAS) {
+        const title = getDefaultLifeAreaTitle(def, userLocale);
+        this.em.create(LifeArea, {
+          title,
+          vision: '',
+          active: true,
+          difficulty: def.defaultDifficulty,
+          user: newUser,
+        });
+      }
+
       await this.em.flush();
       return { user: newUser, status: 'CREATED' };
     } catch {
@@ -89,13 +105,27 @@ export class UserRepository extends EntityRepository<User> {
   }
 
   async createUser(data: CreateUserData): Promise<User> {
+    const userLocale = data.locale ?? 'fa';
     const user = this.create({
       username: data.username.trim(),
       password: data.password,
       email: data.email?.trim().toLowerCase(),
-      locale: data.locale ?? 'fa',
+      locale: userLocale,
       colorScheme: data.colorScheme ?? 'system',
     });
+
+    // Create default life areas for new user: lifestyle, health, career, social connections
+    for (const def of DEFAULT_LIFE_AREAS) {
+      const title = getDefaultLifeAreaTitle(def, userLocale);
+      this.em.create(LifeArea, {
+        title,
+        vision: '',
+        active: true,
+        difficulty: def.defaultDifficulty,
+        user,
+      });
+    }
+
     await this.em.flush();
     return user;
   }

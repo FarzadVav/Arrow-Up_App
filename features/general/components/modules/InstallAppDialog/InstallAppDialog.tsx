@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 
 import Dialog from "@/features/general/components/ui/Dialog/Dialog";
-import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import { usePwaInstall } from "@/features/general/hooks/usePwaInstall";
 import {
   Button,

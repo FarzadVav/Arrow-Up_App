@@ -30,6 +30,7 @@ export type DayPickerDialogProps = {
   dir?: "ltr" | "rtl";
   locale?: typeof enUS;
   formatDate?: (date: Date | null) => string;
+  allowClear?: boolean;
 };
 
 function LocalDayPickerDialog({
@@ -47,6 +48,7 @@ function LocalDayPickerDialog({
   dir,
   locale = enUS,
   formatDate,
+  allowClear = false,
 }: DayPickerDialogProps) {
   const { formatDate: localeFormatDate, t, locale: activeLocale } = useLocale();
   const effectiveDir = dir ?? (activeLocale === "fa" ? "rtl" : "ltr");
@@ -68,6 +70,10 @@ function LocalDayPickerDialog({
   const handleSelectDate = (selectedDate: Date | null) => {
     onChange(selectedDate);
     handleOpenChange(false);
+  };
+
+  const handleClear = () => {
+    onChange(null);
   };
 
   const computedTrigger = trigger || (
@@ -115,6 +121,11 @@ function LocalDayPickerDialog({
       />
 
       <div className="actions-footer">
+        {allowClear && value ? (
+          <Button type="button" variant="outline" onClick={handleClear}>
+            {t("common.clear")}
+          </Button>
+        ) : null}
         <Dialog.Close
           render={
             <Button

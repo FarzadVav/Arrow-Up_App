@@ -20,17 +20,18 @@ export function FrameworksAreaList() {
 
   const countByArea = useMemo(() => {
     const counts = new Map<number, number>();
-    let general = 0;
+    let abandoned = 0;
 
     frameworks.forEach((framework) => {
-      if (framework.lifeAreaId) {
-        counts.set(framework.lifeAreaId, (counts.get(framework.lifeAreaId) ?? 0) + 1);
+      const areaId = framework.lifeAreaId ?? framework.lifeArea?.id;
+      if (areaId) {
+        counts.set(areaId, (counts.get(areaId) ?? 0) + 1);
       } else {
-        general += 1;
+        abandoned += 1;
       }
     });
 
-    return { counts, general };
+    return { counts, abandoned };
   }, [frameworks]);
 
   const isLoading =
@@ -92,14 +93,14 @@ export function FrameworksAreaList() {
         ),
       )}
 
-      {countByArea.general > 0 &&
+      {countByArea.abandoned > 0 &&
         renderCard(
           UNSET_LIFE_AREA_SLUG,
           `/framework/${UNSET_LIFE_AREA_SLUG}`,
           FolderOpenIcon,
-          t("common.general"),
-          t("framework.generalDesc"),
-          countByArea.general,
+          t("common.abandoned"),
+          t("framework.abandonedDesc"),
+          countByArea.abandoned,
         )}
     </div>
   );

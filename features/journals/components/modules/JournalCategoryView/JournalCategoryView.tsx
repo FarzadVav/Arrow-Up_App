@@ -2,14 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { TagIcon } from "lucide-react";
 import { useJournals, useJournalTags } from "@/features/journals/hooks";
 import type {
   JournalCategory,
   JournalCategoryDefinition,
   JournalType,
 } from "@/features/journals/lib/types";
-import { getJournalCategory } from "@/features/journals/lib/utils";
+import {
+  getJournalCategory,
+  getCategoryStaticTags,
+} from "@/features/journals/lib/utils";
 import JournalCard from "../JournalCard/JournalCard";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
@@ -35,6 +37,8 @@ export default function JournalCategoryView({
   const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
   const [activeTag, setActiveTag] = useState<string>(initialTag);
 
+  const { t, locale } = useLocale();
+
   const categoryDefinition = useMemo(() => {
     if (typeof category === "object" && category !== null && "name" in category) {
       return category;
@@ -42,6 +46,9 @@ export default function JournalCategoryView({
     return (
       getJournalCategory(category) ?? {
         name: (category as JournalCategory) || "Logs",
+        slug: "logs",
+        nameEn: "Logs",
+        nameFa: "گزارش‌ها",
         tags: [],
       }
     );
@@ -53,15 +60,17 @@ export default function JournalCategoryView({
     isLoading,
     mutate: revalidateJournals,
   } = useJournals(categoryName);
-  const { tags: dbTags } = useJournalTags(categoryName);
-  const { t } = useLocale();
 
-  const allTagNames = useMemo(() => {
-    const names = new Set<string>();
-    categoryDefinition.tags.forEach((tag) => names.add(tag));
-    dbTags.forEach((tag) => names.add(tag.title));
-    return Array.from(names);
-  }, [categoryDefinition.tags, dbTags]);
+  const { tags: dbTags } = useJournalTags(categoryName);
+  const staticFallbackTags = useMemo(
+    () => getCategoryStaticTags(categoryName),
+    [categoryName],
+  );
+
+  const tagsList = useMemo(() => {
+    if (dbTags && dbTags.length > 0) return dbTags;
+    return staticFallbackTags;
+  }, [dbTags, staticFallbackTags]);
 
   const filterTabs: SlideTabItem[] = useMemo(() => {
     return [
@@ -69,24 +78,25 @@ export default function JournalCategoryView({
         id: "all",
         label: t("common.all"),
       },
-      ...allTagNames.map((tagName) => ({
-        id: tagName.toLowerCase(),
-        label: tagName,
+      ...tagsList.map((tag) => ({
+        id: tag.slug.toLowerCase(),
+        label: locale === "fa" ? tag.nameFa : tag.nameEn,
       })),
-      {
-        id: "tags-page",
-        label: t("common.tags"),
-        href: `/journals/${categoryName.toLowerCase()}/tags`,
-        icon: <TagIcon />,
-      },
     ];
-  }, [allTagNames, categoryName, t]);
+  }, [tagsList, locale, t]);
 
   const filteredJournals = useMemo(() => {
     if (activeTag === "all") return journals;
-    return journals.filter(
-      (j) => j.tag?.toLowerCase() === activeTag.toLowerCase(),
-    );
+    return journals.filter((j) => {
+      const tagSlug = j.tag?.slug?.toLowerCase();
+      const tagId = String(j.tag?.id);
+      const tagNameEn = j.tag?.nameEn?.toLowerCase();
+      return (
+        tagSlug === activeTag ||
+        tagId === activeTag ||
+        tagNameEn === activeTag
+      );
+    });
   }, [journals, activeTag]);
 
   return (
@@ -101,11 +111,7 @@ export default function JournalCategoryView({
         <SlideTabs
           tabs={filterTabs}
           activeId={activeTag}
-          onTabChange={(id) => {
-            if (id !== "tags-page") {
-              setActiveTag(id);
-            }
-          }}
+          onTabChange={setActiveTag}
           headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
           tabClassName="shrink-0 flex-none"
           between={
@@ -132,7 +138,7 @@ export default function JournalCategoryView({
                     description={t("journals.subtitle")}
                     href={`/journals/new?category=${encodeURIComponent(
                       categoryName.toLowerCase(),
-                    )}${activeTag !== "all" && activeTag !== "tags-page" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
+                    )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
                     className="p-md"
                   />
                 ) : (
@@ -156,7 +162,7 @@ export default function JournalCategoryView({
         <PageActionBtn
           href={`/journals/new?category=${encodeURIComponent(
             categoryName.toLowerCase(),
-          )}${activeTag !== "all" && activeTag !== "tags-page" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
+          )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
         >
           {t("journals.new")}
         </PageActionBtn>
