@@ -318,7 +318,7 @@
     "visionLabel": "Vision & Principles",
     "visionPlaceholder": "Describe your ideal destination, standards, and rules for this area...",
     "deleteConfirm": "Are you sure you want to delete this life area?",
-    "deleteDesc": "\"{title}\" will be deleted. Linked todos, skills and frameworks stay and simply become unassigned.",
+    "deleteDesc": "\"{title}\" will be deleted. Linked todos and frameworks stay and simply become unassigned.",
     "selectLifeArea": "Select Life Area",
     "allAreas": "All Areas",
     "notActiveTitle": "Not Active Life Areas",
@@ -329,35 +329,6 @@
     "selectDifficulty": "Select Life Time and Energy Cost",
     "capacityError": "Total life time and energy cost cannot exceed 10. Currently {current}/10 is used.",
     "costUsed": "Time and Energy Spent on Life"
-  },
-  "skills": {
-    "title": "Skills",
-    "subtitle": "Practical proficiencies, playbooks, and personal capabilities.",
-    "new": "New Skill",
-    "edit": "Edit Skill",
-    "empty": "No skills defined yet.",
-    "addFirst": "Add your first skill to link your capabilities to life areas.",
-    "titlePlaceholder": "e.g. Distributed Systems, Public Speaking, Speed Reading...",
-    "contentLabel": "Playbook & Notes",
-    "contentPlaceholder": "Write detailed guidelines, mental models, steps, and routines...",
-    "deleteConfirm": "Are you sure you want to delete this skill?",
-    "deleteDesc": "\"{title}\" will be permanently deleted.",
-    "tags": "Tags",
-    "newTag": "New Tag",
-    "editTag": "Edit Tag",
-    "tagTitlePlaceholder": "Tag name...",
-    "selectTag": "Select tag",
-    "deleteTagConfirm": "Are you sure you want to delete this tag?",
-    "noTags": "You haven't any tags in this life area",
-    "noTagsSubtitle": "Tags help you organize and filter the skills of this area.",
-    "noSkillsInArea": "You haven't any skills in this area",
-    "noSkillsWithTag": "You haven't any skills with this tag",
-    "areaDesc": "Skills linked to this life area",
-    "generalDesc": "Skills that are not linked to a life area yet",
-    "abandonedDesc": "Skills that are not linked to a life area",
-    "noAbandonedSkills": "No abandoned skills",
-    "unknownArea": "Unknown life area",
-    "countSuffix": "skills"
   },
   "framework": {
     "title": "Framework",
@@ -400,7 +371,6 @@
       "upcoming": "Upcoming",
       "missions": "Missions",
       "framework": "Framework",
-      "skills": "Skills",
       "journals": "Journals"
     }
   }

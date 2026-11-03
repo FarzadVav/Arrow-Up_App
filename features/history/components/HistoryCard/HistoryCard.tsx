@@ -10,7 +10,6 @@ import {
   LoaderIcon,
   Repeat2Icon,
   RotateCcwIcon,
-  SparklesIcon,
   TagIcon,
   TargetIcon,
   Trash2Icon,
@@ -41,7 +40,7 @@ export type HistoryItem = {
 
 export interface HistoryCardProps {
   item: HistoryItem;
-  type: "daily" | "upcoming" | "missions" | "framework" | "skills" | "journals";
+  type: "daily" | "upcoming" | "missions" | "framework" | "journals";
   onMutated?: () => void;
 }
 
@@ -109,9 +108,6 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
   } else if (type === "framework") {
     icon = <Repeat2Icon />;
     descriptionPreview = stripHtml(item.description || "");
-  } else if (type === "skills") {
-    icon = <SparklesIcon />;
-    descriptionPreview = stripHtml(item.content || "");
   } else if (type === "journals") {
     icon = <FileTextIcon />;
     descriptionPreview = stripHtml(item.content || "");

@@ -9,8 +9,6 @@ export * from './JournalCategory';
 export * from './JournalTag';
 export * from './Journal';
 export * from './LifeArea';
-export * from './Skill';
-export * from './SkillTag';
 export * from './Habit';
 export * from './HabitHistory';
 export * from './HabitTag';

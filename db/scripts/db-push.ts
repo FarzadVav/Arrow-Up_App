@@ -190,30 +190,9 @@ async function preMigrateRelations(orm: MikroORM) {
     console.warn('⚠️ Notice during journal_tags relation update:', (err as Error).message);
   }
 
-  // 3. Migrate skills: tag varchar to tag_id integer foreign key
-  try {
-    await conn.execute(`
-      DO $$
-      BEGIN
-        IF EXISTS (
-          SELECT 1 FROM information_schema.columns
-          WHERE table_name = 'skills' AND column_name = 'tag' AND data_type LIKE '%char%'
-        ) THEN
-          ALTER TABLE "skills" DROP COLUMN "tag";
-        END IF;
-      END $$;
-    `);
-    await conn.execute(`ALTER TABLE "skills" ADD COLUMN IF NOT EXISTS "tag_id" int;`);
-    await conn.execute(`ALTER TABLE "skills" DROP CONSTRAINT IF EXISTS "skills_tag_id_foreign";`);
-    await conn.execute(`
-      ALTER TABLE "skills"
-      ADD CONSTRAINT "skills_tag_id_foreign"
-      FOREIGN KEY ("tag_id") REFERENCES "skill_tags"("id") ON DELETE SET NULL;
-    `);
-    console.log('🔄 Updated skills tag_id relation to ON DELETE SET NULL.');
-  } catch (err) {
-    console.warn('⚠️ Notice during skills relation update:', (err as Error).message);
-  }
+  // 3. Drop obsolete skills tables (the Skills feature was removed)
+  await conn.execute('DROP TABLE IF EXISTS "skills" CASCADE;');
+  await conn.execute('DROP TABLE IF EXISTS "skill_tags" CASCADE;');
 
   // 4. Migrate habits: tag varchar to tag_id integer foreign key
   try {
@@ -243,9 +222,7 @@ async function preMigrateRelations(orm: MikroORM) {
   // 5. Ensure all life_area_id foreign keys allow null and have ON DELETE SET NULL
   const lifeAreaTables = [
     { table: 'todos', constraint: 'todos_life_area_id_foreign' },
-    { table: 'skills', constraint: 'skills_life_area_id_foreign' },
     { table: 'habits', constraint: 'habits_life_area_id_foreign' },
-    { table: 'skill_tags', constraint: 'skill_tags_life_area_id_foreign' },
     { table: 'habit_tags', constraint: 'habit_tags_life_area_id_foreign' },
   ];
 

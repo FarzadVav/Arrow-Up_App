@@ -17,8 +17,6 @@ import {
   JournalCategory,
   JournalTag,
   LifeArea,
-  Skill,
-  SkillTag,
   Habit,
   HabitHistory,
   HabitTag,
@@ -34,7 +32,6 @@ import {
   JournalTagRepository,
 } from '@/features/journals/api/repository';
 import { LifeAreaRepository } from '@/features/life-areas/api/repository';
-import { SkillRepository, SkillTagRepository } from '@/features/skills/api/repository';
 import {
   FrameworkRepository,
   FrameworkTagRepository,
@@ -52,8 +49,6 @@ export interface Services {
   journalCategory: EntityRepository<JournalCategory>;
   journalTag: JournalTagRepository;
   lifeArea: LifeAreaRepository;
-  skill: SkillRepository;
-  skillTag: SkillTagRepository;
   framework: FrameworkRepository;
   frameworkTag: FrameworkTagRepository;
   frameworkHistory: EntityRepository<HabitHistory>;
@@ -76,8 +71,6 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     journalCategory: em.getRepository(JournalCategory),
     journalTag: new JournalTagRepository(em, JournalTag),
     lifeArea: new LifeAreaRepository(em, LifeArea),
-    skill: new SkillRepository(em, Skill),
-    skillTag: new SkillTagRepository(em, SkillTag),
     framework: new FrameworkRepository(em, Habit),
     frameworkTag: new FrameworkTagRepository(em, HabitTag),
     frameworkHistory: em.getRepository(HabitHistory),

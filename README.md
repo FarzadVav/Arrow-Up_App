@@ -1,5 +1,6 @@
 # **Bug & Refactor**
 
+- Explore and fix ui and logics
 - New Reusable components (Card, Text, Row, List)
 - Reusable components
 - Folder and file structured
@@ -18,8 +19,7 @@
   3. Life Areas
   4. Todos
   5. Framework
-  6. Skills
-  7. Journals
+  6. Journals
 
 - ### Topics
   1. Folders, Features, Components, Hooks, Mutations, Queries, Repositories, Lib, Files

@@ -16,13 +16,11 @@ export async function POST(request: NextRequest) {
     }
 
     let success = false;
-    await withRequestContext(async ({ todo, framework, skill, journal }) => {
+    await withRequestContext(async ({ todo, framework, journal }) => {
       if (type === 'daily' || type === 'upcoming' || type === 'missions' || type === 'todos') {
         success = await todo.hardDeleteTodo(id, userId);
       } else if (type === 'framework') {
         success = await framework.hardDeleteFramework(id, userId);
-      } else if (type === 'skills') {
-        success = await skill.hardDeleteSkill(id, userId);
       } else if (type === 'journals') {
         success = await journal.hardDeleteJournal(id, userId);
       }

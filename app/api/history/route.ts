@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { jsonNoStore, handleApiError } from '@/features/general/lib/utils';
 import { getTodosHistoryQuery } from '@/features/todos/api/queries';
 import { getFrameworksHistoryQuery } from '@/features/framework/api/queries';
-import { getSkillsHistoryQuery } from '@/features/skills/api/queries';
 import { getJournalsHistoryQuery } from '@/features/journals/api/queries';
 
 export const dynamic = 'force-dynamic';
@@ -31,10 +30,6 @@ export async function GET(request: NextRequest) {
     if (typeParam === 'framework') {
       const items = await getFrameworksHistoryQuery();
       return jsonNoStore({ items, type: 'framework' });
-    }
-    if (typeParam === 'skills') {
-      const items = await getSkillsHistoryQuery();
-      return jsonNoStore({ items, type: 'skills' });
     }
     if (typeParam === 'journals') {
       const items = await getJournalsHistoryQuery();

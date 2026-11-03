@@ -3,7 +3,6 @@ import {
   UserIcon,
   FrameIcon,
   CircleCheckBig,
-  DatabaseIcon,
 } from "lucide-react";
 
 import { NavigationLink } from "./types";
@@ -52,11 +51,6 @@ export const NAVIGATION_LINKS: NavigationLink[] = [
     href: "/framework",
     matchPathname: "/framework",
     Icon: FrameIcon,
-  },
-  {
-    href: "/skills",
-    matchPathname: "/skills",
-    Icon: DatabaseIcon,
   },
   {
     href: "/journals",

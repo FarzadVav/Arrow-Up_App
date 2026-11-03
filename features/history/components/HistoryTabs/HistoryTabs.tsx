@@ -8,7 +8,7 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 import { useHistory } from "@/features/general/hooks/useHistory";
 import HistoryCard from "../HistoryCard/HistoryCard";
 
-const VALID_TABS = ["daily", "upcoming", "missions", "framework", "skills", "journals"] as const;
+const VALID_TABS = ["daily", "upcoming", "missions", "framework", "journals"] as const;
 type HistoryTabType = typeof VALID_TABS[number];
 
 export function HistoryTabs() {
@@ -39,11 +39,6 @@ export function HistoryTabs() {
       id: "framework",
       label: t("history.tabs.framework"),
       href: "?tab=framework",
-    },
-    {
-      id: "skills",
-      label: t("history.tabs.skills"),
-      href: "?tab=skills",
     },
     {
       id: "journals",

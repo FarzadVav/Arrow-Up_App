@@ -14,16 +14,12 @@ import {
   Habit,
   HabitTag,
   HabitHistory,
-  Skill,
-  SkillTag,
 } from '../entities';
 import {
   SEED_USER,
   SEED_LIFE_AREAS,
   SEED_FRAMEWORK_TAGS,
   SEED_FRAMEWORKS,
-  SEED_SKILL_TAGS,
-  SEED_SKILLS,
   SEED_TODOS,
   SEED_JOURNALS,
 } from './seedData';
@@ -194,44 +190,7 @@ export class DatabaseSeeder extends Seeder {
     );
 
     // =========================================================================
-    // 5. Seed Skill Tags & Skills
-    // =========================================================================
-    const skillTagsByKey = new Map<string, SkillTag>();
-
-    for (const tagDef of SEED_SKILL_TAGS) {
-      const lifeArea = lifeAreasByKey.get(tagDef.lifeAreaKey);
-      const tag = em.create(SkillTag, {
-        title: tagDef.title,
-        lifeArea,
-        user,
-      });
-      em.persist(tag);
-      skillTagsByKey.set(tagDef.key, tag);
-    }
-    await em.flush();
-
-    for (let i = 0; i < SEED_SKILLS.length; i++) {
-      const skillData = SEED_SKILLS[i];
-      const lifeArea = skillData.lifeAreaKey ? lifeAreasByKey.get(skillData.lifeAreaKey) : undefined;
-      const tag = skillData.tagKey ? skillTagsByKey.get(skillData.tagKey) : undefined;
-
-      const skill = em.create(Skill, {
-        title: skillData.title,
-        content: skillData.content,
-        sortNumber: i + 1,
-        lifeArea,
-        tag,
-        user,
-      });
-      em.persist(skill);
-    }
-    await em.flush();
-    console.log(
-      `💡 Seeded ${SEED_SKILLS.length} Skills (${SEED_SKILL_TAGS.length} tags, including 1 abandoned skill)`,
-    );
-
-    // =========================================================================
-    // 6. Seed Todos & Missions
+    // 5. Seed Todos & Missions
     // =========================================================================
     let totalActions = 0;
     let totalDisciplines = 0;
@@ -293,7 +252,7 @@ export class DatabaseSeeder extends Seeder {
     );
 
     // =========================================================================
-    // 7. Seed Journals across all Static Categories & Tags
+    // 6. Seed Journals across all Static Categories & Tags
     // =========================================================================
     for (let i = 0; i < SEED_JOURNALS.length; i++) {
       const journalData = SEED_JOURNALS[i];
@@ -315,7 +274,7 @@ export class DatabaseSeeder extends Seeder {
     console.log(`📖 Seeded ${SEED_JOURNALS.length} Journal entries across static categories and tags.`);
 
     // =========================================================================
-    // 8. Align All Primary Key Sequences to max(id)
+    // 7. Align All Primary Key Sequences to max(id)
     // =========================================================================
     const allTables = [
       'users',
@@ -323,8 +282,6 @@ export class DatabaseSeeder extends Seeder {
       'habit_tags',
       'habits',
       'habit_history',
-      'skill_tags',
-      'skills',
       'todos',
       'todo_actions',
       'todo_disciplines',
