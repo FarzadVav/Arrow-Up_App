@@ -22,11 +22,11 @@ export async function getFrameworkByIdQuery(id: number): Promise<Framework | nul
   });
 }
 
-export async function getFrameworksHistoryQuery(): Promise<Framework[]> {
+export async function getFrameworksHistoryQuery(lifeAreaId?: number | null): Promise<Framework[]> {
   const userId = await requireUserId();
 
   return withRequestContext(async ({ framework }) => {
-    const items = await framework.findHistory(userId);
+    const items = await framework.findHistory(userId, { lifeAreaId });
     return items.map(serializeFramework);
   });
 }

@@ -23,14 +23,21 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import { Switch } from "@/features/general/components/ui/Switch/Switch";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import type { ActionResult } from "@/features/general/lib/types";
+import {
+  useHistoryActions,
+  HistoryDrawerActions,
+  HistoryDeleteDialog,
+  HistoryQuickRestoreBtn,
+} from "@/features/history";
 
-type TodoCardProps = {
+export type TodoCardProps = {
   todo: Todo;
+  isHistory?: boolean;
   onMutated?: () => void;
 };
 
-function TodoCard({ todo, onMutated }: TodoCardProps) {
-  const { t, formatDeadline } = useLocale();
+export function TodoCard({ todo, isHistory = false, onMutated }: TodoCardProps) {
+  const { t, formatDeadline, formatDateTime } = useLocale();
   const toggleFormRef = useRef<HTMLFormElement>(null);
 
   const [toggleState, toggleAction, isToggling] = useActionState<
@@ -49,22 +56,68 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
     }
   }, [toggleState, deleteState, onMutated]);
 
+  const historyActions = useHistoryActions({
+    id: todo.id,
+    type:
+      todo.type === "Mission"
+        ? "missions"
+        : todo.type === "Upcoming"
+          ? "upcoming"
+          : "daily",
+    onMutated,
+  });
+
   const isDaily = todo.type === "Daily";
   const costLabel = isDaily
     ? t("todos.dailyDifficulty")
     : t("todos.midtermDifficulty");
   const costValue = todo.difficulty ?? 1;
 
-  return (
+  const deletedDateStr = todo.deletedAt ? formatDateTime(todo.deletedAt) : "";
+
+  const cardDate =
+    isHistory && deletedDateStr ? (
+      <span className="text-xs sub-text">
+        {t("history.deletedAt")}: {deletedDateStr}
+      </span>
+    ) : (
+      <span className="flex items-center gap-xs">
+        {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
+        <span>{formatDeadline(todo.deadline, isDaily)}</span>
+      </span>
+    );
+
+  const drawerActions = isHistory ? (
+    <HistoryDrawerActions
+      onRestore={historyActions.handleRestore}
+      onRequestDelete={() => historyActions.setDeleteDialogOpen(true)}
+      isRestoring={historyActions.isRestoring}
+      isDeleting={historyActions.isDeleting}
+    />
+  ) : (
+    <form action={deleteAction}>
+      <Field type="hidden" name="id" value={todo.id} />
+      <Drawer.Close
+        render={
+          <Button
+            type="submit"
+            variant="card"
+            size={"square"}
+            disabled={isDeleting}
+            className="size-10 justify-center"
+            aria-label={t("common.delete")}>
+            <Trash2Icon />
+          </Button>
+        }
+      />
+    </form>
+  );
+
+  const cardElement = (
     <CardDrawer
       title={todo.title}
       description={todo.lifeArea?.title ?? t("common.notSet")}
-      date={
-        <span className="flex items-center gap-xs">
-          {isDaily ? <ClockIcon /> : <CalendarDaysIcon />}
-          <span>{formatDeadline(todo.deadline, isDaily)}</span>
-        </span>
-      }
+      date={cardDate}
       badge={
         <span
           className="inline-flex items-center gap-xs rounded-full bg-card-thick px-xs py-xs text-xs font-semibold sub-text"
@@ -78,7 +131,8 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
           {todo.isDone ? <CheckIcon /> : <CircleIcon />}
         </div>
       }
-      editHref={`/todos/new?editId=${todo.id}`}
+      editHref={isHistory ? undefined : `/todos/new?editId=${todo.id}`}
+      isHistory={isHistory}
       content={
         <div className="space-y-sm">
           <div className="grid grid-cols-2 gap-xs">
@@ -144,52 +198,62 @@ function TodoCard({ todo, onMutated }: TodoCardProps) {
             </section>
           )}
 
-          <form ref={toggleFormRef} action={toggleAction}>
-            <Field type="hidden" name="id" value={todo.id} />
-            <label className="rounded-component bg-background p-sm flex items-center justify-between select-none">
-              <div className="flex flex-col">
-                <span className="text-sm font-medium">
-                  {todo.isDone
-                    ? t("todos.markAsIncomplete")
-                    : t("todos.markAsCompleted")}
-                </span>
-                <span className="sub-text">
-                  {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
-                </span>
-              </div>
-              <Switch
-                checked={todo.isDone}
-                disabled={isToggling}
-                onCheckedChange={() => toggleFormRef.current?.requestSubmit()}
-                aria-label={
-                  todo.isDone
-                    ? t("todos.markAsIncomplete")
-                    : t("todos.markAsCompleted")
-                }
-              />
-            </label>
-          </form>
+          {!isHistory && (
+            <form ref={toggleFormRef} action={toggleAction}>
+              <Field type="hidden" name="id" value={todo.id} />
+              <label className="rounded-component bg-background p-sm flex items-center justify-between select-none">
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium">
+                    {todo.isDone
+                      ? t("todos.markAsIncomplete")
+                      : t("todos.markAsCompleted")}
+                  </span>
+                  <span className="sub-text">
+                    {todo.isDone ? t("todos.completed") : t("todos.inProgress")}
+                  </span>
+                </div>
+                <Switch
+                  checked={todo.isDone}
+                  disabled={isToggling}
+                  onCheckedChange={() => toggleFormRef.current?.requestSubmit()}
+                  aria-label={
+                    todo.isDone
+                      ? t("todos.markAsIncomplete")
+                      : t("todos.markAsCompleted")
+                  }
+                />
+              </label>
+            </form>
+          )}
         </div>
       }
-      actions={
-        <form action={deleteAction}>
-          <Field type="hidden" name="id" value={todo.id} />
-          <Drawer.Close
-            render={
-              <Button
-                type="submit"
-                variant="card"
-                size={"square"}
-                disabled={isDeleting}
-                className="size-10 justify-center"
-                aria-label={t("common.delete")}>
-                <Trash2Icon />
-              </Button>
-            }
-          />
-        </form>
-      }
+      actions={drawerActions}
     />
+  );
+
+  return (
+    <>
+      {isHistory ? (
+        <div className="flex items-center gap-xs w-full">
+          <div className="flex-1 min-w-0">{cardElement}</div>
+          <HistoryQuickRestoreBtn
+            onRestore={historyActions.handleRestore}
+            isRestoring={historyActions.isRestoring}
+          />
+        </div>
+      ) : (
+        cardElement
+      )}
+
+      {isHistory && (
+        <HistoryDeleteDialog
+          open={historyActions.deleteDialogOpen}
+          onOpenChange={historyActions.setDeleteDialogOpen}
+          onConfirm={historyActions.handlePermanentDelete}
+          isDeleting={historyActions.isDeleting}
+        />
+      )}
+    </>
   );
 }
 

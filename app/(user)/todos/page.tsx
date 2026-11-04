@@ -17,7 +17,7 @@ export default async function TodosPage() {
       <TopBar>
         <TopBar.Btn
           position="left"
-          href="/history?tab=daily"
+          href="/todos/history"
           aria-label={t("common.history")}
         >
           <HistoryIcon />

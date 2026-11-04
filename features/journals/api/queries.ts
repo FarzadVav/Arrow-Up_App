@@ -59,11 +59,12 @@ export async function getJournalsQuery(
  */
 export async function getJournalsHistoryQuery(
   category?: JournalCategoryType | 'all' | string,
+  tag?: string,
 ): Promise<Journal[]> {
   const userId = await requireUserId();
 
   return withRequestContext(async ({ journal }) => {
-    const entities = await journal.findHistory(userId, category);
+    const entities = await journal.findHistory(userId, category, tag);
     return entities.map((item) => serializeJournal(item));
   });
 }

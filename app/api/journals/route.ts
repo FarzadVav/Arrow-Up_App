@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
-import { getJournalsQuery } from '@/features/journals/api/queries';
+import { getJournalsQuery, getJournalsHistoryQuery } from '@/features/journals/api/queries';
 import { serializeJournal } from '@/features/journals/api/repository';
 import { CreateJournalSchema } from '@/features/journals/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
@@ -22,8 +22,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const categoryParam = searchParams.get('category') || undefined;
     const tagParam = searchParams.get('tag') || undefined;
+    const isHistory = searchParams.get('history') === 'true' || searchParams.get('isHistory') === 'true';
 
-    const journals = await getJournalsQuery(categoryParam, tagParam);
+    const journals = isHistory
+      ? await getJournalsHistoryQuery(categoryParam, tagParam)
+      : await getJournalsQuery(categoryParam, tagParam);
 
     return jsonNoStore({ journals });
   } catch (error) {

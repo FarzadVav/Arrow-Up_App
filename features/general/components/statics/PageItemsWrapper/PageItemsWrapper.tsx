@@ -1,9 +1,10 @@
-import { PropsWithChildren } from "react";
+import { cn } from "cn";
+import { ComponentProps } from "react";
 
-function PageItemsWrapper(p: PropsWithChildren) {
+function PageItemsWrapper({ className, ...p }: ComponentProps<"div">) {
   return (
     <div
-      className="w-full flex flex-col justify-start items-start flex-1 gap-md"
+      className={cn("w-full flex flex-col justify-start items-start flex-1 gap-md", className)}
       {...p}
     />
   );

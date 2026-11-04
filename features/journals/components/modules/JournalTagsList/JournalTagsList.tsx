@@ -20,11 +20,13 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 export interface JournalTagsListProps {
   category: JournalCategory | string;
   categoryTitle: string;
+  isHistory?: boolean;
 }
 
 export function JournalTagsList({
   category,
   categoryTitle,
+  isHistory,
 }: JournalTagsListProps) {
   const { t } = useLocale();
   const { tags, isLoading, mutate: revalidateTags } = useJournalTags(category);
@@ -81,6 +83,7 @@ export function JournalTagsList({
                 key={tag.id}
                 tag={tag}
                 category={category}
+                isHistory={isHistory}
                 onRequestDelete={(id) => {
                   setDeleteTargetId(id);
                   setDeleteDialogOpen(true);

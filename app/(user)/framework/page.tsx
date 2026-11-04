@@ -16,7 +16,7 @@ export default async function FrameworkPage() {
       <TopBar>
         <TopBar.Btn
           position="left"
-          href="/history?tab=framework"
+          href="/framework/history"
           aria-label={t("common.history")}
         >
           <HistoryIcon />

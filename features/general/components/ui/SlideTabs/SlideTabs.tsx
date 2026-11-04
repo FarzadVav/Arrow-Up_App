@@ -38,6 +38,7 @@ export type SlideTabsProps = {
   offset?: string;
   transition?: Transition;
   mode?: "wait" | "popLayout" | "sync";
+  isHistory?: boolean;
 };
 
 export function getSlideX(
@@ -76,6 +77,7 @@ export function SlideTabs({
   offset = "100%",
   transition,
   mode = "wait",
+  isHistory,
 }: SlideTabsProps) {
   const { locale } = useLocale();
 
@@ -173,6 +175,7 @@ export function SlideTabs({
               <Button
                 key={tab.id}
                 nativeButton={false}
+                isHistory={isHistory}
                 className={cn("flex-1", tabClassName, tab.className)}
                 render={<Link href={tab.href} scroll={false} />}
                 variant={isActive ? "primary" : "card"}
@@ -187,6 +190,7 @@ export function SlideTabs({
             <Button
               key={tab.id}
               type="button"
+              isHistory={isHistory}
               className={cn("flex-1", tabClassName, tab.className)}
               variant={isActive ? "primary" : "card"}
               disabled={tab.disabled}

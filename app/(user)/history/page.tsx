@@ -1,32 +1,22 @@
-import { Suspense } from "react";
-import TopBar from "@/features/general/components/statics/TopBar/TopBar";
-import PageWrapper from "@/features/general/components/statics/PageWrapper/PageWrapper";
-import PageItemsWrapper from "@/features/general/components/statics/PageItemsWrapper/PageItemsWrapper";
-import ContentSuspense from "@/features/general/components/modules/ContentSuspense";
-import { getTranslations } from "@/features/general/lib/i18n/server";
-import HistoryTabs from "@/features/history/components/HistoryTabs/HistoryTabs";
+import { redirect } from 'next/navigation';
 
-export default async function HistoryPage() {
-  const { t } = await getTranslations();
+export default async function HistoryPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ tab?: string }>;
+}) {
+  const sp = await searchParams;
+  const tab = sp?.tab?.toLowerCase();
 
-  return (
-    <PageWrapper>
-      <TopBar>
-        <TopBar.Btn backIcon goBack position="left" />
-        <TopBar.Title asTitle>{t("history.title")}</TopBar.Title>
-      </TopBar>
+  if (tab === 'framework') {
+    redirect('/framework/history');
+  }
+  if (tab === 'journals') {
+    redirect('/journals/history');
+  }
+  if (tab === 'upcoming' || tab === 'missions') {
+    redirect(`/todos/history?tab=${tab}`);
+  }
 
-      <PageItemsWrapper>
-        <ContentSuspense fallbackMessage={t("common.loading")}>
-          <Suspense>
-            <HistoryTabs />
-          </Suspense>
-        </ContentSuspense>
-
-        <p className="sub-text w-full text-center">
-          {t("history.subtitle")}
-        </p>
-      </PageItemsWrapper>
-    </PageWrapper>
-  );
+  redirect('/todos/history');
 }

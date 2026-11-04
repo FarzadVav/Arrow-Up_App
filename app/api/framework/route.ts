@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { serializeFramework } from '@/features/framework/api/repository';
+import { getFrameworksQuery, getFrameworksHistoryQuery } from '@/features/framework/api/queries';
 import { CreateFrameworkSchema } from '@/features/framework/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
 import {
@@ -19,14 +20,13 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const userId = await requireUserId();
     const searchParams = request.nextUrl.searchParams;
     const lifeAreaId = parseLifeAreaSlug(searchParams.get('lifeAreaId'));
+    const isHistory = searchParams.get('history') === 'true' || searchParams.get('isHistory') === 'true';
 
-    const frameworks = await withRequestContext(async ({ framework }) => {
-      const entities = await framework.findAllFrameworks(userId, { lifeAreaId });
-      return entities.map(serializeFramework);
-    });
+    const frameworks = isHistory
+      ? await getFrameworksHistoryQuery(lifeAreaId)
+      : await getFrameworksQuery(lifeAreaId);
 
     return jsonNoStore({ frameworks });
   } catch (error) {

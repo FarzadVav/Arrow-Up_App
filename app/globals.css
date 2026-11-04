@@ -122,6 +122,29 @@
   @apply w-full flex gap-sm p-0 rounded-component bg-card animate-pulse;
 }
 
+@utility history-striped {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, currentColor 1%, transparent) 0px,
+    color-mix(in srgb, currentColor 1%, transparent) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+}
+
+.history-page .card,
+.history-page [data-card],
+.history-page button,
+.history-page a[class*="rounded-component"] {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, currentColor 1%, transparent) 0px,
+    color-mix(in srgb, currentColor 1%, transparent) 5px,
+    transparent 5px,
+    transparent 10px
+  );
+}
+
 /* Base UI renders a 1px hidden input for form-enabled fields. Its inline
    margin: -1px pulls it outside the viewport, leaking a horizontal scrollbar. */
 input[id^="base-ui"][id$="-hidden-input"] {

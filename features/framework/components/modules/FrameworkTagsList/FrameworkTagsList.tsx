@@ -23,9 +23,13 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 export interface FrameworkTagsListProps {
   /** null targets the General area (frameworks without a life area) */
   lifeAreaId: number | null;
+  isHistory?: boolean;
 }
 
-export function FrameworkTagsList({ lifeAreaId }: FrameworkTagsListProps) {
+export function FrameworkTagsList({
+  lifeAreaId,
+  isHistory,
+}: FrameworkTagsListProps) {
   const { t } = useLocale();
   const areaTitle = useLifeAreaTitle(lifeAreaId, t("framework.unknownArea"));
   const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
@@ -88,6 +92,7 @@ export function FrameworkTagsList({ lifeAreaId }: FrameworkTagsListProps) {
               <FrameworkTagCard
                 key={tag.id}
                 tag={tag}
+                isHistory={isHistory}
                 onRequestDelete={(id) => {
                   setDeleteTargetId(id);
                   setDeleteDialogOpen(true);

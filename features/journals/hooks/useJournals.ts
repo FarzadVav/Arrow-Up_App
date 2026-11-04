@@ -12,13 +12,21 @@ const fetcher = async (url: string) => {
   return (data.journals ?? []) as Journal[];
 };
 
-export function useJournals(category?: JournalCategory | 'all' | string, tag?: string) {
+export function useJournals(
+  category?: JournalCategory | 'all' | string,
+  tag?: string,
+  options?: { isHistory?: boolean } | boolean,
+) {
+  const isHistory = typeof options === 'boolean' ? options : options?.isHistory ?? false;
   const params = new URLSearchParams();
   if (category && category !== 'all') {
     params.set('category', category);
   }
   if (tag && tag.toLowerCase() !== 'all') {
     params.set('tag', tag);
+  }
+  if (isHistory) {
+    params.set('history', 'true');
   }
   const queryString = params.toString();
   const url = `/api/journals${queryString ? `?${queryString}` : ''}`;

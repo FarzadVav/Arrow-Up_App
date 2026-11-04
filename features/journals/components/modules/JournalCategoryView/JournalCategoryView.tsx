@@ -24,14 +24,16 @@ import SlideTabs, { SlideTabItem } from "@/features/general/components/ui/SlideT
 import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
-type JournalCategoryViewProps = {
+export type JournalCategoryViewProps = {
   category: JournalCategoryDefinition | JournalType;
   title: string;
+  isHistory?: boolean;
 };
 
-export default function JournalCategoryView({
+export function JournalCategoryView({
   category,
   title,
+  isHistory = false,
 }: JournalCategoryViewProps) {
   const searchParams = useSearchParams();
   const initialTag = searchParams.get("tag")?.toLowerCase() || "all";
@@ -59,7 +61,7 @@ export default function JournalCategoryView({
     journals,
     isLoading,
     mutate: revalidateJournals,
-  } = useJournals(categoryName);
+  } = useJournals(categoryName, undefined, { isHistory });
 
   const { tags: dbTags } = useJournalTags(categoryName);
   const staticFallbackTags = useMemo(
@@ -99,11 +101,15 @@ export default function JournalCategoryView({
     });
   }, [journals, activeTag]);
 
+  const backHref = isHistory ? "/journals/history" : "/journals";
+
   return (
-    <PageWrapper>
+    <PageWrapper className={isHistory ? "history-page" : undefined}>
       <TopBar>
-        <TopBar.Title asTitle>{title}</TopBar.Title>
-        <TopBar.Btn backIcon href="/journals" position="left" />
+        <TopBar.Title asTitle>
+          {isHistory ? `${t("history.title")} - ${title}` : title}
+        </TopBar.Title>
+        <TopBar.Btn backIcon href={backHref} position="left" />
         <HelpDialog position="right" />
       </TopBar>
 
@@ -111,6 +117,7 @@ export default function JournalCategoryView({
         <SlideTabs
           tabs={filterTabs}
           activeId={activeTag}
+          isHistory={isHistory}
           onTabChange={setActiveTag}
           headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
           tabClassName="shrink-0 flex-none"
@@ -131,16 +138,34 @@ export default function JournalCategoryView({
                 {filteredJournals.length === 0 ? (
                   <EmptyAlert
                     alert={
-                      activeTag !== "all"
-                        ? t("journals.noJournalsWithTag")
-                        : t("journals.noJournalsInCategory")
+                      isHistory
+                        ? t("history.empty")
+                        : activeTag !== "all"
+                          ? t("journals.noJournalsWithTag")
+                          : t("journals.noJournalsInCategory")
                     }
-                    description={t("journals.subtitle")}
-                    href={`/journals/new?category=${encodeURIComponent(
-                      categoryName.toLowerCase(),
-                    )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
+                    description={isHistory ? undefined : t("journals.subtitle")}
+                    href={
+                      isHistory
+                        ? undefined
+                        : `/journals/new?category=${encodeURIComponent(
+                            categoryName.toLowerCase(),
+                          )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`
+                    }
                     className="p-md"
                   />
+                ) : isHistory ? (
+                  <div className="w-full space-y-sm">
+                    {filteredJournals.map((journal) => (
+                      <JournalCard
+                        key={journal.id}
+                        journal={journal}
+                        isHistory={isHistory}
+                        onDeleted={revalidateJournals}
+                        onMutated={revalidateJournals}
+                      />
+                    ))}
+                  </div>
                 ) : (
                   <ReorderList
                     items={filteredJournals}
@@ -149,7 +174,9 @@ export default function JournalCategoryView({
                     renderItem={(journal) => (
                       <JournalCard
                         journal={journal}
+                        isHistory={isHistory}
                         onDeleted={revalidateJournals}
+                        onMutated={revalidateJournals}
                       />
                     )}
                   />
@@ -159,14 +186,18 @@ export default function JournalCategoryView({
           </div>
         </SlideTabs>
 
-        <PageActionBtn
-          href={`/journals/new?category=${encodeURIComponent(
-            categoryName.toLowerCase(),
-          )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
-        >
-          {t("journals.new")}
-        </PageActionBtn>
+        {!isHistory && (
+          <PageActionBtn
+            href={`/journals/new?category=${encodeURIComponent(
+              categoryName.toLowerCase(),
+            )}${activeTag !== "all" ? `&tag=${encodeURIComponent(activeTag)}` : ""}`}
+          >
+            {t("journals.new")}
+          </PageActionBtn>
+        )}
       </PageItemsWrapper>
     </PageWrapper>
   );
 }
+
+export default JournalCategoryView;

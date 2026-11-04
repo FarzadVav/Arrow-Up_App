@@ -14,34 +14,81 @@ import { RichTextResult } from "@/features/general/components/ui/RichTextEditor"
 import { stripHtml } from "@/features/general/lib/utils";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import {
+  useHistoryActions,
+  HistoryDrawerActions,
+  HistoryDeleteDialog,
+  HistoryQuickRestoreBtn,
+} from "@/features/history";
 
 export interface FrameworkCardProps {
   framework: Framework;
+  isHistory?: boolean;
   onEdit?: (framework: Framework) => void;
-  onRequestDelete: (id: number) => void;
+  onRequestDelete?: (id: number) => void;
   onRecorded?: () => void;
+  onMutated?: () => void;
 }
 
 export function FrameworkCard({
   framework,
+  isHistory = false,
   onRequestDelete,
+  onMutated,
 }: FrameworkCardProps) {
-  const { t, formatDate } = useLocale();
+  const { t, formatDate, formatDateTime } = useLocale();
+
+  const historyActions = useHistoryActions({
+    id: framework.id,
+    type: "framework",
+    onMutated,
+  });
 
   const completedCount = useMemo(() => {
     return (framework.history || []).filter((h) => h.isDone).length;
   }, [framework.history]);
 
-  return (
+  const deletedDateStr = framework.deletedAt
+    ? formatDateTime(framework.deletedAt)
+    : "";
+
+  const cardDate =
+    isHistory && deletedDateStr ? (
+      <span className="text-xs sub-text">
+        {t("history.deletedAt")}: {deletedDateStr}
+      </span>
+    ) : undefined;
+
+  const drawerActions = isHistory ? (
+    <HistoryDrawerActions
+      onRestore={historyActions.handleRestore}
+      onRequestDelete={() => historyActions.setDeleteDialogOpen(true)}
+      isRestoring={historyActions.isRestoring}
+      isDeleting={historyActions.isDeleting}
+    />
+  ) : (
+    <Button
+      type="button"
+      variant="card"
+      size={"square"}
+      aria-label={t("common.delete")}
+      onClick={() => onRequestDelete?.(framework.id)}>
+      <Trash2Icon />
+    </Button>
+  );
+
+  const cardElement = (
     <CardDrawer
       title={framework.title}
       description={stripHtml(framework.description)}
+      date={cardDate}
       icon={
         <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
           <Repeat2Icon />
         </div>
       }
-      editHref={`/framework/new?editId=${framework.id}`}
+      editHref={isHistory ? undefined : `/framework/new?editId=${framework.id}`}
+      isHistory={isHistory}
       content={
         <div className="space-y-sm">
           <div className="flex items-center gap-sm flex-wrap sub-text">
@@ -99,17 +146,33 @@ export function FrameworkCard({
           )}
         </div>
       }
-      actions={
-        <Button
-          type="button"
-          variant="card"
-          size={"square"}
-          aria-label={t("common.delete")}
-          onClick={() => onRequestDelete(framework.id)}>
-          <Trash2Icon />
-        </Button>
-      }
+      actions={drawerActions}
     />
+  );
+
+  return (
+    <>
+      {isHistory ? (
+        <div className="flex items-center gap-xs w-full">
+          <div className="flex-1 min-w-0">{cardElement}</div>
+          <HistoryQuickRestoreBtn
+            onRestore={historyActions.handleRestore}
+            isRestoring={historyActions.isRestoring}
+          />
+        </div>
+      ) : (
+        cardElement
+      )}
+
+      {isHistory && (
+        <HistoryDeleteDialog
+          open={historyActions.deleteDialogOpen}
+          onOpenChange={historyActions.setDeleteDialogOpen}
+          onConfirm={historyActions.handlePermanentDelete}
+          isDeleting={historyActions.isDeleting}
+        />
+      )}
+    </>
   );
 }
 

@@ -11,7 +11,11 @@ import EmptyAlert from "@/features/general/components/statics/EmptyAlert";
 import Skeleton from "@/features/general/components/ui/Skeleton";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
-function JournalsTabs() {
+export interface JournalsTabsProps {
+  isHistory?: boolean;
+}
+
+export function JournalsTabs({ isHistory = false }: JournalsTabsProps) {
   const sp = useSearchParams();
   const tab = sp.get("tab");
   const activeTab = (tab || "all").toLowerCase();
@@ -20,7 +24,7 @@ function JournalsTabs() {
     journals: currentJournals,
     isLoading,
     mutate: revalidateJournals,
-  } = useJournals(activeTab);
+  } = useJournals(activeTab, undefined, { isHistory });
   const { t, locale } = useLocale();
 
   const tabs: SlideTabItem[] = [
@@ -43,6 +47,7 @@ function JournalsTabs() {
     <SlideTabs
       tabs={tabs}
       activeId={activeTab}
+      isHistory={isHistory}
       headerClassName="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-xs gap-xs"
       tabClassName="shrink-0 flex-none">
       <div className="w-full space-y-sm">
@@ -54,21 +59,27 @@ function JournalsTabs() {
               <JournalCard
                 key={journal.id}
                 journal={journal}
+                isHistory={isHistory}
                 onDeleted={revalidateJournals}
+                onMutated={revalidateJournals}
               />
             ))}
 
             {currentJournals.length === 0 && (
               <EmptyAlert
                 alert={
-                  activeTab !== "all"
-                    ? t("journals.noJournalsInCategory")
-                    : t("journals.noJournals")
+                  isHistory
+                    ? t("history.empty")
+                    : activeTab !== "all"
+                      ? t("journals.noJournalsInCategory")
+                      : t("journals.noJournals")
                 }
                 href={
-                  activeTab !== "all"
-                    ? `/journals/new?category=${encodeURIComponent(activeTab)}`
-                    : "/journals/new"
+                  isHistory
+                    ? undefined
+                    : activeTab !== "all"
+                      ? `/journals/new?category=${encodeURIComponent(activeTab)}`
+                      : "/journals/new"
                 }
               />
             )}

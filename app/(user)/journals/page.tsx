@@ -16,7 +16,7 @@ export default async function JournalsPage() {
       <TopBar>
         <TopBar.Btn
           position="left"
-          href="/history?tab=journals"
+          href="/journals/history"
           aria-label={t("common.history")}
         >
           <HistoryIcon />

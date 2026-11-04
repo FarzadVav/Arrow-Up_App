@@ -211,9 +211,17 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     return true;
   }
 
-  async findHistory(userId: number): Promise<Habit[]> {
+  async findHistory(
+    userId: number,
+    options?: { lifeAreaId?: number | null },
+  ): Promise<Habit[]> {
+    const where: FilterQuery<Habit> = { user: userId, deletedAt: { $ne: null } };
+    if (options?.lifeAreaId !== undefined) {
+      where.lifeArea = options.lifeAreaId;
+    }
+
     return this.find(
-      { user: userId, deletedAt: { $ne: null } },
+      where,
       {
         populate: ['lifeArea', 'tag', 'history'],
         orderBy: [{ deletedAt: 'DESC' }],

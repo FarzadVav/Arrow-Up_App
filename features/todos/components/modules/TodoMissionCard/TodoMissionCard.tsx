@@ -23,6 +23,12 @@ import CardDrawer from "@/features/general/components/ui/CardDrawer/CardDrawer";
 import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import {
+  useHistoryActions,
+  HistoryDrawerActions,
+  HistoryDeleteDialog,
+  HistoryQuickRestoreBtn,
+} from "@/features/history";
 
 function Difficulty({ value }: { value: number }) {
   return (
@@ -47,9 +53,11 @@ function Difficulty({ value }: { value: number }) {
  */
 function MissionActionRow({
   action,
+  isHistory = false,
   onMutated,
 }: {
   action: TodoAction;
+  isHistory?: boolean;
   onMutated?: () => void;
 }) {
   const { formatDate, t } = useLocale();
@@ -63,6 +71,43 @@ function MissionActionRow({
       onMutated?.();
     }
   }, [state, onMutated]);
+
+  if (isHistory) {
+    return (
+      <div
+        className={`flex items-center gap-xs w-full rounded-component bg-background p-sm text-left ${
+          action.isDone ? "opacity-60" : ""
+        }`}>
+        <div className="shrink-0">
+          {action.isDone ? (
+            <div className="flex size-5 items-center justify-center rounded-component bg-foreground">
+              <CheckIcon className="text-background" />
+            </div>
+          ) : (
+            <CircleIcon className="sub-text" />
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <p
+            className={`font-medium text-sm ${
+              action.isDone ? "line-through sub-text" : ""
+            }`}>
+            {action.title}
+          </p>
+
+          <div className="mt-xs flex items-center gap-xs sub-text">
+            <CalendarIcon />
+            <span>
+              {action.deadline
+                ? formatDate(action.deadline)
+                : t("common.notSet")}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form action={toggleAction}>
@@ -120,14 +165,19 @@ function MissionDisciplineRow({ discipline }: { discipline: TodoDiscipline }) {
   );
 }
 
-type TodoMissionCardProps = {
+export type TodoMissionCardProps = {
   todo: Todo;
+  isHistory?: boolean;
   /** Called after any mission action/discipline check-in succeeds so the list can revalidate. */
   onMutated?: () => void;
 };
 
-function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
-  const { formatDate, t } = useLocale();
+export function TodoMissionCard({
+  todo,
+  isHistory = false,
+  onMutated,
+}: TodoMissionCardProps) {
+  const { formatDate, formatDateTime, t } = useLocale();
 
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteTodoMutation,
@@ -140,6 +190,12 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
     }
   }, [deleteState, onMutated]);
 
+  const historyActions = useHistoryActions({
+    id: todo.id,
+    type: "missions",
+    onMutated,
+  });
+
   const actions = todo.actions || [];
   const disciplines = todo.disciplines || [];
   const totalActions = actions.length;
@@ -147,20 +203,55 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
   const progress =
     totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
 
-  return (
+  const deletedDateStr = todo.deletedAt ? formatDateTime(todo.deletedAt) : "";
+
+  const cardDate =
+    isHistory && deletedDateStr ? (
+      <span className="text-xs sub-text">
+        {t("history.deletedAt")}: {deletedDateStr}
+      </span>
+    ) : (
+      <span className="flex items-center gap-xs">
+        <CalendarDaysIcon />
+        <span>
+          {todo.deadline
+            ? `${t("dates.to")} ${formatDate(todo.deadline)}`
+            : t("common.notSet")}
+        </span>
+      </span>
+    );
+
+  const drawerActions = isHistory ? (
+    <HistoryDrawerActions
+      onRestore={historyActions.handleRestore}
+      onRequestDelete={() => historyActions.setDeleteDialogOpen(true)}
+      isRestoring={historyActions.isRestoring}
+      isDeleting={historyActions.isDeleting}
+    />
+  ) : (
+    <form action={deleteAction}>
+      <Field type="hidden" name="id" value={todo.id} />
+      <Drawer.Close
+        render={
+          <Button
+            type="submit"
+            variant="card"
+            size={"square"}
+            disabled={isDeleting}
+            className="size-10 justify-center"
+            aria-label={t("common.delete")}>
+            <Trash2Icon />
+          </Button>
+        }
+      />
+    </form>
+  );
+
+  const cardElement = (
     <CardDrawer
       title={todo.title}
       description={`${todo.lifeArea?.title ?? t("common.notSet")} • ${progress}%`}
-      date={
-        <span className="flex items-center gap-xs">
-          <CalendarDaysIcon />
-          <span>
-            {todo.deadline
-              ? `${t("dates.to")} ${formatDate(todo.deadline)}`
-              : t("common.notSet")}
-          </span>
-        </span>
-      }
+      date={cardDate}
       badge={
         <span
           className="inline-flex items-center gap-xs rounded-full bg-card-thick px-xs py-xs text-xs font-semibold sub-text"
@@ -174,7 +265,8 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
           <TargetIcon />
         </div>
       }
-      editHref={`/todos/new?editId=${todo.id}`}
+      editHref={isHistory ? undefined : `/todos/new?editId=${todo.id}`}
+      isHistory={isHistory}
       content={
         <div className="space-y-sm">
           <div className="rounded-component bg-background p-sm">
@@ -269,6 +361,7 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
                   <MissionActionRow
                     key={action.id}
                     action={action}
+                    isHistory={isHistory}
                     onMutated={onMutated}
                   />
                 ))}
@@ -302,25 +395,33 @@ function TodoMissionCard({ todo, onMutated }: TodoMissionCardProps) {
           )}
         </div>
       }
-      actions={
-        <form action={deleteAction}>
-          <Field type="hidden" name="id" value={todo.id} />
-          <Drawer.Close
-            render={
-              <Button
-                type="submit"
-                variant="card"
-                size={"square"}
-                disabled={isDeleting}
-                className="size-10 justify-center"
-                aria-label={t("common.delete")}>
-                <Trash2Icon />
-              </Button>
-            }
-          />
-        </form>
-      }
+      actions={drawerActions}
     />
+  );
+
+  return (
+    <>
+      {isHistory ? (
+        <div className="flex items-center gap-xs w-full">
+          <div className="flex-1 min-w-0">{cardElement}</div>
+          <HistoryQuickRestoreBtn
+            onRestore={historyActions.handleRestore}
+            isRestoring={historyActions.isRestoring}
+          />
+        </div>
+      ) : (
+        cardElement
+      )}
+
+      {isHistory && (
+        <HistoryDeleteDialog
+          open={historyActions.deleteDialogOpen}
+          onOpenChange={historyActions.setDeleteDialogOpen}
+          onConfirm={historyActions.handlePermanentDelete}
+          isDeleting={historyActions.isDeleting}
+        />
+      )}
+    </>
   );
 }
 

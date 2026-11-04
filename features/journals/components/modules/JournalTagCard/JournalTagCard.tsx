@@ -10,12 +10,14 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 export interface JournalTagCardProps {
   tag: JournalTag;
   category: string;
+  isHistory?: boolean;
   onRequestDelete: (id: number) => void;
 }
 
 export function JournalTagCard({
   tag,
   category,
+  isHistory,
   onRequestDelete,
 }: JournalTagCardProps) {
   const { t, formatDate } = useLocale();
@@ -24,6 +26,7 @@ export function JournalTagCard({
     <div className="w-full flex items-center gap-xs">
       <div className="flex-1 min-w-0">
         <CardView
+          isHistory={isHistory}
           title={tag.title}
           description={tag.createdAt ? formatDate(tag.createdAt) : undefined}
           icon={
@@ -37,6 +40,7 @@ export function JournalTagCard({
       <div className="flex items-center gap-xs shrink-0">
         <Button
           nativeButton={false}
+          isHistory={isHistory}
           render={
             <Link
               href={`/journals/${category.toLowerCase()}/tags/new?editId=${tag.id}`}
@@ -51,6 +55,7 @@ export function JournalTagCard({
 
         <Button
           type="button"
+          isHistory={isHistory}
           variant="card"
           size={"square"}
           className="size-10 justify-center"

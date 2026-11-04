@@ -321,14 +321,21 @@ export class TodoRepository extends EntityRepository<Todo> {
 
   async findHistory(
     userId: number,
-    type?: TodoType | 'Daily' | 'Upcoming' | 'Mission',
+    type?: TodoType | 'Daily' | 'Upcoming' | 'Mission' | string,
   ): Promise<Todo[]> {
     const where: FilterQuery<Todo> = {
       user: userId,
       deletedAt: { $ne: null },
     };
     if (type) {
-      where.type = type as unknown as TodoType;
+      const typeStr = String(type).toLowerCase();
+      if (typeStr === 'daily') {
+        where.type = TodoType.DAILY;
+      } else if (typeStr === 'upcoming') {
+        where.type = TodoType.UPCOMING;
+      } else if (typeStr === 'mission' || typeStr === 'missions') {
+        where.type = TodoType.MISSION;
+      }
     }
 
     return this.find(where, {

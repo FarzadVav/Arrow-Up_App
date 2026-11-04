@@ -30,6 +30,7 @@ export interface CardViewProps
   date?: ReactNode;
   dateTime?: ReactNode;
   badge?: ReactNode;
+  isHistory?: boolean;
 }
 
 const CardView = forwardRef<HTMLDivElement, CardViewProps>(
@@ -43,6 +44,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
       badge,
       variant = "card",
       className,
+      isHistory,
       ...props
     },
     ref,
@@ -53,10 +55,12 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
     return (
       <div
         ref={ref}
+        data-card="true"
         className={cn(
           cardViewVariants({ variant }),
           description || cardDate ? "items-start" : "items-center",
           isInteractive && "hover:opacity-90 active:scale-[0.99]",
+          isHistory && "history-striped",
           className,
         )}
         {...props}>

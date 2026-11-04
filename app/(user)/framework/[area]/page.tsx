@@ -4,14 +4,20 @@ import { resolveAreaSlug, type AreaRouteParams } from "@/features/general/lib/ut
 
 export default async function FrameworkAreaPage({
   params,
+  searchParams,
 }: {
   params: AreaRouteParams;
+  searchParams?: Promise<{ history?: string }>;
 }) {
-  const lifeAreaId = await resolveAreaSlug(params);
+  const [lifeAreaId, sp] = await Promise.all([
+    resolveAreaSlug(params),
+    searchParams,
+  ]);
+  const isHistory = sp?.history === "true";
 
   return (
     <ContentSuspense>
-      <FrameworkAreaView lifeAreaId={lifeAreaId} />
+      <FrameworkAreaView lifeAreaId={lifeAreaId} isHistory={isHistory} />
     </ContentSuspense>
   );
 }

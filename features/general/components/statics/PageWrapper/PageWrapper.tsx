@@ -2,8 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { PropsWithChildren, useEffect, useRef } from "react";
+import { cn } from "cn";
 
-function PageWrapper(p: PropsWithChildren) {
+export interface PageWrapperProps extends PropsWithChildren {
+  className?: string;
+}
+
+function PageWrapper({ children, className, ...props }: PageWrapperProps) {
   const pathname = usePathname();
 
   const pageWrapperRef = useRef<HTMLDivElement>(null);
@@ -34,7 +39,16 @@ function PageWrapper(p: PropsWithChildren) {
   }, [pathname]);
 
   return (
-    <div ref={pageWrapperRef} className="p-sm pt-md flex flex-col justify-start items-start gap-md" {...p} />
+    <div
+      ref={pageWrapperRef}
+      className={cn(
+        "p-sm pt-md flex flex-col justify-start items-start gap-md",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
   );
 }
 

@@ -28,12 +28,16 @@ import SlideTabs, {
 import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 
-type FrameworkAreaViewProps = {
+export type FrameworkAreaViewProps = {
   /** null targets frameworks that have no life area */
   lifeAreaId: number | null;
+  isHistory?: boolean;
 };
 
-export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
+export function FrameworkAreaView({
+  lifeAreaId,
+  isHistory = false,
+}: FrameworkAreaViewProps) {
   const isAbandoned = lifeAreaId === null;
   const { t } = useLocale();
   const searchParams = useSearchParams();
@@ -46,7 +50,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
     frameworks,
     isLoading,
     mutate: revalidateFrameworks,
-  } = useFrameworks();
+  } = useFrameworks(undefined, { isHistory });
   const { tags } = useFrameworkTags(isAbandoned ? undefined : lifeAreaId);
   const { lifeAreas } = useLifeAreas();
 
@@ -87,8 +91,8 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
 
   const areaSlug = String(lifeAreaId ?? UNSET_LIFE_AREA_SLUG);
 
-  const filterTabs = useMemo<SlideTabItem[]>(
-    () => [
+  const filterTabs = useMemo<SlideTabItem[]>(() => {
+    const baseTabs: SlideTabItem[] = [
       {
         id: "all",
         label: t("common.all"),
@@ -98,15 +102,19 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
         id: tag.title.toLowerCase(),
         label: tag.title,
       })),
-      {
+    ];
+
+    if (!isHistory) {
+      baseTabs.push({
         id: "tags-page",
         label: t("common.tags"),
         href: `/framework/${areaSlug}/tags`,
         icon: <TagIcon />,
-      },
-    ],
-    [areaFrameworks.length, areaSlug, tags, t],
-  );
+      });
+    }
+
+    return baseTabs;
+  }, [areaFrameworks.length, areaSlug, tags, t, isHistory]);
 
   const targetFramework = frameworks.find(
     (framework) => framework.id === deleteTargetId,
@@ -122,14 +130,19 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
   };
 
   const handleOpenEdit = (framework: Framework) => {
+    if (isHistory) return;
     router.push(`/framework/new?editId=${framework.id}`);
   };
 
+  const backHref = isHistory ? "/framework/history" : "/framework";
+
   return (
-    <PageWrapper>
+    <PageWrapper className={isHistory ? "history-page" : undefined}>
       <TopBar>
-        <TopBar.Title asTitle>{title}</TopBar.Title>
-        <TopBar.Btn backIcon href="/framework" position="left" />
+        <TopBar.Title asTitle>
+          {isHistory ? `${t("history.title")} - ${title}` : title}
+        </TopBar.Title>
+        <TopBar.Btn backIcon href={backHref} position="left" />
         <HelpDialog position="right" />
       </TopBar>
 
@@ -147,9 +160,24 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
               <Skeleton count={3} />
             ) : areaFrameworks.length === 0 ? (
               <EmptyAlert
-                alert={t("framework.noAbandonedFrameworks")}
+                alert={
+                  isHistory
+                    ? t("history.empty")
+                    : t("framework.noAbandonedFrameworks")
+                }
                 className="p-md"
               />
+            ) : isHistory ? (
+              <div className="w-full space-y-sm">
+                {areaFrameworks.map((framework) => (
+                  <FrameworkCard
+                    key={framework.id}
+                    framework={framework}
+                    isHistory={isHistory}
+                    onMutated={revalidateFrameworks}
+                  />
+                ))}
+              </div>
             ) : (
               <ReorderList
                 items={areaFrameworks}
@@ -158,6 +186,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                 renderItem={(framework) => (
                   <FrameworkCard
                     framework={framework}
+                    isHistory={isHistory}
                     onEdit={handleOpenEdit}
                     onRequestDelete={(id) => {
                       setDeleteTargetId(id);
@@ -172,6 +201,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
           <SlideTabs
             tabs={filterTabs}
             activeId={activeTag}
+            isHistory={isHistory}
             onTabChange={(id) => {
               if (id !== "tags-page") {
                 setActiveTag(id);
@@ -195,14 +225,27 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                   {filteredFrameworks.length === 0 ? (
                     <EmptyAlert
                       alert={
-                        activeTag !== "all"
-                          ? t("framework.noFrameworksWithTag")
-                          : t("framework.noFrameworksInArea")
+                        isHistory
+                          ? t("history.empty")
+                          : activeTag !== "all"
+                            ? t("framework.noFrameworksWithTag")
+                            : t("framework.noFrameworksInArea")
                       }
-                      description={t("framework.addFirst")}
-                      href={isArchivedArea ? undefined : createHref()}
+                      description={isHistory ? undefined : t("framework.addFirst")}
+                      href={isHistory || isArchivedArea ? undefined : createHref()}
                       className="p-md"
                     />
+                  ) : isHistory ? (
+                    <div className="w-full space-y-sm">
+                      {filteredFrameworks.map((framework) => (
+                        <FrameworkCard
+                          key={framework.id}
+                          framework={framework}
+                          isHistory={isHistory}
+                          onMutated={revalidateFrameworks}
+                        />
+                      ))}
+                    </div>
                   ) : (
                     <ReorderList
                       items={filteredFrameworks}
@@ -211,6 +254,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
                       renderItem={(framework) => (
                         <FrameworkCard
                           framework={framework}
+                          isHistory={isHistory}
                           onEdit={handleOpenEdit}
                           onRequestDelete={(id) => {
                             setDeleteTargetId(id);
@@ -226,15 +270,19 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
           </SlideTabs>
         )}
 
-        {isArchivedArea ? (
-          <p className="sub-text w-full text-center">
-            {t("lifeAreas.inactiveDesc")}
-          </p>
-        ) : !isAbandoned ? (
-          <PageActionBtn href={createHref()}>
-            {t("framework.new")}
-          </PageActionBtn>
-        ) : null}
+        {!isHistory && (
+          <>
+            {isArchivedArea ? (
+              <p className="sub-text w-full text-center">
+                {t("lifeAreas.inactiveDesc")}
+              </p>
+            ) : !isAbandoned ? (
+              <PageActionBtn href={createHref()}>
+                {t("framework.new")}
+              </PageActionBtn>
+            ) : null}
+          </>
+        )}
       </PageItemsWrapper>
 
       {/* Delete Confirmation Dialog */}
@@ -261,8 +309,7 @@ export function FrameworkAreaView({ lifeAreaId }: FrameworkAreaViewProps) {
             <Button
               type="submit"
               variant="primary"
-              disabled={isDeleting || deleteTargetId === null}
-              >
+              disabled={isDeleting || deleteTargetId === null}>
               {isDeleting ? (
                 <span className="flex items-center gap-xs">
                   <LoaderIcon className="animate-spin" />

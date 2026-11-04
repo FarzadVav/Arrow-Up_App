@@ -12,11 +12,22 @@ const fetcher = async (url: string) => {
   return (data.frameworks || []) as Framework[];
 };
 
-export function useFrameworks(lifeAreaId?: number | null) {
-  const endpoint =
-    lifeAreaId !== undefined && lifeAreaId !== null
-      ? `/api/framework?lifeAreaId=${lifeAreaId}`
-      : '/api/framework';
+export function useFrameworks(
+  lifeAreaId?: number | null,
+  options?: { isHistory?: boolean } | boolean,
+) {
+  const isHistory = typeof options === 'boolean' ? options : options?.isHistory ?? false;
+  const params = new URLSearchParams();
+
+  if (lifeAreaId !== undefined && lifeAreaId !== null) {
+    params.set('lifeAreaId', String(lifeAreaId));
+  }
+  if (isHistory) {
+    params.set('history', 'true');
+  }
+
+  const queryString = params.toString();
+  const endpoint = `/api/framework${queryString ? `?${queryString}` : ''}`;
 
   const { data: frameworks = [], error, isLoading, mutate } = useSWR<Framework[]>(
     endpoint,

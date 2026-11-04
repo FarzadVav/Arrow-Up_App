@@ -316,6 +316,7 @@ export class JournalRepository extends EntityRepository<Journal> {
   async findHistory(
     userId: number,
     categoryParam?: string,
+    tagParam?: string,
   ): Promise<Journal[]> {
     const where: FilterQuery<Journal> = {
       user: userId,
@@ -329,6 +330,21 @@ export class JournalRepository extends EntityRepository<Journal> {
       });
       if (catEntity) {
         where.category = catEntity.id;
+      }
+    }
+
+    if (tagParam && tagParam !== 'all') {
+      const cleanTag = tagParam.trim().toLowerCase();
+      const tagNum = Number(cleanTag);
+      const tagEntity = await this.em.findOne(JournalTag, {
+        $or: [
+          ...(Number.isInteger(tagNum) && tagNum > 0 ? [{ id: tagNum }] : []),
+          { slug: cleanTag },
+          { nameEn: { $ilike: cleanTag } },
+        ],
+      });
+      if (tagEntity) {
+        where.tag = tagEntity.id;
       }
     }
 

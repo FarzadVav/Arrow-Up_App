@@ -10,11 +10,13 @@ import { useLocale } from "@/features/general/components/modules/LocaleProvider/
 
 export interface FrameworkTagCardProps {
   tag: FrameworkTag;
+  isHistory?: boolean;
   onRequestDelete: (id: number) => void;
 }
 
 export function FrameworkTagCard({
   tag,
+  isHistory,
   onRequestDelete,
 }: FrameworkTagCardProps) {
   const { t, formatDate } = useLocale();
@@ -24,6 +26,7 @@ export function FrameworkTagCard({
     <div className="w-full flex items-center gap-xs">
       <div className="flex-1 min-w-0">
         <CardView
+          isHistory={isHistory}
           title={tag.title}
           description={tag.createdAt ? formatDate(tag.createdAt) : undefined}
           icon={
@@ -37,6 +40,7 @@ export function FrameworkTagCard({
       <div className="flex items-center gap-xs shrink-0">
         <Button
           nativeButton={false}
+          isHistory={isHistory}
           render={
             <Link href={`/framework/${areaSlug}/tags/new?editId=${tag.id}`} />
           }
@@ -49,6 +53,7 @@ export function FrameworkTagCard({
 
         <Button
           type="button"
+          isHistory={isHistory}
           variant="card"
           size={"square"}
           className="size-10 justify-center"

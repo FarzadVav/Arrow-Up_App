@@ -38,13 +38,16 @@ const buttonVariants = cva(
 );
 
 type ButtonProps = ComponentProps<typeof BaseUIButton> &
-  VariantProps<typeof buttonVariants>;
+  VariantProps<typeof buttonVariants> & {
+    isHistory?: boolean;
+  };
 
 function Button({
   size,
   variant,
   className,
   type = "button",
+  isHistory,
   ...props
 }: ButtonProps) {
   return (
@@ -55,6 +58,7 @@ function Button({
           variant,
           size,
         }),
+        isHistory && "history-striped",
         className,
       )}
       {...props}

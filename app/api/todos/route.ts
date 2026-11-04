@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
 import { TodoType as DbTodoType } from '@/db/entities/enums';
-import { getTodosQuery } from '@/features/todos/api/queries';
+import { getTodosQuery, getTodosHistoryQuery } from '@/features/todos/api/queries';
 import { serializeTodo } from '@/features/todos/api/repository';
 import { CreateTodoSchema, TodoType } from '@/features/todos/lib/types';
 import { requireUserId } from '@/features/auth/lib/utils';
@@ -23,8 +23,11 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const typeParam = searchParams.get('type') || undefined;
+    const isHistory = searchParams.get('history') === 'true' || searchParams.get('isHistory') === 'true';
 
-    const todos = await getTodosQuery(typeParam as TodoType);
+    const todos = isHistory
+      ? await getTodosHistoryQuery(typeParam as TodoType)
+      : await getTodosQuery(typeParam as TodoType);
 
     return jsonNoStore({ todos });
   } catch (error) {

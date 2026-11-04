@@ -22,6 +22,7 @@ export interface CardDrawerProps {
   actions?: ReactNode;
   children?: ReactNode;
   drawerContentClassName?: string;
+  isHistory?: boolean;
 }
 
 export function CardDrawer({
@@ -38,6 +39,7 @@ export function CardDrawer({
   actions,
   children,
   drawerContentClassName,
+  isHistory,
 }: CardDrawerProps) {
   const { t } = useLocale();
 
@@ -52,6 +54,7 @@ export function CardDrawer({
           description={description}
           date={date ?? dateTime}
           badge={badge}
+          isHistory={isHistory}
           className={cardClassName}
         />
       }
@@ -71,6 +74,7 @@ export function CardDrawer({
             <Button
               type="button"
               variant="card"
+              isHistory={isHistory}
               className="flex-1 justify-center"
             >
               {t("common.close")}
@@ -86,6 +90,7 @@ export function CardDrawer({
                 type="button"
                 variant="primary"
                 nativeButton={false}
+                isHistory={isHistory}
                 className="flex-1 justify-center"
                 render={
                   <Link

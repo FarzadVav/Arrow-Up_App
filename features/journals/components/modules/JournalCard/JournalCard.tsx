@@ -18,14 +18,27 @@ import { Button } from "@/features/general/components/ui/Button/Button";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { stripHtml } from "@/features/general/lib/utils";
 import { RichTextResult } from "@/features/general/components/ui/RichTextEditor";
+import {
+  useHistoryActions,
+  HistoryDrawerActions,
+  HistoryDeleteDialog,
+  HistoryQuickRestoreBtn,
+} from "@/features/history";
 
-type JournalCardProps = {
+export type JournalCardProps = {
   journal: Journal;
+  isHistory?: boolean;
   onDeleted?: () => void;
+  onMutated?: () => void;
 };
 
-function JournalCard({ journal, onDeleted }: JournalCardProps) {
-  const { formatDate, formatTime, t, locale } = useLocale();
+export function JournalCard({
+  journal,
+  isHistory = false,
+  onDeleted,
+  onMutated,
+}: JournalCardProps) {
+  const { formatDate, formatTime, formatDateTime, t, locale } = useLocale();
 
   const [deleteState, deleteAction, isDeleting] = useActionState(
     deleteJournalMutation,
@@ -35,8 +48,15 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
   useEffect(() => {
     if (deleteState?.success) {
       onDeleted?.();
+      onMutated?.();
     }
-  }, [deleteState, onDeleted]);
+  }, [deleteState, onDeleted, onMutated]);
+
+  const historyActions = useHistoryActions({
+    id: journal.id,
+    type: "journals",
+    onMutated: onMutated || onDeleted,
+  });
 
   const tagName = journal.tag
     ? typeof journal.tag === "object"
@@ -56,38 +76,71 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
       ? t(`journals.categories.${journal.type.toLowerCase()}`) || journal.type
       : t("common.general");
 
-  return (
+  const deletedDateStr = journal.deletedAt
+    ? formatDateTime(journal.deletedAt)
+    : "";
+
+  const cardDate =
+    isHistory && deletedDateStr ? (
+      <span className="text-xs sub-text">
+        {t("history.deletedAt")}: {deletedDateStr}
+      </span>
+    ) : (
+      <div className="flex items-center gap-xs flex-wrap">
+        <span className="flex items-center gap-xs">
+          <CalendarDaysIcon />
+          {formatDate(journal.createdAt)}
+        </span>
+        <span>•</span>
+        <span className="flex items-center gap-xs">
+          <ClockIcon />
+          {formatTime(journal.createdAt)}
+        </span>
+        {tagName && (
+          <>
+            <span>•</span>
+            <span className="flex items-center gap-xs font-medium">
+              <TagIcon />
+              {tagName}
+            </span>
+          </>
+        )}
+      </div>
+    );
+
+  const drawerActions = isHistory ? (
+    <HistoryDrawerActions
+      onRestore={historyActions.handleRestore}
+      onRequestDelete={() => historyActions.setDeleteDialogOpen(true)}
+      isRestoring={historyActions.isRestoring}
+      isDeleting={historyActions.isDeleting}
+    />
+  ) : (
+    <form action={deleteAction} className="flex-1">
+      <Field type="hidden" name="id" value={journal.id} />
+      <Button
+        type="submit"
+        variant="card"
+        className="w-full justify-center text-destructive"
+        disabled={isDeleting}>
+        <Trash2Icon />
+        <span>{isDeleting ? t("common.loading") : t("common.delete")}</span>
+      </Button>
+    </form>
+  );
+
+  const cardElement = (
     <CardDrawer
       title={journal.title}
       description={stripHtml(journal.content)}
-      date={
-        <div className="flex items-center gap-xs flex-wrap">
-          <span className="flex items-center gap-xs">
-            <CalendarDaysIcon />
-            {formatDate(journal.createdAt)}
-          </span>
-          <span>•</span>
-          <span className="flex items-center gap-xs">
-            <ClockIcon />
-            {formatTime(journal.createdAt)}
-          </span>
-          {tagName && (
-            <>
-              <span>•</span>
-              <span className="flex items-center gap-xs font-medium">
-                <TagIcon />
-                {tagName}
-              </span>
-            </>
-          )}
-        </div>
-      }
+      date={cardDate}
       icon={
         <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
           <FileTextIcon />
         </div>
       }
-      editHref={`/journals/new?editId=${journal.id}`}
+      editHref={isHistory ? undefined : `/journals/new?editId=${journal.id}`}
+      isHistory={isHistory}
       content={
         <div className="space-y-sm">
           <div
@@ -100,9 +153,7 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
                 <FileTextIcon />
                 <span>{t("common.category")}</span>
               </div>
-              <p className="mt-xs font-medium">
-                {categoryName}
-              </p>
+              <p className="mt-xs font-medium">{categoryName}</p>
             </div>
 
             {tagName && (
@@ -139,20 +190,33 @@ function JournalCard({ journal, onDeleted }: JournalCardProps) {
           <RichTextResult content={journal.content} />
         </div>
       }
-      actions={
-        <form action={deleteAction} className="flex-1">
-          <Field type="hidden" name="id" value={journal.id} />
-          <Button
-            type="submit"
-            variant="card"
-            className="w-full justify-center text-destructive"
-            disabled={isDeleting}>
-            <Trash2Icon />
-            <span>{isDeleting ? t("common.loading") : t("common.delete")}</span>
-          </Button>
-        </form>
-      }
+      actions={drawerActions}
     />
+  );
+
+  return (
+    <>
+      {isHistory ? (
+        <div className="flex items-center gap-xs w-full">
+          <div className="flex-1 min-w-0">{cardElement}</div>
+          <HistoryQuickRestoreBtn
+            onRestore={historyActions.handleRestore}
+            isRestoring={historyActions.isRestoring}
+          />
+        </div>
+      ) : (
+        cardElement
+      )}
+
+      {isHistory && (
+        <HistoryDeleteDialog
+          open={historyActions.deleteDialogOpen}
+          onOpenChange={historyActions.setDeleteDialogOpen}
+          onConfirm={historyActions.handlePermanentDelete}
+          isDeleting={historyActions.isDeleting}
+        />
+      )}
+    </>
   );
 }
 
