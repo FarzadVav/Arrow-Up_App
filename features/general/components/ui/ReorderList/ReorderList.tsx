@@ -98,12 +98,56 @@ function isInteractiveControl(el: HTMLElement | null): boolean {
   );
 }
 
+function scrollBy(container: HTMLElement | Window, delta: number) {
+  if (container === window) {
+    window.scrollBy({ top: delta, behavior: "instant" as ScrollBehavior });
+  } else {
+    (container as HTMLElement).scrollTop += delta;
+  }
+}
+
+// touch-action is "none" on the items, so vertical finger movement has to move
+// the scroll container by hand. This reproduces the flick that native scrolling
+// would have given us.
+function flickScroll(
+  container: HTMLElement | Window,
+  velocity: number,
+  cancelRef: { current: number | null }
+) {
+  let last = performance.now();
+
+  const step = (now: number) => {
+    const dt = now - last;
+    last = now;
+    velocity *= Math.pow(0.94, dt / 16);
+
+    if (Math.abs(velocity) < 0.02) {
+      cancelRef.current = null;
+      return;
+    }
+
+    scrollBy(container, velocity * dt);
+    cancelRef.current = requestAnimationFrame(step);
+  };
+
+  cancelRef.current = requestAnimationFrame(step);
+}
+
+function touchPoint(ev: PointerEvent | TouchEvent) {
+  if ("touches" in ev) {
+    const touch = ev.touches[0] ?? (ev as TouchEvent).changedTouches[0];
+    return touch ? { x: touch.clientX, y: touch.clientY } : null;
+  }
+  const pointer = ev as PointerEvent;
+  return { x: pointer.clientX, y: pointer.clientY };
+}
+
 function findScrollableParent(
   element: HTMLElement | null
 ): HTMLElement | Window {
   if (typeof window === "undefined") return null as unknown as Window;
 
-  let current = element?.parentElement;
+  let current = element;
 
   while (
     current &&
@@ -201,14 +245,7 @@ function useAutoScroll({
         }
 
         if (speed !== 0) {
-          if (isWin) {
-            window.scrollBy({
-              top: speed,
-              behavior: "instant" as ScrollBehavior,
-            });
-          } else {
-            (container as HTMLElement).scrollTop += speed;
-          }
+          scrollBy(container, speed);
         }
 
         rafIdRef.current = requestAnimationFrame(loop);
@@ -257,44 +294,39 @@ function ReorderListItem<T extends { id: number }>({
   const itemRef = useRef<HTMLDivElement>(null);
 
   const holdTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const startPosRef = useRef<{ x: number; y: number } | null>(null);
-  const savedPointerEventRef = useRef<PointerEvent | null>(null);
-  const touchPreventCleanupRef = useRef<(() => void) | null>(null);
-  const holdListenersCleanupRef = useRef<(() => void) | null>(null);
+  const gestureCleanupRef = useRef<(() => void) | null>(null);
+  const inertiaRef = useRef<number | null>(null);
+  const isHeldRef = useRef(false);
 
   const [isHeld, setIsHeld] = useState(false);
 
-  const cleanupTouchPrevent = useCallback(() => {
-    if (touchPreventCleanupRef.current) {
-      touchPreventCleanupRef.current();
-      touchPreventCleanupRef.current = null;
+  const stopInertia = useCallback(() => {
+    if (inertiaRef.current !== null) {
+      cancelAnimationFrame(inertiaRef.current);
+      inertiaRef.current = null;
     }
   }, []);
 
-  const clearHoldListeners = useCallback(() => {
-    if (holdListenersCleanupRef.current) {
-      holdListenersCleanupRef.current();
-      holdListenersCleanupRef.current = null;
-    }
-  }, []);
-
-  const clearHold = useCallback(() => {
+  const endGesture = useCallback(() => {
     if (holdTimerRef.current) {
       clearTimeout(holdTimerRef.current);
       holdTimerRef.current = null;
     }
-    clearHoldListeners();
-    startPosRef.current = null;
-    savedPointerEventRef.current = null;
-    setIsHeld(false);
-  }, [clearHoldListeners]);
+    gestureCleanupRef.current?.();
+    gestureCleanupRef.current = null;
+
+    if (isHeldRef.current) {
+      isHeldRef.current = false;
+      setIsHeld(false);
+    }
+  }, []);
 
   useEffect(() => {
     return () => {
-      clearHold();
-      cleanupTouchPrevent();
+      endGesture();
+      stopInertia();
     };
-  }, [clearHold, cleanupTouchPrevent]);
+  }, [endGesture, stopInertia]);
 
   useEffect(() => {
     const el = itemRef.current;
@@ -322,59 +354,122 @@ function ReorderListItem<T extends { id: number }>({
 
     const target = e.target as HTMLElement | null;
 
-    if (isInteractiveControl(target)) return;
-    if (target?.closest("[data-reorder-handle]")) return;
+    const isControl = isInteractiveControl(target);
+    const isHandle = Boolean(target?.closest("[data-reorder-handle]"));
+    const isTouch = e.pointerType === "touch";
 
-    clearHold();
-    cleanupTouchPrevent();
+    // Controls keep their own gestures, but under touch-action: none they still
+    // need us to move the scroll container by hand.
+    if ((isControl || isHandle) && !isTouch) return;
 
-    startPosRef.current = { x: e.clientX, y: e.clientY };
-    savedPointerEventRef.current = e.nativeEvent;
+    endGesture();
+    stopInertia();
 
-    const handlePointerMove = (ev: PointerEvent | TouchEvent) => {
-      if (!startPosRef.current) return;
-      const clientX =
-        "touches" in ev ? ev.touches[0]?.clientX : (ev as PointerEvent).clientX;
-      const clientY =
-        "touches" in ev ? ev.touches[0]?.clientY : (ev as PointerEvent).clientY;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const scrollContainer = isTouch
+      ? findScrollableParent(target ?? itemRef.current)
+      : null;
 
-      if (clientX === undefined || clientY === undefined) return;
+    let ended = false;
+    let axis: "y" | "swipe" | null = null;
+    let lastY = startY;
+    const samples: { t: number; y: number }[] = [{ t: e.timeStamp, y: startY }];
 
-      const deltaX = Math.abs(clientX - startPosRef.current.x);
-      const deltaY = Math.abs(clientY - startPosRef.current.y);
-      const dist = Math.hypot(deltaX, deltaY);
-
-      // If user moves more than 10px before the 1s hold completes,
-      // it means they want to scroll the page or swipe the card. Cancel hold immediately!
-      if (dist > 10) {
-        clearHold();
+    const releaseHold = () => {
+      if (holdTimerRef.current) {
+        clearTimeout(holdTimerRef.current);
+        holdTimerRef.current = null;
       }
     };
 
-    const handleCancelDuringHold = () => {
-      clearHold();
+    const handleMove = (ev: Event) => {
+      if (ended) return;
+
+      const point = touchPoint(ev as TouchEvent);
+      if (!point) return;
+
+      // The reorder drag owns the gesture now; motion drives it.
+      if (isHeldRef.current) return;
+
+      if (axis !== null) {
+        if (axis === "y" && scrollContainer) {
+          scrollBy(scrollContainer, -(point.y - lastY));
+          lastY = point.y;
+          samples.push({ t: ev.timeStamp, y: point.y });
+          while (samples.length > 2 && ev.timeStamp - samples[0].t > 90) {
+            samples.shift();
+          }
+        }
+        return;
+      }
+
+      const deltaX = Math.abs(point.x - startX);
+      const deltaY = Math.abs(point.y - startY);
+
+      // Moving before the hold completes means the user wants to scroll the page
+      // or swipe the card, so drop the hold and only take over vertical motion.
+      if (deltaX + deltaY > 10) {
+        axis = deltaX > deltaY ? "swipe" : "y";
+        lastY = point.y;
+        releaseHold();
+
+        // A horizontal swipe belongs to the card's own drag handlers.
+        if (axis === "swipe") endGesture();
+      }
     };
 
-    window.addEventListener("pointermove", handlePointerMove, {
-      passive: true,
-    });
-    window.addEventListener("touchmove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerup", handleCancelDuringHold, { once: true });
-    window.addEventListener("pointercancel", handleCancelDuringHold, {
-      once: true,
-    });
-    window.addEventListener("touchend", handleCancelDuringHold, { once: true });
+    const handleEnd = () => {
+      if (ended) return;
+      ended = true;
 
-    holdListenersCleanupRef.current = () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("touchmove", handlePointerMove);
-      window.removeEventListener("pointerup", handleCancelDuringHold);
-      window.removeEventListener("pointercancel", handleCancelDuringHold);
-      window.removeEventListener("touchend", handleCancelDuringHold);
+      releaseHold();
+      endGesture();
+
+      if (axis !== "y" || !scrollContainer || samples.length < 2) return;
+
+      const first = samples[0];
+      const last = samples[samples.length - 1];
+      const duration = last.t - first.t;
+      if (duration <= 0) return;
+
+      flickScroll(scrollContainer, -(last.y - first.y) / duration, inertiaRef);
     };
+
+    const moveEvent: "pointermove" | "touchmove" = isTouch
+      ? "touchmove"
+      : "pointermove";
+    const endEvents: (
+      | "pointerup"
+      | "pointercancel"
+      | "touchend"
+      | "touchcancel"
+    )[] = isTouch
+      ? ["touchend", "touchcancel", "pointercancel"]
+      : ["pointerup", "pointercancel"];
+
+    for (const type of [moveEvent, ...endEvents]) {
+      window.addEventListener(type, handleMove, { passive: true });
+    }
+    for (const type of endEvents) {
+      window.addEventListener(type, handleEnd, { once: true, passive: true });
+    }
+
+    gestureCleanupRef.current = () => {
+      window.removeEventListener(moveEvent, handleMove);
+      for (const type of endEvents) {
+        window.removeEventListener(type, handleMove);
+        window.removeEventListener(type, handleEnd);
+      }
+    };
+
+    if (isControl || isHandle) return;
 
     holdTimerRef.current = setTimeout(() => {
-      clearHoldListeners();
+      holdTimerRef.current = null;
+      endGesture();
+
+      isHeldRef.current = true;
       setIsHeld(true);
       isDraggingAnyRef.current = true;
       onHoldStart(item);
@@ -385,22 +480,7 @@ function ReorderListItem<T extends { id: number }>({
         } catch {}
       }
 
-      const preventTouchScroll = (te: TouchEvent) => {
-        if (te.cancelable) {
-          te.preventDefault();
-        }
-      };
-
-      window.addEventListener("touchmove", preventTouchScroll, {
-        passive: false,
-      });
-      touchPreventCleanupRef.current = () => {
-        window.removeEventListener("touchmove", preventTouchScroll);
-      };
-
-      if (savedPointerEventRef.current) {
-        controls.start(savedPointerEventRef.current);
-      }
+      controls.start(e.nativeEvent);
     }, holdDelayMs);
   };
 
@@ -423,11 +503,8 @@ function ReorderListItem<T extends { id: number }>({
         data-reorder="item"
         dragListener={false}
         dragControls={controls}
-        className={cn(
-          "w-full select-none",
-          isHeld ? "touch-none" : "touch-pan-y"
-        )}
-        style={{ touchAction: isHeld ? "none" : "pan-y" }}
+        className="w-full select-none touch-none"
+        style={{ touchAction: "none" }}
         onPointerDown={handlePointerDown}
         onClickCapture={handleClickCapture}
         animate={
@@ -460,8 +537,8 @@ function ReorderListItem<T extends { id: number }>({
           }
         }}
         onDragEnd={() => {
-          clearHold();
-          cleanupTouchPrevent();
+          endGesture();
+          stopInertia();
           onDragEnd(item);
         }}
       >

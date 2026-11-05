@@ -307,12 +307,12 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         {/* Underneath: Swipe Action Tray */}
         <div
           ref={actionsRef}
+          data-no-drag="true"
           className={cn(
             "absolute inset-y-0 flex items-center gap-xs px-sm z-0",
             isRtl ? "left-0" : "right-0",
           )}
-          onClick={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}>
+          onClick={(e) => e.stopPropagation()}>
           <motion.div
             className="flex items-center gap-xs"
             style={{ opacity: actionsOpacity, scale: actionsScale }}>

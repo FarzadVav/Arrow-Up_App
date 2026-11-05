@@ -1,15 +1,15 @@
 # **Bug & Refactor**
 
-- Explore and fix ui and logics
-  - Backlinks, specially on back to the active tag/category
+- RichTextEditor
+- Time and Cost UI
+- Backlinks, specially on back to the active tag/category
+- Svg icon sizes
+- Translations
+- Helps
+- General UI
 
-- New Reusable components (Card, Text, Row, List)
-- Reusable components
 - Folder and file structured
-- Back redirection to prev active tab
-- Optimize translations
-- Optimize helps
-- Optimize UI
+- Reusable components (Card, Text, Row, List)
 
 ---
 
