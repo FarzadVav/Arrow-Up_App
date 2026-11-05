@@ -18,8 +18,21 @@ import {
 
 import type { ReorderEntity } from "@/app/api/reorder/route";
 
+export type ReorderContextType = {
+  isReorderActive: boolean;
+};
+
+export const ReorderContext = createContext<ReorderContextType>({
+  isReorderActive: false,
+});
+
+export function useReorder() {
+  return useContext(ReorderContext);
+}
+
 type ReorderItemContextType = {
   dragControls: DragControls;
+  isHeld: boolean;
 };
 
 const ReorderItemContext = createContext<ReorderItemContextType | null>(null);
@@ -177,8 +190,7 @@ function useAutoScroll({
           speed = -Math.round(
             maxSpeed * (intensity * 0.35 + intensity * intensity * 0.65)
           );
-        }
-        else if (distFromBottom < threshold && distFromBottom >= -60) {
+        } else if (distFromBottom < threshold && distFromBottom >= -60) {
           const intensity = Math.min(
             Math.max((threshold - distFromBottom) / threshold, 0),
             1.5
@@ -190,7 +202,10 @@ function useAutoScroll({
 
         if (speed !== 0) {
           if (isWin) {
-            window.scrollBy({ top: speed, behavior: "instant" as ScrollBehavior });
+            window.scrollBy({
+              top: speed,
+              behavior: "instant" as ScrollBehavior,
+            });
           } else {
             (container as HTMLElement).scrollTop += speed;
           }
@@ -220,23 +235,23 @@ function useAutoScroll({
 type ReorderListItemProps<T extends { id: number }> = {
   item: T;
   holdDelayMs: number;
+  onHoldStart: (item: T) => void;
   onDragEnd: (item: T) => void;
   onDragStart: (item: T) => void;
   renderItem: (item: T) => ReactNode;
   updatePointer: (y: number) => void;
   isDraggingAnyRef: React.RefObject<boolean>;
-  maxDragYRef: React.RefObject<number>;
 };
 
 function ReorderListItem<T extends { id: number }>({
   item,
+  onHoldStart,
   onDragEnd,
   renderItem,
   holdDelayMs,
   onDragStart,
   updatePointer,
   isDraggingAnyRef,
-  maxDragYRef,
 }: ReorderListItemProps<T>) {
   const controls = useDragControls();
   const itemRef = useRef<HTMLDivElement>(null);
@@ -246,7 +261,6 @@ function ReorderListItem<T extends { id: number }>({
   const savedPointerEventRef = useRef<PointerEvent | null>(null);
   const touchPreventCleanupRef = useRef<(() => void) | null>(null);
   const holdListenersCleanupRef = useRef<(() => void) | null>(null);
-  const hasStartedDragRef = useRef(false);
 
   const [isHeld, setIsHeld] = useState(false);
 
@@ -272,7 +286,6 @@ function ReorderListItem<T extends { id: number }>({
     clearHoldListeners();
     startPosRef.current = null;
     savedPointerEventRef.current = null;
-    hasStartedDragRef.current = false;
     setIsHeld(false);
   }, [clearHoldListeners]);
 
@@ -310,7 +323,6 @@ function ReorderListItem<T extends { id: number }>({
     const target = e.target as HTMLElement | null;
 
     if (isInteractiveControl(target)) return;
-
     if (target?.closest("[data-reorder-handle]")) return;
 
     clearHold();
@@ -318,10 +330,9 @@ function ReorderListItem<T extends { id: number }>({
 
     startPosRef.current = { x: e.clientX, y: e.clientY };
     savedPointerEventRef.current = e.nativeEvent;
-    hasStartedDragRef.current = false;
 
     const handlePointerMove = (ev: PointerEvent | TouchEvent) => {
-      if (!startPosRef.current || hasStartedDragRef.current) return;
+      if (!startPosRef.current) return;
       const clientX =
         "touches" in ev ? ev.touches[0]?.clientX : (ev as PointerEvent).clientX;
       const clientY =
@@ -333,36 +344,10 @@ function ReorderListItem<T extends { id: number }>({
       const deltaY = Math.abs(clientY - startPosRef.current.y);
       const dist = Math.hypot(deltaX, deltaY);
 
-      // In the first 30px of movement, if X/Y ratio is greater, revert drag and cancel
-      if ((deltaX <= 30 && deltaY <= 30) || dist <= 30) {
-        if (deltaX > deltaY && deltaX > 2) {
-          clearHold();
-          cleanupTouchPrevent();
-          controls.cancel();
-          setIsHeld(false);
-          isDraggingAnyRef.current = false;
-          return;
-        }
-      }
-
-      // If vertical dragging is >= 30px and vertical movement dominates, move the item
-      if (deltaY >= 30 && deltaY >= deltaX) {
-        hasStartedDragRef.current = true;
-        if (holdTimerRef.current) {
-          clearTimeout(holdTimerRef.current);
-          holdTimerRef.current = null;
-        }
-        clearHoldListeners();
-        setIsHeld(true);
-        isDraggingAnyRef.current = true;
-
-        if (typeof navigator !== "undefined" && navigator.vibrate) {
-          try {
-            navigator.vibrate(20);
-          } catch {}
-        }
-
-        controls.start(savedPointerEventRef.current || (ev as PointerEvent));
+      // If user moves more than 10px before the 1s hold completes,
+      // it means they want to scroll the page or swipe the card. Cancel hold immediately!
+      if (dist > 10) {
+        clearHold();
       }
     };
 
@@ -370,10 +355,14 @@ function ReorderListItem<T extends { id: number }>({
       clearHold();
     };
 
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointermove", handlePointerMove, {
+      passive: true,
+    });
     window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("pointerup", handleCancelDuringHold, { once: true });
-    window.addEventListener("pointercancel", handleCancelDuringHold, { once: true });
+    window.addEventListener("pointercancel", handleCancelDuringHold, {
+      once: true,
+    });
     window.addEventListener("touchend", handleCancelDuringHold, { once: true });
 
     holdListenersCleanupRef.current = () => {
@@ -384,29 +373,35 @@ function ReorderListItem<T extends { id: number }>({
       window.removeEventListener("touchend", handleCancelDuringHold);
     };
 
-    if (e.pointerType !== "mouse") {
-      holdTimerRef.current = setTimeout(() => {
-        setIsHeld(true);
-        isDraggingAnyRef.current = true;
+    holdTimerRef.current = setTimeout(() => {
+      clearHoldListeners();
+      setIsHeld(true);
+      isDraggingAnyRef.current = true;
+      onHoldStart(item);
 
-        const preventTouchScroll = (te: TouchEvent) => {
-          if (te.cancelable) {
-            te.preventDefault();
-          }
-        };
+      if (typeof navigator !== "undefined" && navigator.vibrate) {
+        try {
+          navigator.vibrate(20);
+        } catch {}
+      }
 
-        window.addEventListener("touchmove", preventTouchScroll, { passive: false });
-        touchPreventCleanupRef.current = () => {
-          window.removeEventListener("touchmove", preventTouchScroll);
-        };
-
-        if (typeof navigator !== "undefined" && navigator.vibrate) {
-          try {
-            navigator.vibrate(20);
-          } catch {}
+      const preventTouchScroll = (te: TouchEvent) => {
+        if (te.cancelable) {
+          te.preventDefault();
         }
-      }, holdDelayMs);
-    }
+      };
+
+      window.addEventListener("touchmove", preventTouchScroll, {
+        passive: false,
+      });
+      touchPreventCleanupRef.current = () => {
+        window.removeEventListener("touchmove", preventTouchScroll);
+      };
+
+      if (savedPointerEventRef.current) {
+        controls.start(savedPointerEventRef.current);
+      }
+    }, holdDelayMs);
   };
 
   const handleClickCapture = (e: ReactMouseEvent) => {
@@ -420,7 +415,7 @@ function ReorderListItem<T extends { id: number }>({
   };
 
   return (
-    <ReorderItemContext.Provider value={{ dragControls: controls }}>
+    <ReorderItemContext.Provider value={{ dragControls: controls, isHeld }}>
       <Reorder.Item
         as="div"
         ref={itemRef}
@@ -428,36 +423,33 @@ function ReorderListItem<T extends { id: number }>({
         data-reorder="item"
         dragListener={false}
         dragControls={controls}
-        className="touch-pan-y"
-        style={{ touchAction: "pan-y" }}
+        className={cn(
+          "w-full select-none",
+          isHeld ? "touch-none" : "touch-pan-y"
+        )}
+        style={{ touchAction: isHeld ? "none" : "pan-y" }}
         onPointerDown={handlePointerDown}
         onClickCapture={handleClickCapture}
-        animate={isHeld ? { scale: 1.03 } : { scale: 1 }}
+        animate={
+          isHeld
+            ? { scale: 0.95, filter: "blur(2px)" }
+            : { scale: 1, filter: "blur(0px)" }
+        }
+        whileDrag={{
+          scale: 0.95,
+          filter: "blur(2px)",
+          zIndex: 50,
+        }}
+        transition={{
+          scale: { duration: 0.2, ease: "easeOut" },
+          filter: { duration: 0.2, ease: "easeOut" },
+        }}
         onDragStart={() => {
-          clearHold();
+          setIsHeld(true);
           isDraggingAnyRef.current = true;
-          if (maxDragYRef.current !== undefined) {
-            maxDragYRef.current = 0;
-          }
           onDragStart(item);
         }}
         onDrag={(event, info) => {
-          const absX = Math.abs(info?.offset?.x ?? 0);
-          const absY = Math.abs(info?.offset?.y ?? 0);
-          const dist = Math.hypot(absX, absY);
-
-          // In the first 30px of movement, if X/Y ratio is greater, revert drag and cancel
-          if ((absX <= 30 && absY <= 30) || dist <= 30) {
-            if (absX > absY && absX > 2) {
-              controls.cancel();
-              clearHold();
-              cleanupTouchPrevent();
-              setIsHeld(false);
-              isDraggingAnyRef.current = false;
-              return;
-            }
-          }
-
           const clientY =
             (event as PointerEvent)?.clientY ??
             (info?.point?.y !== undefined
@@ -466,24 +458,11 @@ function ReorderListItem<T extends { id: number }>({
           if (clientY !== null) {
             updatePointer(clientY);
           }
-          if (info?.offset?.y !== undefined && maxDragYRef.current !== undefined) {
-            const absYOffset = Math.abs(info.offset.y);
-            if (absYOffset > maxDragYRef.current) {
-              maxDragYRef.current = absYOffset;
-            }
-          }
         }}
         onDragEnd={() => {
           clearHold();
           cleanupTouchPrevent();
           onDragEnd(item);
-        }}
-        whileDrag={{
-          scale: 1.03,
-          opacity: 0.94,
-          zIndex: 50,
-          boxShadow:
-            "0 12px 28px -4px rgba(0, 0, 0, 0.16), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
         }}
       >
         {renderItem(item)}
@@ -498,17 +477,17 @@ function ReorderListComponent<T extends { id: number }>({
   renderItem,
   revalidate,
   className,
-  holdDelayMs = 220,
+  holdDelayMs = 1000,
   autoScrollThreshold = 100,
   autoScrollMaxSpeed = 24,
 }: ReorderListProps<T>) {
   const [order, setOrder] = useState<number[]>(() => items.map((i) => i.id));
   const orderRef = useRef(order);
+  const initialOrderRef = useRef<number[]>([]);
   const groupRef = useRef<HTMLDivElement>(null);
 
   const [isDragging, setIsDragging] = useState(false);
   const isDraggingAnyRef = useRef(false);
-  const maxDragYRef = useRef(0);
 
   const { startAutoScroll, stopAutoScroll, updatePointer } = useAutoScroll({
     threshold: autoScrollThreshold,
@@ -516,10 +495,6 @@ function ReorderListComponent<T extends { id: number }>({
   });
 
   const handleReorder = (next: number[]) => {
-    // If vertical dragging is smaller than 30px, the item order doesn't move
-    if (maxDragYRef.current < 30) {
-      return;
-    }
     orderRef.current = next;
     setOrder(next);
   };
@@ -552,32 +527,54 @@ function ReorderListComponent<T extends { id: number }>({
   useEffect(() => {
     if (!isDragging) return;
 
-    const handleWindowPointerMove = (e: PointerEvent) => {
+    const handlePointerMove = (e: PointerEvent) => {
       updatePointer(e.clientY);
     };
 
-    window.addEventListener("pointermove", handleWindowPointerMove, {
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches && e.touches[0]) {
+        updatePointer(e.touches[0].clientY);
+      }
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, {
       passive: true,
     });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     return () => {
-      window.removeEventListener("pointermove", handleWindowPointerMove);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("touchmove", handleTouchMove);
     };
   }, [isDragging, updatePointer]);
 
-  const handleDragStart = () => {
+  const handleHoldStart = () => {
+    initialOrderRef.current = [...orderRef.current];
     setIsDragging(true);
     isDraggingAnyRef.current = true;
     startAutoScroll(groupRef.current);
   };
 
+  const handleDragStart = () => {
+    if (!isDragging) {
+      initialOrderRef.current = [...orderRef.current];
+      setIsDragging(true);
+      isDraggingAnyRef.current = true;
+      startAutoScroll(groupRef.current);
+    }
+  };
+
   const handleDragEnd = () => {
     setIsDragging(false);
     stopAutoScroll();
-    if (maxDragYRef.current >= 30) {
+
+    const hasChanged =
+      orderRef.current.length !== initialOrderRef.current.length ||
+      orderRef.current.some((id, idx) => id !== initialOrderRef.current[idx]);
+
+    if (hasChanged) {
       persistOrder();
     }
-    maxDragYRef.current = 0;
 
     setTimeout(() => {
       isDraggingAnyRef.current = false;
@@ -590,29 +587,31 @@ function ReorderListComponent<T extends { id: number }>({
     .filter((i): i is T => Boolean(i));
 
   return (
-    <Reorder.Group
-      as="div"
-      axis="y"
-      ref={groupRef}
-      values={order}
-      data-reorder="group"
-      onReorder={handleReorder}
-      className={cn("w-full space-y-sm", className)}
-    >
-      {orderedItems.map((item) => (
-        <ReorderListItem
-          item={item}
-          key={item.id}
-          renderItem={renderItem}
-          holdDelayMs={holdDelayMs}
-          onDragEnd={handleDragEnd}
-          onDragStart={handleDragStart}
-          updatePointer={updatePointer}
-          isDraggingAnyRef={isDraggingAnyRef}
-          maxDragYRef={maxDragYRef}
-        />
-      ))}
-    </Reorder.Group>
+    <ReorderContext.Provider value={{ isReorderActive: isDragging }}>
+      <Reorder.Group
+        as="div"
+        axis="y"
+        ref={groupRef}
+        values={order}
+        data-reorder="group"
+        onReorder={handleReorder}
+        className={cn("w-full space-y-sm", className)}
+      >
+        {orderedItems.map((item) => (
+          <ReorderListItem
+            item={item}
+            key={item.id}
+            renderItem={renderItem}
+            holdDelayMs={holdDelayMs}
+            onHoldStart={handleHoldStart}
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
+            updatePointer={updatePointer}
+            isDraggingAnyRef={isDraggingAnyRef}
+          />
+        ))}
+      </Reorder.Group>
+    </ReorderContext.Provider>
   );
 }
 

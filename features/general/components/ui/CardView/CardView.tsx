@@ -18,6 +18,7 @@ import {
   type PanInfo,
 } from "motion/react";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import { useReorder } from "@/features/general/components/ui/ReorderList";
 import { cn } from "cn";
 
 const cardViewVariants = cva(
@@ -75,20 +76,27 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
 
     const { locale } = useLocale();
     const isRtl = locale === "fa";
+    const { isReorderActive } = useReorder();
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const actionsRef = useRef<HTMLDivElement | null>(null);
     const isDraggingRef = useRef(false);
-
-    const startPosRef = useRef<{ x: number; y: number } | null>(null);
-    const initialXRef = useRef(0);
-    const isCancelledRef = useRef(false);
 
     const [actionsWidth, setActionsWidth] = useState(80);
     const [isOpen, setIsOpen] = useState(false);
 
     const x = useMotionValue(0);
     const dragControls = useDragControls();
+
+    // When reordering starts, cancel any active swipe and close the card if open
+    useEffect(() => {
+      if (isReorderActive) {
+        dragControls.cancel();
+        if (isOpen) {
+          close();
+        }
+      }
+    }, [isReorderActive, isOpen]);
 
     // Measure the actions container width dynamically
     useEffect(() => {
@@ -165,96 +173,14 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
       setIsOpen(false);
     };
 
-    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-      startPosRef.current = { x: e.clientX, y: e.clientY };
-      initialXRef.current = x.get();
-      isCancelledRef.current = false;
-
-      const handlePointerMove = (ev: PointerEvent) => {
-        if (!startPosRef.current || isCancelledRef.current) return;
-        const deltaX = Math.abs(ev.clientX - startPosRef.current.x);
-        const deltaY = Math.abs(ev.clientY - startPosRef.current.y);
-        const dist = Math.hypot(deltaX, deltaY);
-
-        // In the first 30px of movement, if Y/X ratio is greater, revert swipe and cancel
-        if ((deltaX <= 30 && deltaY <= 30) || dist <= 30) {
-          if (deltaY > deltaX && deltaY > 2) {
-            isCancelledRef.current = true;
-            dragControls.cancel();
-            animate(x, initialXRef.current, {
-              type: "spring",
-              stiffness: 450,
-              damping: 35,
-            });
-            isDraggingRef.current = false;
-            cleanupPointerMove();
-          }
-        } else if (dist > 30) {
-          cleanupPointerMove();
-        }
-      };
-
-      const cleanupPointerMove = () => {
-        window.removeEventListener("pointermove", handlePointerMove);
-        window.removeEventListener("pointerup", cleanupPointerMove);
-        window.removeEventListener("pointercancel", cleanupPointerMove);
-      };
-
-      window.addEventListener("pointermove", handlePointerMove, {
-        passive: true,
-      });
-      window.addEventListener("pointerup", cleanupPointerMove, { once: true });
-      window.addEventListener("pointercancel", cleanupPointerMove, {
-        once: true,
-      });
-    };
-
     const handleDragStart = () => {
       isDraggingRef.current = true;
-    };
-
-    const handleDrag = (
-      _event: MouseEvent | TouchEvent | PointerEvent,
-      info: PanInfo,
-    ) => {
-      if (isCancelledRef.current) return;
-
-      const deltaX = Math.abs(info.offset.x);
-      const deltaY = Math.abs(info.offset.y);
-      const dist = Math.hypot(info.offset.x, info.offset.y);
-
-      // In the first 30px of movement, if Y/X ratio is greater, revert swipe and cancel
-      if ((deltaX <= 30 && deltaY <= 30) || dist <= 30) {
-        if (deltaY > deltaX && deltaY > 2) {
-          isCancelledRef.current = true;
-          dragControls.cancel();
-          animate(x, initialXRef.current, {
-            type: "spring",
-            stiffness: 450,
-            damping: 35,
-          });
-          isDraggingRef.current = false;
-        }
-      }
     };
 
     const handleDragEnd = (
       _event: MouseEvent | TouchEvent | PointerEvent,
       info: PanInfo,
     ) => {
-      if (isCancelledRef.current) {
-        isCancelledRef.current = false;
-        animate(x, initialXRef.current, {
-          type: "spring",
-          stiffness: 450,
-          damping: 35,
-        });
-        setTimeout(() => {
-          isDraggingRef.current = false;
-        }, 50);
-        return;
-      }
-
       const currentX = x.get();
       const velocity = info.velocity.x;
 
@@ -396,7 +322,8 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
 
         {/* Sliding Card Surface */}
         <motion.div
-          drag="x"
+          drag={isReorderActive ? false : "x"}
+          dragListener={!isReorderActive}
           dragControls={dragControls}
           dragDirectionLock
           dragMomentum={false}
@@ -407,9 +334,7 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
               : { left: -actionsWidth, right: 0 }
           }
           style={{ x }}
-          onPointerDown={handlePointerDown}
           onDragStart={handleDragStart}
-          onDrag={handleDrag}
           onDragEnd={handleDragEnd}
           onClick={handleCardClick}
           className={cn(
