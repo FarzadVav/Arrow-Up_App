@@ -1,6 +1,7 @@
 import { cn } from "cn";
 import type { Metadata, Viewport } from "next";
 import { Geist, Vazirmatn } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import "./globals.css";
 import { getLocale } from "@/features/general/lib/i18n/server";
@@ -82,6 +83,7 @@ export default async function RootLayout({
             <SplashScreen>{children}</SplashScreen>
           </LocaleProvider>
         </ThemeProvider>
+        <SpeedInsights />
       </body>
     </html>
   );
