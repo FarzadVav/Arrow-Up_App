@@ -1,7 +1,23 @@
 "use client";
 
-import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import {
+  forwardRef,
+  useRef,
+  useState,
+  useEffect,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  animate,
+  useDragControls,
+  type PanInfo,
+} from "motion/react";
+import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
 import { cn } from "cn";
 
 const cardViewVariants = cva(
@@ -31,6 +47,8 @@ export interface CardViewProps
   dateTime?: ReactNode;
   badge?: ReactNode;
   isHistory?: boolean;
+  swipeActions?: ReactNode;
+  actions?: ReactNode;
 }
 
 const CardView = forwardRef<HTMLDivElement, CardViewProps>(
@@ -45,25 +63,252 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
       variant = "card",
       className,
       isHistory,
+      swipeActions,
+      actions,
       ...props
     },
     ref,
   ) => {
     const cardDate = date ?? dateTime;
     const isInteractive = Boolean(props.onClick);
+    const finalSwipeActions = swipeActions ?? actions;
 
-    return (
-      <div
-        ref={ref}
-        data-card="true"
-        className={cn(
-          cardViewVariants({ variant }),
-          description || cardDate ? "items-start" : "items-center",
-          isInteractive && "hover:opacity-90 active:scale-[0.99]",
-          isHistory && "history-striped",
-          className,
-        )}
-        {...props}>
+    const { locale } = useLocale();
+    const isRtl = locale === "fa";
+
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const actionsRef = useRef<HTMLDivElement | null>(null);
+    const isDraggingRef = useRef(false);
+
+    const startPosRef = useRef<{ x: number; y: number } | null>(null);
+    const initialXRef = useRef(0);
+    const isCancelledRef = useRef(false);
+
+    const [actionsWidth, setActionsWidth] = useState(80);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const x = useMotionValue(0);
+    const dragControls = useDragControls();
+
+    // Measure the actions container width dynamically
+    useEffect(() => {
+      if (!finalSwipeActions || !actionsRef.current) return;
+      const updateWidth = () => {
+        if (actionsRef.current) {
+          const rect = actionsRef.current.getBoundingClientRect();
+          if (rect.width > 0) {
+            setActionsWidth(rect.width);
+          }
+        }
+      };
+      updateWidth();
+      const observer = new ResizeObserver(updateWidth);
+      observer.observe(actionsRef.current);
+      return () => observer.disconnect();
+    }, [finalSwipeActions]);
+
+    // Close when tapping outside while open
+    useEffect(() => {
+      if (!isOpen) return;
+
+      const handlePointerDownOutside = (e: PointerEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          animate(x, 0, {
+            type: "spring",
+            stiffness: 450,
+            damping: 35,
+          });
+          setIsOpen(false);
+        }
+      };
+
+      window.addEventListener("pointerdown", handlePointerDownOutside);
+      return () => {
+        window.removeEventListener("pointerdown", handlePointerDownOutside);
+      };
+    }, [isOpen, x]);
+
+    // Actions entrance animations (opacity and subtle scale)
+    const actionsOpacity = useTransform(
+      x,
+      isRtl
+        ? [0, actionsWidth * 0.35, actionsWidth]
+        : [0, -actionsWidth * 0.35, -actionsWidth],
+      [0, 0.6, 1],
+    );
+
+    const actionsScale = useTransform(
+      x,
+      isRtl ? [0, actionsWidth] : [0, -actionsWidth],
+      [0.85, 1],
+    );
+
+    const open = () => {
+      const target = isRtl ? actionsWidth : -actionsWidth;
+      animate(x, target, {
+        type: "spring",
+        stiffness: 450,
+        damping: 35,
+      });
+      setIsOpen(true);
+    };
+
+    const close = () => {
+      animate(x, 0, {
+        type: "spring",
+        stiffness: 450,
+        damping: 35,
+      });
+      setIsOpen(false);
+    };
+
+    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+      startPosRef.current = { x: e.clientX, y: e.clientY };
+      initialXRef.current = x.get();
+      isCancelledRef.current = false;
+
+      const handlePointerMove = (ev: PointerEvent) => {
+        if (!startPosRef.current || isCancelledRef.current) return;
+        const deltaX = Math.abs(ev.clientX - startPosRef.current.x);
+        const deltaY = Math.abs(ev.clientY - startPosRef.current.y);
+        const dist = Math.hypot(deltaX, deltaY);
+
+        // In the first 30px of movement, if Y/X ratio is greater, revert swipe and cancel
+        if ((deltaX <= 30 && deltaY <= 30) || dist <= 30) {
+          if (deltaY > deltaX && deltaY > 2) {
+            isCancelledRef.current = true;
+            dragControls.cancel();
+            animate(x, initialXRef.current, {
+              type: "spring",
+              stiffness: 450,
+              damping: 35,
+            });
+            isDraggingRef.current = false;
+            cleanupPointerMove();
+          }
+        } else if (dist > 30) {
+          cleanupPointerMove();
+        }
+      };
+
+      const cleanupPointerMove = () => {
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", cleanupPointerMove);
+        window.removeEventListener("pointercancel", cleanupPointerMove);
+      };
+
+      window.addEventListener("pointermove", handlePointerMove, {
+        passive: true,
+      });
+      window.addEventListener("pointerup", cleanupPointerMove, { once: true });
+      window.addEventListener("pointercancel", cleanupPointerMove, {
+        once: true,
+      });
+    };
+
+    const handleDragStart = () => {
+      isDraggingRef.current = true;
+    };
+
+    const handleDrag = (
+      _event: MouseEvent | TouchEvent | PointerEvent,
+      info: PanInfo,
+    ) => {
+      if (isCancelledRef.current) return;
+
+      const deltaX = Math.abs(info.offset.x);
+      const deltaY = Math.abs(info.offset.y);
+      const dist = Math.hypot(info.offset.x, info.offset.y);
+
+      // In the first 30px of movement, if Y/X ratio is greater, revert swipe and cancel
+      if ((deltaX <= 30 && deltaY <= 30) || dist <= 30) {
+        if (deltaY > deltaX && deltaY > 2) {
+          isCancelledRef.current = true;
+          dragControls.cancel();
+          animate(x, initialXRef.current, {
+            type: "spring",
+            stiffness: 450,
+            damping: 35,
+          });
+          isDraggingRef.current = false;
+        }
+      }
+    };
+
+    const handleDragEnd = (
+      _event: MouseEvent | TouchEvent | PointerEvent,
+      info: PanInfo,
+    ) => {
+      if (isCancelledRef.current) {
+        isCancelledRef.current = false;
+        animate(x, initialXRef.current, {
+          type: "spring",
+          stiffness: 450,
+          damping: 35,
+        });
+        setTimeout(() => {
+          isDraggingRef.current = false;
+        }, 50);
+        return;
+      }
+
+      const currentX = x.get();
+      const velocity = info.velocity.x;
+
+      if (isRtl) {
+        if (isOpen) {
+          if (currentX < actionsWidth * 0.65 || velocity < -200) {
+            close();
+          } else {
+            open();
+          }
+        } else {
+          if (currentX > actionsWidth * 0.35 || velocity > 200) {
+            open();
+          } else {
+            close();
+          }
+        }
+      } else {
+        if (isOpen) {
+          if (currentX > -actionsWidth * 0.65 || velocity > 200) {
+            close();
+          } else {
+            open();
+          }
+        } else {
+          if (currentX < -actionsWidth * 0.35 || velocity < -200) {
+            open();
+          } else {
+            close();
+          }
+        }
+      }
+
+      setTimeout(() => {
+        isDraggingRef.current = false;
+      }, 50);
+    };
+
+    const handleCardClick = (e: React.MouseEvent) => {
+      if (isDraggingRef.current) {
+        e.stopPropagation();
+        e.preventDefault();
+        return;
+      }
+      if (isOpen) {
+        e.stopPropagation();
+        e.preventDefault();
+        close();
+        return;
+      }
+    };
+
+    const cardContent = (
+      <>
         {icon && (
           <div
             className={cn(
@@ -93,6 +338,89 @@ const CardView = forwardRef<HTMLDivElement, CardViewProps>(
         {badge && (
           <div className="shrink-0 flex items-center self-center">{badge}</div>
         )}
+      </>
+    );
+
+    // If no swipe actions are provided, render standard card
+    if (!finalSwipeActions) {
+      return (
+        <div
+          ref={ref}
+          data-card="true"
+          className={cn(
+            cardViewVariants({ variant }),
+            description || cardDate ? "items-start" : "items-center",
+            isInteractive && "hover:opacity-90 active:scale-[0.99]",
+            isHistory && "history-striped",
+            className,
+          )}
+          {...props}>
+          {cardContent}
+        </div>
+      );
+    }
+
+    const assignRef = (node: HTMLDivElement | null) => {
+      containerRef.current = node;
+      if (typeof ref === "function") {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    };
+
+    return (
+      <div
+        ref={assignRef}
+        data-card="true"
+        className={cn(
+          "relative overflow-hidden w-full rounded-component select-none bg-card-thick/40",
+          className,
+        )}
+        {...props}>
+        {/* Underneath: Swipe Action Tray */}
+        <div
+          ref={actionsRef}
+          className={cn(
+            "absolute inset-y-0 flex items-center gap-xs px-sm z-0",
+            isRtl ? "left-0" : "right-0",
+          )}
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}>
+          <motion.div
+            className="flex items-center gap-xs"
+            style={{ opacity: actionsOpacity, scale: actionsScale }}>
+            {finalSwipeActions}
+          </motion.div>
+        </div>
+
+        {/* Sliding Card Surface */}
+        <motion.div
+          drag="x"
+          dragControls={dragControls}
+          dragDirectionLock
+          dragMomentum={false}
+          dragElastic={0.15}
+          dragConstraints={
+            isRtl
+              ? { left: 0, right: actionsWidth }
+              : { left: -actionsWidth, right: 0 }
+          }
+          style={{ x }}
+          onPointerDown={handlePointerDown}
+          onDragStart={handleDragStart}
+          onDrag={handleDrag}
+          onDragEnd={handleDragEnd}
+          onClick={handleCardClick}
+          className={cn(
+            cardViewVariants({ variant }),
+            description || cardDate ? "items-start" : "items-center",
+            isInteractive && "hover:opacity-90 active:scale-[0.99]",
+            isHistory && "history-striped",
+            "relative z-10 w-full touch-pan-y transition-none cursor-pointer",
+          )}>
+          {cardContent}
+        </motion.div>
       </div>
     );
   },

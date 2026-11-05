@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { type ReactNode } from "react";
+import { PencilIcon } from "lucide-react";
 import Drawer from "@/features/general/components/ui/Drawer/Drawer";
 import { Button } from "@/features/general/components/ui/Button/Button";
 import CardView from "@/features/general/components/ui/CardView/CardView";
@@ -23,6 +24,7 @@ export interface CardDrawerProps {
   children?: ReactNode;
   drawerContentClassName?: string;
   isHistory?: boolean;
+  swipeActions?: ReactNode;
 }
 
 export function CardDrawer({
@@ -40,8 +42,35 @@ export function CardDrawer({
   children,
   drawerContentClassName,
   isHistory,
+  swipeActions,
 }: CardDrawerProps) {
   const { t } = useLocale();
+
+  const renderedSwipeActions =
+    actions || editHref || swipeActions ? (
+      <div className="flex items-center gap-xs">
+        {editHref && (
+          <Button
+            nativeButton={false}
+            variant="card"
+            size="square"
+            isHistory={isHistory}
+            className="size-10 justify-center"
+            aria-label={t("common.edit")}
+            title={t("common.edit")}
+            render={
+              <Link
+                href={editHref}
+                className="flex items-center justify-center">
+                <PencilIcon className="size-4" />
+              </Link>
+            }
+          />
+        )}
+        {actions}
+        {swipeActions}
+      </div>
+    ) : undefined;
 
   return (
     <Drawer
@@ -56,54 +85,14 @@ export function CardDrawer({
           badge={badge}
           isHistory={isHistory}
           className={cardClassName}
+          swipeActions={renderedSwipeActions}
         />
-      }
-    >
+      }>
       <Drawer.Title className="title">{title}</Drawer.Title>
 
       <div className={cn("space-y-sm", drawerContentClassName)}>
         {content}
         {children}
-      </div>
-
-      <div className="flex items-center gap-xs pt-xs">
-        {actions}
-
-        <Drawer.Close
-          render={
-            <Button
-              type="button"
-              variant="card"
-              isHistory={isHistory}
-              className="flex-1 justify-center"
-            >
-              {t("common.close")}
-            </Button>
-          }
-        />
-
-        {editHref && (
-          <Drawer.Close
-            nativeButton={false}
-            render={
-              <Button
-                type="button"
-                variant="primary"
-                nativeButton={false}
-                isHistory={isHistory}
-                className="flex-1 justify-center"
-                render={
-                  <Link
-                    className="flex flex-1 items-center justify-center gap-xs"
-                    href={editHref}
-                  >
-                    <span>{t("common.edit")}</span>
-                  </Link>
-                }
-              />
-            }
-          />
-        )}
       </div>
     </Drawer>
   );
