@@ -1,12 +1,26 @@
 # **Bug & Refactor**
 
+- Search page
 - RichTextEditor
-- Time and Cost UI
-- Backlinks, specially on back to the active tag/category
+- Time and Cost UI and set an entities limit to 5
+- Backlinks and redirection to the current tab (if exists)
+- Progress bar
 - Svg icon sizes
 - Translations
-- Helps
-- General UI
+- Helps and Download
+- Accessibility and focuses
+- Card, CardView, CardDrawer, Inner buttons and links
+- Life areas sort based on cost and newest
+- Better splitting and More white spaces
+- Profile header
+- DVH friendly
+- More form fields completion and errros UX
+- Change daily todos deadline to start/end
+- Calculate cost based on uncompleted todos
+- Default general tag for framework
+- All description/content entities should be optional
+- more animations durations and feelings and make them same
+- Experimental UI rendering and logics (Based on state)
 
 - Folder and file structured
 - Reusable components (Card, Text, Row, List)
