@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:h": "next dev -H",
-    "dev:r": "rm -rf ./next && next dev",
+    "dev:r": "pnpm dlx rimraf .next && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

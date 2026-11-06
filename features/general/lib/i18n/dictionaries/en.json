@@ -178,7 +178,25 @@
     "level5": "Very hard"
   },
   "search": {
-    "title": "Search"
+    "title": "Search",
+    "subtitle": "Search across all items and history",
+    "placeholder": "Search across todos, framework, and journals...",
+    "filterTitle": "Filter Status",
+    "filterPlaceholder": "Select filter...",
+    "resultsCount": "results",
+    "empty": "No matching items found",
+    "emptySubtitle": "Try adjusting your query or filter",
+    "filters": {
+      "availables": "Availables",
+      "histories": "Histories",
+      "all": "All"
+    },
+    "tabs": {
+      "all": "All",
+      "todos": "Todos",
+      "framework": "Framework",
+      "journals": "Journals"
+    }
   },
   "pwa": {
     "updateAvailable": "Update Available",

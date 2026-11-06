@@ -178,7 +178,25 @@
     "level5": "بسیار سخت"
   },
   "search": {
-    "title": "جستجو"
+    "title": "جستجو",
+    "subtitle": "جستجو در میان تمام موارد و تاریخچه",
+    "placeholder": "جستجو در کارها، چارچوب و یادداشت‌ها...",
+    "filterTitle": "وضعیت فیلتر",
+    "filterPlaceholder": "انتخاب فیلتر...",
+    "resultsCount": "نتیجه",
+    "empty": "موردی یافت نشد",
+    "emptySubtitle": "عبارت جستجو یا فیلتر را تغییر دهید",
+    "filters": {
+      "availables": "موجودها",
+      "histories": "تاریخچه‌ها",
+      "all": "همه"
+    },
+    "tabs": {
+      "all": "همه",
+      "todos": "کارها",
+      "framework": "چارچوب",
+      "journals": "یادداشت‌ها"
+    }
   },
   "pwa": {
     "updateAvailable": "نسخه جدید موجود است",
