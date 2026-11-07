@@ -9,7 +9,7 @@ import { NavigationLink } from "./types";
 
 export const APP_PROFILE = {
   name: "Arrow Up",
-  themeColor: "#fafafa",
+  themeColor: "#101010",
   description:
     "Personal operating system for moving up and managing the land of the mind",
   icons: {

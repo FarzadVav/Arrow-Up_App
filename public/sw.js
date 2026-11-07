@@ -1,5 +1,5 @@
 // Service Worker for Arrow Up PWA
-const CACHE_NAME = "arrow-up-offline-v2";
+const CACHE_NAME = "arrow-up-offline-v3";
 const OFFLINE_URL = "/offline";
 
 const PRECACHE_ASSETS = [
