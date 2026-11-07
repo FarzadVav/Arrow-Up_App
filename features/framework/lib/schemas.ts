@@ -26,16 +26,26 @@ export const FrameworkHistoryItemSchema = type({
 });
 
 /**
+ * ArkType schema and inferred type for Framework practice items.
+ */
+export const FrameworkPracticeSchema = type({
+  id: 'number',
+  title: 'string',
+});
+export type FrameworkPractice = typeof FrameworkPracticeSchema.infer;
+
+/**
  * ArkType schema and inferred type for Framework entity.
  */
 export const FrameworkSchema = type({
   id: 'number',
   title: 'string',
-  description: 'string',
+  content: 'string',
   'lifeAreaId?': 'number | null',
   'lifeArea?': FrameworkLifeAreaSummarySchema,
   'tagId?': 'number | null',
   'tag?': 'string | null',
+  'practices?': FrameworkPracticeSchema.array(),
   'history?': FrameworkHistoryItemSchema.array(),
   'createdAt?': 'string',
   'updatedAt?': 'string',
@@ -44,15 +54,26 @@ export const FrameworkSchema = type({
 export type Framework = typeof FrameworkSchema.infer;
 
 /**
+ * ArkType schema for a practice input item.
+ * Supports either an object with id/title or a plain title string.
+ */
+export const FrameworkPracticeInputSchema = type({
+  'id?': 'number',
+  title: 'string >= 1',
+}).or('string >= 1');
+export type FrameworkPracticeInput = typeof FrameworkPracticeInputSchema.infer;
+
+/**
  * ArkType schema for creating a Framework.
- * LifeArea and Tag are mandatory; users cannot send null.
+ * Content is mandatory; practices are optional.
  */
 export const CreateFrameworkSchema = type({
   title: 'string >= 1',
-  'description?': 'string',
+  content: 'string >= 1',
   lifeAreaId: 'number >= 1',
   'tagId?': 'number >= 1',
   'tag?': 'string | number',
+  'practices?': FrameworkPracticeInputSchema.array(),
 });
 export type CreateFrameworkData = typeof CreateFrameworkSchema.infer;
 
@@ -62,10 +83,11 @@ export type CreateFrameworkData = typeof CreateFrameworkSchema.infer;
 export const UpdateFrameworkSchema = type({
   'id?': 'number',
   'title?': 'string >= 1',
-  'description?': 'string',
+  'content?': 'string >= 1',
   'lifeAreaId?': 'number >= 1',
   'tagId?': 'number >= 1',
   'tag?': 'string | number',
+  'practices?': FrameworkPracticeInputSchema.array(),
 });
 export type UpdateFrameworkData = typeof UpdateFrameworkSchema.infer;
 

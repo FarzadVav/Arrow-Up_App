@@ -23,7 +23,7 @@ export interface FrameworkDialogProps {
   initialData?: {
     id?: number;
     title: string;
-    description: string;
+    content: string;
     lifeAreaId?: number | null;
   } | null;
   defaultLifeAreaId?: number | null;
@@ -44,7 +44,7 @@ export function FrameworkDialog({
   const { lifeAreas, isLoading: isLoadingLifeAreas } = useLifeAreas();
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [selectedLifeAreaId, setSelectedLifeAreaId] =
     useState<number>(UNASSIGNED_ID);
 
@@ -57,7 +57,7 @@ export function FrameworkDialog({
     if (open) {
       queueMicrotask(() => {
         setTitle(initialData?.title || "");
-        setDescription(initialData?.description || "");
+        setContent(initialData?.content || "");
         const areaId = initialData?.lifeAreaId ?? defaultLifeAreaId;
         setSelectedLifeAreaId(areaId && areaId > 0 ? areaId : UNASSIGNED_ID);
       });
@@ -132,19 +132,20 @@ export function FrameworkDialog({
         <Field
           multiline
           rows={3}
-          name="description"
-          label={t("common.description")}
+          name="content"
+          label={t("common.content")}
           labelSize="sm"
-          placeholder={t("framework.descPlaceholder")}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          required
+          placeholder={t("framework.contentPlaceholder")}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           disabled={isSubmitting}
           schema={isEdit ? UpdateFrameworkSchema : CreateFrameworkSchema}
         />
 
         <Field.FormError
           errors={state?.errors}
-          knownFields={["title", "description", "lifeAreaId"]}
+          knownFields={["title", "content", "lifeAreaId", "practices"]}
         />
 
         <div className="flex items-center justify-end gap-xs pt-xs">

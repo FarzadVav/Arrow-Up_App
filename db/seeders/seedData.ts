@@ -1,4 +1,4 @@
-import { TodoType } from '../entities';
+﻿import { TodoType } from '../entities';
 
 export const SEED_USER = {
   id: 1,
@@ -21,35 +21,35 @@ export const SEED_LIFE_AREAS: readonly SeedLifeArea[] = [
   {
     key: 'lifestyle',
     titleEn: 'Lifestyle',
-    titleFa: 'سبک زندگی',
+    titleFa: 'ط³ط¨ع© ط²ظ†ط¯ع¯غŒ',
     difficulty: 2,
     vision: '<p>Cultivate balance, intentional daily habits, and everyday mindfulness. Maintain a peaceful, uncluttered physical and mental environment.</p>',
   },
   {
     key: 'health',
     titleEn: 'Health',
-    titleFa: 'سلامت',
+    titleFa: 'ط³ظ„ط§ظ…طھ',
     difficulty: 3,
     vision: '<p>Build a durable, high-energy body with consistent nutrition, restorative sleep, and rigorous daily physical movement.</p>',
   },
   {
     key: 'career',
     titleEn: 'Career',
-    titleFa: 'شغل و حرفه',
+    titleFa: 'ط´ط؛ظ„ ظˆ ط­ط±ظپظ‡',
     difficulty: 3,
     vision: '<p>Master software craftsmanship, design resilient distributed architectures, and build autonomous, high-impact products.</p>',
   },
   {
     key: 'social-connections',
     titleEn: 'Social Connections',
-    titleFa: 'روابط اجتماعی',
+    titleFa: 'ط±ظˆط§ط¨ط· ط§ط¬طھظ…ط§ط¹غŒ',
     difficulty: 2,
     vision: '<p>Deepen meaningful relationships with family, friends, mentors, and the wider developer and open-source community.</p>',
   },
 ] as const;
 
 // -------------------------------------------------------------
-// Frameworks (Habits) & Tags
+// Frameworks & Tags
 // -------------------------------------------------------------
 
 export interface SeedFrameworkTag {
@@ -79,7 +79,8 @@ export const SEED_FRAMEWORK_TAGS: readonly SeedFrameworkTag[] = [
 
 export interface SeedFramework {
   title: string;
-  description: string;
+  content: string;
+  practices?: readonly string[];
   lifeAreaKey: string | null;
   tagKey: string | null;
   history: Array<{ date: string; isDone: boolean }>;
@@ -89,9 +90,10 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   // Health Frameworks
   {
     title: 'Zone-2 Aerobic Running (45m)',
-    description: '<p>Maintain heart rate between 130-140 BPM to optimize fat oxidation, mitochondrial density, and cardiovascular endurance.</p>',
+    content: '<p>Maintain heart rate between 130-140 BPM to optimize fat oxidation, mitochondrial density, and cardiovascular endurance.</p>',
     lifeAreaKey: 'health',
     tagKey: 'health-cardio',
+    practices: ['Warm up for 5 minutes', 'Stay in Zone-2 HR (130-140 BPM)', 'Cool down walk & stretch'],
     history: [
       { date: '2026-10-28', isDone: true },
       { date: '2026-10-29', isDone: true },
@@ -104,9 +106,10 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Morning Cold Shower & Box Breathing',
-    description: '<p>3-minute cold exposure preceded by 4 rounds of box breathing (4s in, 4s hold, 4s out, 4s hold) to tone the vagal nerve.</p>',
+    content: '<p>3-minute cold exposure preceded by 4 rounds of box breathing (4s in, 4s hold, 4s out, 4s hold) to tone the vagal nerve.</p>',
     lifeAreaKey: 'health',
     tagKey: 'health-recovery',
+    practices: ['4 rounds of box breathing', 'Cold shower for 3 minutes'],
     history: [
       { date: '2026-10-28', isDone: true },
       { date: '2026-10-29', isDone: true },
@@ -119,7 +122,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Full-Body Mobility & Foam Rolling',
-    description: '<p>15 minutes targeting hip flexors, thoracic spine rotations, ankles, and hamstring release.</p>',
+    content: '<p>15 minutes targeting hip flexors, thoracic spine rotations, ankles, and hamstring release.</p>',
     lifeAreaKey: 'health',
     tagKey: 'health-strength',
     history: [
@@ -133,7 +136,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Hydration & Electrolytes (3.5L)',
-    description: '<p>Drink 3.5 liters of filtered water with Himalayan pink salt and magnesium minerals throughout the working day.</p>',
+    content: '<p>Drink 3.5 liters of filtered water with Himalayan pink salt and magnesium minerals throughout the working day.</p>',
     lifeAreaKey: 'health',
     tagKey: 'health-nutrition',
     history: [
@@ -150,7 +153,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   // Career Frameworks
   {
     title: 'Morning Deep Work Block (90m)',
-    description: '<p>Phone locked in drawer, notifications muted, working solely on core architectural algorithms before reading any emails or chats.</p>',
+    content: '<p>Phone locked in drawer, notifications muted, working solely on core architectural algorithms before reading any emails or chats.</p>',
     lifeAreaKey: 'career',
     tagKey: 'career-focus',
     history: [
@@ -165,7 +168,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Distributed Systems RFC & Paper Review',
-    description: '<p>Read and digest one whitepaper or technical architecture RFC (e.g., Raft consensus, LSM-tree storage, Vector Clocks).</p>',
+    content: '<p>Read and digest one whitepaper or technical architecture RFC (e.g., Raft consensus, LSM-tree storage, Vector Clocks).</p>',
     lifeAreaKey: 'career',
     tagKey: 'career-arch',
     history: [
@@ -179,7 +182,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Zero-Inbox PR & GitHub Triage',
-    description: '<p>Batch process open pull requests, issue reviews, and customer feedback at 4:30 PM before ending work hours.</p>',
+    content: '<p>Batch process open pull requests, issue reviews, and customer feedback at 4:30 PM before ending work hours.</p>',
     lifeAreaKey: 'career',
     tagKey: 'career-cadence',
     history: [
@@ -194,7 +197,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   // Lifestyle Frameworks
   {
     title: 'Morning Sunlight Viewing (10m)',
-    description: '<p>View natural outdoor sunlight without sunglasses within 30 minutes of waking to anchor the circadian clock and trigger cortisol peak.</p>',
+    content: '<p>View natural outdoor sunlight without sunglasses within 30 minutes of waking to anchor the circadian clock and trigger cortisol peak.</p>',
     lifeAreaKey: 'lifestyle',
     tagKey: 'lifestyle-morning',
     history: [
@@ -209,7 +212,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Digital Shutdown at 22:00',
-    description: '<p>All screens off, blue blockers on, transitioning into low-light reading or journaling for restorative sleep latency.</p>',
+    content: '<p>All screens off, blue blockers on, transitioning into low-light reading or journaling for restorative sleep latency.</p>',
     lifeAreaKey: 'lifestyle',
     tagKey: 'lifestyle-evening',
     history: [
@@ -224,7 +227,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Daily Win & Gratitude Journaling',
-    description: '<p>Record 3 specific gratitude items and identify the single non-negotiable win for today.</p>',
+    content: '<p>Record 3 specific gratitude items and identify the single non-negotiable win for today.</p>',
     lifeAreaKey: 'lifestyle',
     tagKey: 'lifestyle-mindfulness',
     history: [
@@ -241,7 +244,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   // Social Connections Frameworks
   {
     title: 'Distraction-Free Loved One Call',
-    description: '<p>A dedicated 15-minute phone or video conversation with family or close friends with zero multitasking.</p>',
+    content: '<p>A dedicated 15-minute phone or video conversation with family or close friends with zero multitasking.</p>',
     lifeAreaKey: 'social-connections',
     tagKey: 'social-family',
     history: [
@@ -254,7 +257,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   },
   {
     title: 'Open Source Mentoring & Code Reviews',
-    description: '<p>Review community issues, offer guidance on developer forums, and help open source contributors.</p>',
+    content: '<p>Review community issues, offer guidance on developer forums, and help open source contributors.</p>',
     lifeAreaKey: 'social-connections',
     tagKey: 'social-community',
     history: [
@@ -268,7 +271,7 @@ export const SEED_FRAMEWORKS: readonly SeedFramework[] = [
   // Abandoned Framework (No life area, no tag)
   {
     title: 'Legacy Pomodoro Sprint (25/5)',
-    description: '<p>Archived timeboxing sprint technique from university studies. Unassigned to any active life area, kept for reference.</p>',
+    content: '<p>Archived timeboxing sprint technique from university studies. Unassigned to any active life area, kept for reference.</p>',
     lifeAreaKey: null,
     tagKey: null,
     history: [

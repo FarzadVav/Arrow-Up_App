@@ -9,6 +9,13 @@ export * from './JournalCategory';
 export * from './JournalTag';
 export * from './Journal';
 export * from './LifeArea';
-export * from './Habit';
-export * from './HabitHistory';
-export * from './HabitTag';
+export * from './Framework';
+export * from './FrameworkHistory';
+export * from './FrameworkTag';
+export * from './FrameworkPractice';
+
+// Legacy compatibility aliases
+export { Framework as Habit } from './Framework';
+export { FrameworkTag as HabitTag } from './FrameworkTag';
+export { FrameworkHistory as HabitHistory } from './FrameworkHistory';
+export { FrameworkPractice as HabitPractice } from './FrameworkPractice';

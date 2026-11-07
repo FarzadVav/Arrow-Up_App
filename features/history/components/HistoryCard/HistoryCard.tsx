@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import {
@@ -35,6 +35,7 @@ export type HistoryItem = {
   tag?: string | { nameEn: string; nameFa: string; title?: string };
   actions?: Array<{ id: number; title: string; isDone: boolean }>;
   disciplines?: Array<{ id: number; title: string }>;
+  practices?: Array<{ id: number; title: string }>;
   [key: string]: unknown;
 };
 
@@ -107,7 +108,7 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
     descriptionPreview = stripHtml(item.description || "");
   } else if (type === "framework") {
     icon = <Repeat2Icon />;
-    descriptionPreview = stripHtml(item.description || "");
+    descriptionPreview = stripHtml(item.content || item.description || "");
   } else if (type === "journals") {
     icon = <FileTextIcon />;
     descriptionPreview = stripHtml(item.content || "");
@@ -184,6 +185,25 @@ export function HistoryCard({ item, type, onMutated }: HistoryCardProps) {
                     content={item.content || item.description}
                     containerClassName="bg-background/60 p-sm rounded-component"
                   />
+                )}
+
+                {/* Framework practices if framework */}
+                {type === "framework" && item.practices && item.practices.length > 0 && (
+                  <div className="space-y-xs">
+                    <span className="font-semibold text-xs sub-text">{t("framework.practices")}</span>
+                    <div className="space-y-xs">
+                      {item.practices.map((practice) => (
+                        <div
+                          key={practice.id}
+                          className="flex items-center gap-xs rounded-component bg-background/40 p-xs text-xs"
+                        >
+                          <span className="flex-1">
+                            {practice.title}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 {/* Mission Actions / Disciplines if mission */}

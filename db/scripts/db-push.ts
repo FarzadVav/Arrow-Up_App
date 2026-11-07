@@ -152,6 +152,133 @@ async function preMigrateJournals(orm: MikroORM) {
   }
 }
 
+async function preMigrateFrameworks(orm: MikroORM) {
+  const conn = orm.em.getConnection();
+
+  // 1. Rename legacy tables if they exist and new ones do not
+  const tablesToRename = [
+    { old: 'habits', new: 'frameworks' },
+    { old: 'habit_tags', new: 'framework_tags' },
+    { old: 'habit_history', new: 'framework_history' },
+    { old: 'habit_practices', new: 'framework_practices' },
+  ];
+
+  for (const { old: oldTable, new: newTable } of tablesToRename) {
+    try {
+      await conn.execute(`
+        DO $$
+        BEGIN
+          IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '${oldTable}')
+             AND NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '${newTable}') THEN
+            ALTER TABLE "${oldTable}" RENAME TO "${newTable}";
+          END IF;
+        END $$;
+      `);
+    } catch (err) {
+      console.warn(`⚠️ Notice during table rename from ${oldTable} to ${newTable}:`, (err as Error).message);
+    }
+  }
+
+  // 2. In frameworks: rename description to content, ensure content not null, and ensure tag_id
+  try {
+    await conn.execute(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'frameworks' AND column_name = 'description'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'frameworks' AND column_name = 'content'
+        ) THEN
+          ALTER TABLE "frameworks" RENAME COLUMN "description" TO "content";
+        END IF;
+
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'frameworks' AND column_name = 'content'
+        ) THEN
+          UPDATE "frameworks" SET "content" = '' WHERE "content" IS NULL;
+          ALTER TABLE "frameworks" ALTER COLUMN "content" SET NOT NULL;
+        END IF;
+
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'frameworks' AND column_name = 'tag' AND data_type LIKE '%char%'
+        ) THEN
+          ALTER TABLE "frameworks" DROP COLUMN "tag";
+        END IF;
+      END $$;
+    `);
+    await conn.execute(`ALTER TABLE "frameworks" ADD COLUMN IF NOT EXISTS "tag_id" int;`);
+  } catch (err) {
+    console.warn('⚠️ Notice during frameworks column migration:', (err as Error).message);
+  }
+
+  // 3. In framework_history: rename habit_id to framework_id
+  try {
+    await conn.execute(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'framework_history' AND column_name = 'habit_id'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'framework_history' AND column_name = 'framework_id'
+        ) THEN
+          ALTER TABLE "framework_history" RENAME COLUMN "habit_id" TO "framework_id";
+        END IF;
+      END $$;
+    `);
+  } catch (err) {
+    console.warn('⚠️ Notice during framework_history column migration:', (err as Error).message);
+  }
+
+  // 4. In framework_practices: rename habit_id to framework_id
+  try {
+    await conn.execute(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'framework_practices' AND column_name = 'habit_id'
+        ) AND NOT EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'framework_practices' AND column_name = 'framework_id'
+        ) THEN
+          ALTER TABLE "framework_practices" RENAME COLUMN "habit_id" TO "framework_id";
+        END IF;
+      END $$;
+    `);
+  } catch (err) {
+    console.warn('⚠️ Notice during framework_practices column migration:', (err as Error).message);
+  }
+
+  // 5. Clean up old legacy constraints so MikroORM schema generator can recreate cleanly
+  const oldConstraints = [
+    { table: 'frameworks', constraint: 'habits_tag_id_foreign' },
+    { table: 'frameworks', constraint: 'habits_life_area_id_foreign' },
+    { table: 'frameworks', constraint: 'habits_user_id_foreign' },
+    { table: 'framework_history', constraint: 'habit_history_habit_id_foreign' },
+    { table: 'framework_history', constraint: 'habit_history_habit_id_date_unique' },
+    { table: 'framework_practices', constraint: 'habit_practices_habit_id_foreign' },
+    { table: 'framework_tags', constraint: 'habit_tags_life_area_id_foreign' },
+    { table: 'framework_tags', constraint: 'habit_tags_user_id_foreign' },
+    { table: 'framework_tags', constraint: 'habit_tags_user_id_title_unique' },
+  ];
+
+  for (const { table, constraint } of oldConstraints) {
+    try {
+      await conn.execute(`ALTER TABLE "${table}" DROP CONSTRAINT IF EXISTS "${constraint}";`);
+    } catch {
+      // ignore
+    }
+  }
+
+  console.log('🔄 Pre-migrated frameworks tables, columns, and relations.');
+}
+
 async function preMigrateRelations(orm: MikroORM) {
   const conn = orm.em.getConnection();
 
@@ -194,36 +321,28 @@ async function preMigrateRelations(orm: MikroORM) {
   await conn.execute('DROP TABLE IF EXISTS "skills" CASCADE;');
   await conn.execute('DROP TABLE IF EXISTS "skill_tags" CASCADE;');
 
-  // 4. Migrate habits: tag varchar to tag_id integer foreign key
+  // 4. Ensure framework tag_id foreign key allows null and has ON DELETE SET NULL
   try {
-    await conn.execute(`
-      DO $$
-      BEGIN
-        IF EXISTS (
-          SELECT 1 FROM information_schema.columns
-          WHERE table_name = 'habits' AND column_name = 'tag' AND data_type LIKE '%char%'
-        ) THEN
-          ALTER TABLE "habits" DROP COLUMN "tag";
-        END IF;
-      END $$;
-    `);
-    await conn.execute(`ALTER TABLE "habits" ADD COLUMN IF NOT EXISTS "tag_id" int;`);
-    await conn.execute(`ALTER TABLE "habits" DROP CONSTRAINT IF EXISTS "habits_tag_id_foreign";`);
-    await conn.execute(`
-      ALTER TABLE "habits"
-      ADD CONSTRAINT "habits_tag_id_foreign"
-      FOREIGN KEY ("tag_id") REFERENCES "habit_tags"("id") ON DELETE SET NULL;
-    `);
-    console.log('🔄 Updated habits tag_id relation to ON DELETE SET NULL.');
+    const fwCheck = await conn.execute(`SELECT 1 FROM information_schema.tables WHERE table_name = 'frameworks';`);
+    if (fwCheck.length > 0) {
+      await conn.execute(`ALTER TABLE "frameworks" ALTER COLUMN "tag_id" DROP NOT NULL;`);
+      await conn.execute(`ALTER TABLE "frameworks" DROP CONSTRAINT IF EXISTS "frameworks_tag_id_foreign";`);
+      await conn.execute(`
+        ALTER TABLE "frameworks"
+        ADD CONSTRAINT "frameworks_tag_id_foreign"
+        FOREIGN KEY ("tag_id") REFERENCES "framework_tags"("id") ON DELETE SET NULL;
+      `);
+      console.log('🔄 Updated frameworks tag_id relation to ON DELETE SET NULL.');
+    }
   } catch (err) {
-    console.warn('⚠️ Notice during habits relation update:', (err as Error).message);
+    console.warn('⚠️ Notice during frameworks relation update:', (err as Error).message);
   }
 
   // 5. Ensure all life_area_id foreign keys allow null and have ON DELETE SET NULL
   const lifeAreaTables = [
     { table: 'todos', constraint: 'todos_life_area_id_foreign' },
-    { table: 'habits', constraint: 'habits_life_area_id_foreign' },
-    { table: 'habit_tags', constraint: 'habit_tags_life_area_id_foreign' },
+    { table: 'frameworks', constraint: 'frameworks_life_area_id_foreign' },
+    { table: 'framework_tags', constraint: 'framework_tags_life_area_id_foreign' },
   ];
 
   for (const { table, constraint } of lifeAreaTables) {
@@ -303,7 +422,10 @@ async function dbPush() {
     // 2. Pre-migrate legacy data in journals
     await preMigrateJournals(orm);
 
-    // 2.1 Pre-migrate relations: ensure ON DELETE SET NULL on life_area, category, and tag FKs
+    // 2.1 Pre-migrate legacy habits -> frameworks
+    await preMigrateFrameworks(orm);
+
+    // 2.2 Pre-migrate relations: ensure ON DELETE SET NULL on life_area, category, and tag FKs
     await preMigrateRelations(orm);
 
     // 3. Schema update

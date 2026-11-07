@@ -1,5 +1,7 @@
 export type {
   Framework,
+  FrameworkPractice,
+  FrameworkPracticeInput,
   CreateFrameworkData,
   UpdateFrameworkData,
   FrameworkTag,
@@ -10,6 +12,8 @@ export {
   FrameworkLifeAreaSummarySchema,
   FrameworkTagSummarySchema,
   FrameworkHistoryItemSchema,
+  FrameworkPracticeSchema,
+  FrameworkPracticeInputSchema,
   FrameworkSchema,
   CreateFrameworkSchema,
   UpdateFrameworkSchema,
@@ -21,18 +25,20 @@ export {
 export type FrameworkFormState = {
   errors?: {
     title?: string[];
-    description?: string[];
+    content?: string[];
     lifeAreaId?: string[];
     tag?: string[];
     tagId?: string[];
+    practices?: string[];
     general?: string[];
   };
   inputs?: {
     title?: string;
-    description?: string;
+    content?: string;
     lifeAreaId?: number | null;
     tagId?: number | null;
     tag?: string | null;
+    practices?: Array<{ id?: number; title: string }>;
   };
   success?: boolean;
   frameworkId?: number;

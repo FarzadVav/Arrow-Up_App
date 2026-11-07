@@ -3,11 +3,12 @@ import { Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/decorators/le
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { LifeArea } from './LifeArea';
-import { HabitTag } from './HabitTag';
-import { HabitHistory } from './HabitHistory';
+import { FrameworkTag } from './FrameworkTag';
+import { FrameworkHistory } from './FrameworkHistory';
+import { FrameworkPractice } from './FrameworkPractice';
 
-@Entity({ tableName: 'habits' })
-export class Habit extends BaseEntity {
+@Entity({ tableName: 'frameworks' })
+export class Framework extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | 'tag' | 'sortNumber' | 'deletedAt' | 'lifeArea';
 
   @Property({ type: 'string' })
@@ -16,11 +17,11 @@ export class Habit extends BaseEntity {
   @Property({ type: 'integer', default: 0 })
   sortNumber: number = 0;
 
-  @Property({ type: 'text', default: '' })
-  description: string = '';
+  @Property({ type: 'text' })
+  content!: string;
 
-  @ManyToOne(() => HabitTag, { nullable: true, deleteRule: 'set null' })
-  tag?: Rel<HabitTag> | null;
+  @ManyToOne(() => FrameworkTag, { nullable: true, deleteRule: 'set null' })
+  tag?: Rel<FrameworkTag> | null;
 
   @Property({ type: 'datetime', nullable: true })
   deletedAt?: Date | null;
@@ -31,9 +32,15 @@ export class Habit extends BaseEntity {
   @ManyToOne(() => User, { nullable: true, deleteRule: 'cascade' })
   user?: Rel<User>;
 
-  @OneToMany(() => HabitHistory, (history) => history.habit, {
+  @OneToMany(() => FrameworkHistory, (history) => history.framework, {
     cascade: [Cascade.ALL],
     orphanRemoval: true,
   })
-  history = new Collection<HabitHistory>(this);
+  history = new Collection<FrameworkHistory>(this);
+
+  @OneToMany(() => FrameworkPractice, (practice) => practice.framework, {
+    cascade: [Cascade.ALL],
+    orphanRemoval: true,
+  })
+  practices = new Collection<FrameworkPractice>(this);
 }

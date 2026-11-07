@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useActionState, useMemo } from "react";
 import { Form } from "@base-ui/react";
-import { Trash2Icon } from "lucide-react";
+import { EditIcon, PlusIcon, Trash2Icon } from "lucide-react";
 
 import Field from "@/features/general/components/ui/Field";
 import SelectDialog from "@/features/general/components/ui/SelectDialog";
@@ -21,6 +21,7 @@ import {
 import {
   CreateFrameworkSchema,
   UpdateFrameworkSchema,
+  type FrameworkPractice,
 } from "@/features/framework/lib/types";
 import TopBar from "@/features/general/components/statics/TopBar/TopBar";
 import HelpDialog from "@/features/general/components/modules/HelpDialog/HelpDialog";
@@ -116,17 +117,28 @@ export function FrameworkForm() {
   const tagParam = searchParams.get("tag");
   const isEditMode = Boolean(editId);
 
-  const { framework, isLoading: isHabitLoading } = useFramework(
+  const { framework, isLoading: isFrameworkLoading } = useFramework(
     editId ? Number(editId) : null,
   );
 
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [content, setContent] = useState("");
   const [lifeAreaId, setLifeAreaId] = useState<number | null>(
     () => parseLifeAreaSlug(lifeAreaParam) ?? null,
   );
   const [tagId, setTagId] = useState<number | null>(null);
+  const [practices, setPractices] = useState<FrameworkPractice[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Practice modal state
+  const [practiceDialogOpen, setPracticeDialogOpen] = useState(false);
+  const [practiceDraft, setPracticeDraft] = useState<{
+    id: number | null;
+    title: string;
+  }>({
+    id: null,
+    title: "",
+  });
 
   const { tags } = useFrameworkTags(lifeAreaId);
 
@@ -158,7 +170,8 @@ export function FrameworkForm() {
     if (!editId) {
       queueMicrotask(() => {
         setTitle("");
-        setDescription("");
+        setContent("");
+        setPractices([]);
         const parsedArea = parseLifeAreaSlug(lifeAreaParam) ?? null;
         setLifeAreaId(parsedArea);
         if (tagParam && tags.length > 0) {
@@ -174,12 +187,55 @@ export function FrameworkForm() {
     if (framework) {
       queueMicrotask(() => {
         setTitle(framework.title);
-        setDescription(framework.description || "");
+        setContent(framework.content || "");
         setLifeAreaId(framework.lifeAreaId ?? null);
         setTagId(framework.tagId ?? null);
+        setPractices(framework.practices || []);
       });
     }
   }, [editId, framework, lifeAreaParam, tagParam, tags]);
+
+  const openNewPractice = () => {
+    setPracticeDraft({
+      id: null,
+      title: "",
+    });
+    setPracticeDialogOpen(true);
+  };
+
+  const openEditPractice = (practice: FrameworkPractice) => {
+    setPracticeDraft({
+      id: practice.id,
+      title: practice.title,
+    });
+    setPracticeDialogOpen(true);
+  };
+
+  const savePractice = () => {
+    const nextTitle = practiceDraft.title.trim();
+    if (!nextTitle) return;
+
+    if (practiceDraft.id !== null) {
+      setPractices((prev) =>
+        prev.map((p) =>
+          p.id === practiceDraft.id ? { ...p, title: nextTitle } : p,
+        ),
+      );
+    } else {
+      setPractices((prev) => [
+        ...prev,
+        {
+          id: Date.now() + Math.floor(Math.random() * 1000),
+          title: nextTitle,
+        },
+      ]);
+    }
+    setPracticeDialogOpen(false);
+  };
+
+  const deletePractice = (practiceId: number) => {
+    setPractices((prev) => prev.filter((p) => p.id !== practiceId));
+  };
 
   return (
     <PageWrapper>
@@ -201,7 +257,7 @@ export function FrameworkForm() {
         )}
       </TopBar>
 
-      {isEditMode && isHabitLoading && !framework ? (
+      {isEditMode && isFrameworkLoading && !framework ? (
         <div className="w-full space-y-sm">
           <Skeleton className="h-12" />
           <Skeleton className="h-28" />
@@ -218,7 +274,12 @@ export function FrameworkForm() {
           <Field type="hidden" name="lifeAreaId" value={lifeAreaId ? String(lifeAreaId) : ""} />
           <Field type="hidden" name="tagId" value={tagId ? String(tagId) : ""} />
           <Field type="hidden" name="tag" value={tagId ? String(tagId) : ""} />
-          <Field type="hidden" name="description" value={description} />
+          <Field type="hidden" name="content" value={content} />
+          <Field
+            type="hidden"
+            name="practices"
+            value={JSON.stringify(practices)}
+          />
 
           <Field
             name="title"
@@ -245,20 +306,140 @@ export function FrameworkForm() {
           <TagSelect lifeAreaId={lifeAreaId} value={tagId} onChange={setTagId} />
 
           <Field.Root
-            name="description"
+            name="content"
             schema={isEditMode ? UpdateFrameworkSchema : CreateFrameworkSchema}>
-            <Field.Label>{t("framework.descriptionLabel")}</Field.Label>
+            <Field.Label className="mb-xs font-bold">
+              {t("common.content")}
+              <span className="text-foreground/60 ms-xs">*</span>
+            </Field.Label>
 
             <RichTextarea
-              name="description"
-              value={description}
-              onChange={setDescription}
-              placeholder={t("framework.descriptionPlaceholder")}
-              title={t("framework.descriptionLabel")}
+              name="content"
+              value={content}
+              onChange={setContent}
+              placeholder={t("framework.contentPlaceholder")}
+              title={t("common.content")}
+              required
+              minLength={1}
             />
 
             <Field.Error className="sub-text mt-xs" />
           </Field.Root>
+
+          {/* Practices Section */}
+          <Field.Root name="practices">
+            <div className="flex items-center justify-between mb-xs">
+              <Field.Label className="font-bold">
+                {t("framework.practices")}
+              </Field.Label>
+              <span className="sub-text">
+                {practices.length} {t("framework.practices")}
+              </span>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openNewPractice}
+              disabled={pending}
+              className="w-full justify-center gap-xs rounded-component">
+              <PlusIcon />
+              <span>{t("framework.newPractice")}</span>
+            </Button>
+
+            {practices.length > 0 && (
+              <div className="mt-sm space-y-xs">
+                {practices.map((practice) => (
+                  <div
+                    key={practice.id}
+                    className="card items-center justify-between">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">
+                        {practice.title}
+                      </p>
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-xs">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size={"square"}
+                        className="size-8"
+                        onClick={() => openEditPractice(practice)}
+                        disabled={pending}>
+                        <EditIcon />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size={"square"}
+                        className="size-8"
+                        onClick={() => deletePractice(practice.id)}
+                        disabled={pending}>
+                        <Trash2Icon />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Field.Root>
+
+          {/* Practice Dialog */}
+          <Dialog
+            open={practiceDialogOpen}
+            onOpenChange={setPracticeDialogOpen}>
+            <Dialog.Title className="title">
+              {practiceDraft.id !== null
+                ? t("framework.editPractice")
+                : t("framework.newPractice")}
+            </Dialog.Title>
+            <Dialog.Description className="sub-text">
+              {practiceDraft.id !== null
+                ? t("framework.editPracticeDesc")
+                : t("framework.createPracticeDesc")}
+            </Dialog.Description>
+
+            <Field
+              name="practiceTitle"
+              label={t("common.title")}
+              labelSize="sm"
+              required
+              minLength={1}
+              value={practiceDraft.title}
+              placeholder={t("framework.practiceTitlePlaceholder")}
+              onChange={(e) =>
+                setPracticeDraft((d) => ({
+                  ...d,
+                  title: e.target.value,
+                }))
+              }
+            />
+
+            <div className="actions-footer">
+              <Dialog.Close
+                render={
+                  <Button type="button" variant="ghost">
+                    {t("common.cancel")}
+                  </Button>
+                }
+              />
+              <Button
+                type="button"
+                variant="primary"
+                onClick={savePractice}
+                disabled={practiceDraft.title.trim().length < 1}>
+                {practiceDraft.id !== null
+                  ? t("common.save")
+                  : t("common.add")}
+              </Button>
+            </div>
+          </Dialog>
+
+          <Field.FormError
+            errors={state?.errors}
+            knownFields={["title", "content", "lifeAreaId", "tag", "practices"]}
+          />
 
           <PageActionBtn submit disabled={pending} form="framework-form" />
         </Form>

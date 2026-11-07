@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { type } from 'arktype';
 import type { EntityClass } from '@mikro-orm/core';
 import { withRequestContext } from '@/db';
-import { Habit, Journal, Todo } from '@/db/entities';
+import { Framework, Journal, Todo } from '@/db/entities';
 import { requireUserId } from '@/features/auth/lib/utils';
 import {
   handleApiError,
@@ -14,7 +14,9 @@ export const dynamic = 'force-dynamic';
 const REORDERABLE_ENTITIES = {
   todos: Todo,
   journals: Journal,
-  habits: Habit,
+  frameworks: Framework,
+  // Legacy alias for backwards compatibility
+  habits: Framework,
 } as const;
 
 export type ReorderEntity = keyof typeof REORDERABLE_ENTITIES;
@@ -26,7 +28,7 @@ interface ReorderableRecord {
 }
 
 const ReorderSchema = type({
-  entity: type.enumerated('todos', 'journals', 'habits'),
+  entity: type.enumerated('todos', 'journals', 'frameworks', 'habits'),
   ids: 'number[]',
 });
 

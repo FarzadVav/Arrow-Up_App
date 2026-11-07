@@ -2,7 +2,7 @@ import 'server-only';
 import type { FilterQuery } from '@mikro-orm/core';
 import { withRequestContext } from '@/db';
 import { Todo } from '@/db/entities/Todo';
-import { Habit } from '@/db/entities/Habit';
+import { Framework } from '@/db/entities/Framework';
 import { Journal } from '@/db/entities/Journal';
 import { requireUserId } from '@/features/auth/lib/utils';
 import { serializeTodo } from '@/features/todos/api/repository';
@@ -43,9 +43,13 @@ function matchFrameworkItem(item: FrameworkDto, terms: string[]): boolean {
   if (terms.length === 0) return true;
 
   if (matchesQuery(item.title, terms)) return true;
-  if (matchesQuery(stripHtml(item.description), terms)) return true;
+  if (matchesQuery(stripHtml(item.content), terms)) return true;
   if (matchesQuery(item.lifeArea?.title, terms)) return true;
   if (matchesQuery(item.tag, terms)) return true;
+
+  if (item.practices?.some((practice) => matchesQuery(practice.title, terms))) {
+    return true;
+  }
 
   return false;
 }
@@ -76,7 +80,7 @@ function getDeletedAtFilter(filter: SearchFilter = 'availables') {
 }
 
 /**
- * Searches across todos, frameworks (habits), and journals for the authenticated user,
+ * Searches across todos, frameworks, and journals for the authenticated user,
  * respecting status filtering (availables, histories, all) and optional query term.
  */
 export async function getSearchResultsQuery(
@@ -95,7 +99,7 @@ export async function getSearchResultsQuery(
       ...deletedCondition,
     };
 
-    const frameworkWhere: FilterQuery<Habit> = {
+    const frameworkWhere: FilterQuery<Framework> = {
       user: userId,
       ...deletedCondition,
     };
@@ -111,7 +115,7 @@ export async function getSearchResultsQuery(
         orderBy: [{ sortNumber: 'ASC' }, { deadline: 'ASC' }, { createdAt: 'DESC' }],
       }),
       framework.find(frameworkWhere, {
-        populate: ['lifeArea', 'tag', 'history'],
+        populate: ['lifeArea', 'tag', 'history', 'practices'],
         orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
       }),
       journal.find(journalWhere, {

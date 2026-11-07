@@ -375,7 +375,15 @@
     "abandonedDesc": "فریم‌ورک‌هایی که به حوزه زندگی متصل نیستند",
     "noAbandonedFrameworks": "هیچ فریم‌ورک رهاشده‌ای وجود ندارد",
     "unknownArea": "حوزه زندگی نامشخص",
-    "countSuffix": "فریم‌ورک"
+    "countSuffix": "فریم‌ورک",
+    "content": "محتوا",
+    "contentPlaceholder": "محتوای فریم‌ورک، دستورالعمل‌ها، محرک‌ها یا استانداردهای اجرا...",
+    "practices": "تمرین‌ها",
+    "newPractice": "افزودن تمرین",
+    "editPractice": "ویرایش تمرین",
+    "createPracticeDesc": "یک تمرین یا گام عملی برای این فریم‌ورک تعریف کنید",
+    "editPracticeDesc": "عنوان تمرین را ویرایش کنید",
+    "practiceTitlePlaceholder": "عنوان تمرین..."
   },
   "history": {
     "title": "تاریخچه",

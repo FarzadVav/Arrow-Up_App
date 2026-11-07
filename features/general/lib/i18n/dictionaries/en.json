@@ -78,7 +78,7 @@
   "language": {
     "title": "Language",
     "english": "En",
-    "persian": "فا"
+    "persian": "ظپط§"
   },
   "colorScheme": {
     "light": "Light",
@@ -219,10 +219,10 @@
     "iosStep1": "1. Tap the Share icon in the Safari toolbar",
     "iosStep2": "2. Scroll down and tap \"Add to Home Screen\"",
     "androidTitle": "To install on Android:",
-    "androidStep1": "1. Tap the browser menu (⋮) in the top or bottom bar",
+    "androidStep1": "1. Tap the browser menu (â‹®) in the top or bottom bar",
     "androidStep2": "2. Select \"Install app\" or \"Add to Home screen\"",
     "desktopTitle": "Desktop / Browser install:",
-    "desktopDesc": "Click the install icon (⊕) in your browser's address bar, or open the browser menu (⋮) and select \"Install Arrow Up\".",
+    "desktopDesc": "Click the install icon (âٹ•) in your browser's address bar, or open the browser menu (â‹®) and select \"Install Arrow Up\".",
     "mobileInstallReady": "Arrow Up is ready to install onto your home screen for instant, distraction-free access.",
     "desktopInstallReady": "Install Arrow Up as a dedicated desktop app for faster launch and window isolation.",
     "later": "Later",
@@ -259,13 +259,13 @@
       "tip2Title": "Mission Milestones",
       "tip2Desc": "Missions let you track strategic goals with time and energy cost ratings and concrete sub-actions.",
       "tip3Title": "Actionable Planning",
-      "tip3Desc": "Tap '+' to schedule new daily habits, upcoming deadlines, or major missions."
+      "tip3Desc": "Tap '+' to schedule new daily tasks, upcoming deadlines, or major missions."
     },
     "todosNew": {
       "title": "New Todo / Mission Guide",
       "subtitle": "Create actionable tasks or structured strategic missions.",
       "tip1Title": "Choose Format",
-      "tip1Desc": "Select Daily for time-bound habits, Upcoming for calendar targets, or Mission for milestones.",
+      "tip1Desc": "Select Daily for time-bound tasks, Upcoming for calendar targets, or Mission for milestones.",
       "tip2Title": "Define Time and Energy Cost",
       "tip2Desc": "Assign a time and energy cost scale from 1 (easy) to 5 (epic) to weight high-leverage missions.",
       "tip3Title": "Sub-Actions",
@@ -375,7 +375,15 @@
     "abandonedDesc": "Frameworks that are not linked to a life area",
     "noAbandonedFrameworks": "No abandoned frameworks",
     "unknownArea": "Unknown life area",
-    "countSuffix": "frameworks"
+    "countSuffix": "frameworks",
+    "content": "Content",
+    "contentPlaceholder": "Framework content, guidelines, triggers or execution standards...",
+    "practices": "Practices",
+    "newPractice": "New Practice",
+    "editPractice": "Edit Practice",
+    "createPracticeDesc": "Define a practice or action step for this framework",
+    "editPracticeDesc": "Edit practice title",
+    "practiceTitlePlaceholder": "Practice title..."
   },
   "history": {
     "title": "History",

@@ -4,7 +4,7 @@ import { BaseEntity } from './BaseEntity';
 import { Todo } from './Todo';
 import { Journal } from './Journal';
 import { LifeArea } from './LifeArea';
-import { Habit } from './Habit';
+import { Framework } from './Framework';
 
 @Entity({ tableName: 'users' })
 export class User extends BaseEntity {
@@ -16,7 +16,6 @@ export class User extends BaseEntity {
 
   @Property({ type: 'string', hidden: true })
   password!: string;
-
 
   @Property({ type: 'string', nullable: true })
   email?: string;
@@ -36,6 +35,6 @@ export class User extends BaseEntity {
   @OneToMany(() => LifeArea, (lifeArea) => lifeArea.user, { cascade: [Cascade.ALL], orphanRemoval: true })
   lifeAreas = new Collection<LifeArea>(this);
 
-  @OneToMany(() => Habit, (habit) => habit.user, { cascade: [Cascade.ALL], orphanRemoval: true })
-  habits = new Collection<Habit>(this);
+  @OneToMany(() => Framework, (framework) => framework.user, { cascade: [Cascade.ALL], orphanRemoval: true })
+  frameworks = new Collection<Framework>(this);
 }

@@ -11,9 +11,10 @@ import {
   Journal,
   JournalCategory,
   JournalTag,
-  Habit,
-  HabitTag,
-  HabitHistory,
+  Framework,
+  FrameworkTag,
+  FrameworkHistory,
+  FrameworkPractice,
 } from '../entities';
 import {
   SEED_USER,
@@ -139,19 +140,19 @@ export class DatabaseSeeder extends Seeder {
     console.log(`🌐 Seeded ${SEED_LIFE_AREAS.length} default life areas.`);
 
     // =========================================================================
-    // 4. Seed Framework Tags & Frameworks (Habits)
+    // 4. Seed Framework Tags & Frameworks
     // =========================================================================
-    const habitTagsByKey = new Map<string, HabitTag>();
+    const frameworkTagsByKey = new Map<string, FrameworkTag>();
 
     for (const tagDef of SEED_FRAMEWORK_TAGS) {
       const lifeArea = lifeAreasByKey.get(tagDef.lifeAreaKey);
-      const tag = em.create(HabitTag, {
+      const tag = em.create(FrameworkTag, {
         title: tagDef.title,
         lifeArea,
         user,
       });
       em.persist(tag);
-      habitTagsByKey.set(tagDef.key, tag);
+      frameworkTagsByKey.set(tagDef.key, tag);
     }
     await em.flush();
 
@@ -159,11 +160,11 @@ export class DatabaseSeeder extends Seeder {
     for (let i = 0; i < SEED_FRAMEWORKS.length; i++) {
       const fwData = SEED_FRAMEWORKS[i];
       const lifeArea = fwData.lifeAreaKey ? lifeAreasByKey.get(fwData.lifeAreaKey) : undefined;
-      const tag = fwData.tagKey ? habitTagsByKey.get(fwData.tagKey) : undefined;
+      const tag = fwData.tagKey ? frameworkTagsByKey.get(fwData.tagKey) : undefined;
 
-      const framework = em.create(Habit, {
+      const framework = em.create(Framework, {
         title: fwData.title,
-        description: fwData.description,
+        content: fwData.content,
         sortNumber: i + 1,
         lifeArea,
         tag,
@@ -172,13 +173,23 @@ export class DatabaseSeeder extends Seeder {
 
       if (fwData.history && fwData.history.length > 0) {
         for (const hist of fwData.history) {
-          const historyEntry = em.create(HabitHistory, {
+          const historyEntry = em.create(FrameworkHistory, {
             date: hist.date,
             isDone: hist.isDone,
-            habit: framework,
+            framework,
           });
           framework.history.add(historyEntry);
           totalFrameworkHistory++;
+        }
+      }
+
+      if (fwData.practices && fwData.practices.length > 0) {
+        for (const practiceTitle of fwData.practices) {
+          const practiceEntry = em.create(FrameworkPractice, {
+            title: practiceTitle,
+            framework,
+          });
+          framework.practices.add(practiceEntry);
         }
       }
 
@@ -186,7 +197,7 @@ export class DatabaseSeeder extends Seeder {
     }
     await em.flush();
     console.log(
-      `🧱 Seeded ${SEED_FRAMEWORKS.length} Frameworks (${SEED_FRAMEWORK_TAGS.length} tags, ${totalFrameworkHistory} history records, including 1 abandoned framework)`,
+      `🧩 Seeded ${SEED_FRAMEWORKS.length} Frameworks (${SEED_FRAMEWORK_TAGS.length} tags, ${totalFrameworkHistory} history records, including 1 abandoned framework)`,
     );
 
     // =========================================================================
@@ -279,9 +290,10 @@ export class DatabaseSeeder extends Seeder {
     const allTables = [
       'users',
       'life_areas',
-      'habit_tags',
-      'habits',
-      'habit_history',
+      'framework_tags',
+      'frameworks',
+      'framework_history',
+      'framework_practices',
       'todos',
       'todo_actions',
       'todo_disciplines',

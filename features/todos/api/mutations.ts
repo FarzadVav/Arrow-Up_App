@@ -1,4 +1,4 @@
-'use server';
+﻿'use server';
 
 import { type } from 'arktype';
 import { withRequestContext } from '@/db';
@@ -584,7 +584,7 @@ export async function toggleActionMutation(
 }
 
 /**
- * Server Action mutation for recording a discipline's habit tracking history (I Do / I Don't Do).
+ * Server Action mutation for recording a discipline's check-in history (I Do / I Don't Do).
  * Reads `id` from a hidden input and `isDone` from the pressed submit button.
  */
 export async function recordDisciplineMutation(

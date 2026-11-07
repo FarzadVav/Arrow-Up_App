@@ -23,11 +23,26 @@ export async function createFrameworkMutation(
   formData: FormData,
 ): Promise<FrameworkFormState> {
   const title = String(formData.get('title') ?? '').trim();
-  const description = String(formData.get('description') ?? '').trim();
+  const content = String(formData.get('content') ?? '').trim();
   const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
   const rawTag = formData.get('tagId') ?? formData.get('tag');
   const tagId = rawTag && !isNaN(Number(rawTag)) && Number(rawTag) > 0 ? Number(rawTag) : undefined;
   const tag = rawTag && String(rawTag).trim() && String(rawTag).trim() !== 'none' ? String(rawTag).trim() : null;
+
+  let practices: Array<{ id?: number; title: string }> | undefined = undefined;
+  const practicesRaw = formData.get('practices');
+  if (practicesRaw) {
+    try {
+      const parsed = JSON.parse(String(practicesRaw));
+      if (Array.isArray(parsed)) {
+        practices = parsed
+          .map((item) => (typeof item === 'string' ? { title: item.trim() } : { id: item.id, title: String(item.title ?? '').trim() }))
+          .filter((item) => Boolean(item.title));
+      }
+    } catch {
+      practices = undefined;
+    }
+  }
 
   const errors: NonNullable<FrameworkFormState>['errors'] = {};
 
@@ -37,12 +52,16 @@ export async function createFrameworkMutation(
   if (!tagId && !tag) {
     errors.tag = ['Please select a tag.'];
   }
+  if (!content) {
+    errors.content = ['Content is required.'];
+  }
 
   const validation = CreateFrameworkSchema({
     title,
-    ...(description ? { description } : {}),
+    content,
     lifeAreaId: lifeAreaId ?? 0,
     ...(tagId ? { tagId } : tag ? { tag } : {}),
+    ...(practices && practices.length > 0 ? { practices } : {}),
   });
 
   if (validation instanceof type.errors || Object.keys(errors).length > 0) {
@@ -50,9 +69,10 @@ export async function createFrameworkMutation(
       for (const problem of validation) {
         const field = String(problem.path[0] ?? 'general') as
           | 'title'
-          | 'description'
+          | 'content'
           | 'lifeAreaId'
           | 'tag'
+          | 'practices'
           | 'general';
 
         if (!errors[field]) {
@@ -66,10 +86,11 @@ export async function createFrameworkMutation(
       errors,
       inputs: {
         title,
-        description,
+        content,
         lifeAreaId,
         tagId: tagId ?? null,
         tag,
+        practices,
       },
       success: false,
     };
@@ -79,16 +100,26 @@ export async function createFrameworkMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, description, lifeAreaId, tagId: tagId ?? null, tag },
+      inputs: { title, content, lifeAreaId, tagId: tagId ?? null, tag, practices },
       success: false,
     };
   }
 
-  const inputs = { title, description, lifeAreaId, tagId: tagId ?? null, tag };
+  const inputs = { title, content, lifeAreaId, tagId: tagId ?? null, tag, practices };
 
   try {
     const created = await withRequestContext(async ({ framework }) => {
-      return await framework.createFramework({ title, description, lifeAreaId: lifeAreaId!, tagId, tag: tag ?? undefined }, userId);
+      return await framework.createFramework(
+        {
+          title,
+          content,
+          lifeAreaId: lifeAreaId!,
+          tagId,
+          tag: tag ?? undefined,
+          practices,
+        },
+        userId,
+      );
     });
 
     return {
@@ -112,11 +143,26 @@ export async function updateFrameworkMutation(
   const idRaw = formData.get('id');
   const id = idRaw ? Number(idRaw) : NaN;
   const title = String(formData.get('title') ?? '').trim();
-  const description = String(formData.get('description') ?? '').trim();
+  const content = formData.has('content') ? String(formData.get('content') ?? '').trim() : undefined;
   const lifeAreaId = parseLifeAreaSlug(String(formData.get('lifeAreaId') ?? '')) ?? null;
   const rawTag = formData.get('tagId') ?? formData.get('tag');
   const tagId = rawTag && !isNaN(Number(rawTag)) && Number(rawTag) > 0 ? Number(rawTag) : undefined;
   const tag = rawTag && String(rawTag).trim() && String(rawTag).trim() !== 'none' ? String(rawTag).trim() : null;
+
+  let practices: Array<{ id?: number; title: string }> | undefined = undefined;
+  const practicesRaw = formData.get('practices');
+  if (practicesRaw) {
+    try {
+      const parsed = JSON.parse(String(practicesRaw));
+      if (Array.isArray(parsed)) {
+        practices = parsed
+          .map((item) => (typeof item === 'string' ? { title: item.trim() } : { id: item.id, title: String(item.title ?? '').trim() }))
+          .filter((item) => Boolean(item.title));
+      }
+    } catch {
+      practices = undefined;
+    }
+  }
 
   if (!id || Number.isNaN(id)) {
     return {
@@ -133,13 +179,17 @@ export async function updateFrameworkMutation(
   if (!tagId && !tag) {
     errors.tag = ['Please select a tag.'];
   }
+  if (content !== undefined && !content) {
+    errors.content = ['Content is required.'];
+  }
 
   const validation = UpdateFrameworkSchema({
     id,
     title: title || undefined,
-    ...(description ? { description } : {}),
+    ...(content !== undefined ? { content } : {}),
     lifeAreaId: lifeAreaId ?? undefined,
     ...(tagId ? { tagId } : tag ? { tag } : {}),
+    ...(practices !== undefined ? { practices } : {}),
   });
 
   if (validation instanceof type.errors || Object.keys(errors).length > 0) {
@@ -147,9 +197,10 @@ export async function updateFrameworkMutation(
       for (const problem of validation) {
         const field = String(problem.path[0] ?? 'general') as
           | 'title'
-          | 'description'
+          | 'content'
           | 'lifeAreaId'
           | 'tag'
+          | 'practices'
           | 'general';
 
         if (!errors[field]) {
@@ -163,10 +214,11 @@ export async function updateFrameworkMutation(
       errors,
       inputs: {
         title,
-        description,
+        content,
         lifeAreaId,
         tagId: tagId ?? null,
         tag,
+        practices,
       },
       success: false,
     };
@@ -176,12 +228,12 @@ export async function updateFrameworkMutation(
   if (userId === null) {
     return {
       errors: { general: ['Your session has expired. Please sign in again.'] },
-      inputs: { title, description, lifeAreaId, tagId: tagId ?? null, tag },
+      inputs: { title, content, lifeAreaId, tagId: tagId ?? null, tag, practices },
       success: false,
     };
   }
 
-  const inputs = { title, description, lifeAreaId, tagId: tagId ?? null, tag };
+  const inputs = { title, content, lifeAreaId, tagId: tagId ?? null, tag, practices };
 
   try {
     const updated = await withRequestContext(async ({ framework }) => {
@@ -189,10 +241,11 @@ export async function updateFrameworkMutation(
         id,
         {
           ...(title ? { title } : {}),
-          ...(description ? { description } : {}),
+          ...(content !== undefined ? { content } : {}),
           lifeAreaId: lifeAreaId ?? undefined,
           tagId,
           tag: tag ?? undefined,
+          ...(practices !== undefined ? { practices } : {}),
         },
         userId,
       );
@@ -505,7 +558,7 @@ export async function updateFrameworkTagMutation(
         inputs: {
           id,
           ...(title !== undefined ? { title } : {}),
-          ...(lifeAreaId !== undefined ? { lifeAreaId: lifeAreaId! } : {}),
+          ...(lifeAreaId !== undefined ? { lifeAreaId } : {}),
         },
         success: false,
       };

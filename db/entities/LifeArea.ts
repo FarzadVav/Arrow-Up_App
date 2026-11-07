@@ -3,7 +3,7 @@ import { Entity, ManyToOne, OneToMany, Property } from '@mikro-orm/decorators/le
 import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { Todo } from './Todo';
-import { Habit } from './Habit';
+import { Framework } from './Framework';
 
 @Entity({ tableName: 'life_areas' })
 export class LifeArea extends BaseEntity {
@@ -33,6 +33,6 @@ export class LifeArea extends BaseEntity {
   @OneToMany(() => Todo, (todo) => todo.lifeArea, { cascade: [Cascade.PERSIST], orphanRemoval: false })
   todos = new Collection<Todo>(this);
 
-  @OneToMany(() => Habit, (habit) => habit.lifeArea, { cascade: [Cascade.PERSIST], orphanRemoval: false })
-  habits = new Collection<Habit>(this);
+  @OneToMany(() => Framework, (framework) => framework.lifeArea, { cascade: [Cascade.PERSIST], orphanRemoval: false })
+  frameworks = new Collection<Framework>(this);
 }

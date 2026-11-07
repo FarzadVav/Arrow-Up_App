@@ -53,8 +53,8 @@ export function EmptyAlert({
           nativeButton={false}
           render={
             <Link href={href}>
-              <PlusIcon />
               <span>{t("common.addFirst")}</span>
+              <PlusIcon />
             </Link>
           }
         />

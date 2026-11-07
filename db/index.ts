@@ -17,9 +17,10 @@ import {
   JournalCategory,
   JournalTag,
   LifeArea,
-  Habit,
-  HabitHistory,
-  HabitTag,
+  Framework,
+  FrameworkHistory,
+  FrameworkTag,
+  FrameworkPractice,
 } from './entities';
 import { UserRepository } from '@/features/auth/api/repository';
 import {
@@ -51,7 +52,8 @@ export interface Services {
   lifeArea: LifeAreaRepository;
   framework: FrameworkRepository;
   frameworkTag: FrameworkTagRepository;
-  frameworkHistory: EntityRepository<HabitHistory>;
+  frameworkHistory: EntityRepository<FrameworkHistory>;
+  frameworkPractice: EntityRepository<FrameworkPractice>;
 }
 
 declare global {
@@ -71,9 +73,10 @@ function createServices(orm: MikroORM, em: EntityManager): Services {
     journalCategory: em.getRepository(JournalCategory),
     journalTag: new JournalTagRepository(em, JournalTag),
     lifeArea: new LifeAreaRepository(em, LifeArea),
-    framework: new FrameworkRepository(em, Habit),
-    frameworkTag: new FrameworkTagRepository(em, HabitTag),
-    frameworkHistory: em.getRepository(HabitHistory),
+    framework: new FrameworkRepository(em, Framework),
+    frameworkTag: new FrameworkTagRepository(em, FrameworkTag),
+    frameworkHistory: em.getRepository(FrameworkHistory),
+    frameworkPractice: em.getRepository(FrameworkPractice),
   };
 }
 

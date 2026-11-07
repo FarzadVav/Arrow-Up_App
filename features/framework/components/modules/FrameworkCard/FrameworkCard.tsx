@@ -80,7 +80,7 @@ export function FrameworkCard({
   const cardElement = (
     <CardDrawer
       title={framework.title}
-      description={stripHtml(framework.description)}
+      description={stripHtml(framework.content)}
       date={cardDate}
       icon={
         <div className="size-8 rounded-component bg-foreground/10 flex items-center justify-center shrink-0">
@@ -105,11 +105,38 @@ export function FrameworkCard({
             )}
           </div>
 
-          {framework.description && (
+          {framework.content && (
             <RichTextResult
-              content={framework.description}
+              content={framework.content}
               containerClassName="rounded-component bg-background/60 p-sm"
             />
+          )}
+
+          {/* Practices Section */}
+          {framework.practices && framework.practices.length > 0 && (
+            <section className="space-y-xs">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-bold">
+                  {t("framework.practices")}
+                </h4>
+                <span className="sub-text">{framework.practices.length}</span>
+              </div>
+
+              <div className="space-y-xs">
+                {framework.practices.map((practice) => (
+                  <div
+                    key={practice.id}
+                    className="flex items-center gap-sm rounded-component bg-background p-sm">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-component bg-card text-xs">
+                      <Repeat2Icon className="size-3.5" />
+                    </div>
+                    <p className="text-sm font-medium flex-1 truncate">
+                      {practice.title}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
           )}
 
           {/* Recent History summary */}

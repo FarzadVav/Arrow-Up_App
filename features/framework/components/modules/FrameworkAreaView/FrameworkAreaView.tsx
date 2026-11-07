@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, useActionState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TagIcon, LoaderIcon } from "lucide-react";
+import { TagIcon, LoaderIcon, PlusIcon } from "lucide-react";
 
 import { useFrameworks } from "@/features/framework/hooks";
 import { useFrameworkTags } from "@/features/framework/hooks";
@@ -27,6 +27,7 @@ import SlideTabs, {
 } from "@/features/general/components/ui/SlideTabs";
 import ReorderList from "@/features/general/components/ui/ReorderList";
 import { useLocale } from "@/features/general/components/modules/LocaleProvider/LocaleProvider";
+import Link from "next/link";
 
 export type FrameworkAreaViewProps = {
   /** null targets frameworks that have no life area */
@@ -107,9 +108,9 @@ export function FrameworkAreaView({
     if (!isHistory) {
       baseTabs.push({
         id: "tags-page",
+        icon: <TagIcon />,
         label: t("common.tags"),
         href: `/framework/${areaSlug}/tags`,
-        icon: <TagIcon />,
       });
     }
 
@@ -181,7 +182,7 @@ export function FrameworkAreaView({
             ) : (
               <ReorderList
                 items={areaFrameworks}
-                entity="habits"
+                entity="frameworks"
                 revalidate={revalidateFrameworks}
                 renderItem={(framework) => (
                   <FrameworkCard
@@ -197,7 +198,7 @@ export function FrameworkAreaView({
               />
             )}
           </div>
-        ) : (
+        ) : tags.length ? (
           <SlideTabs
             tabs={filterTabs}
             activeId={activeTag}
@@ -249,7 +250,7 @@ export function FrameworkAreaView({
                   ) : (
                     <ReorderList
                       items={filteredFrameworks}
-                      entity="habits"
+                      entity="frameworks"
                       revalidate={revalidateFrameworks}
                       renderItem={(framework) => (
                         <FrameworkCard
@@ -268,6 +269,14 @@ export function FrameworkAreaView({
               )}
             </div>
           </SlideTabs>
+        ) : (
+          <EmptyAlert
+            alert={t("framework.noTags")}
+            description={t("framework.noTagsSubtitle")}
+            href={
+              isArchivedArea ? undefined : `/framework/${areaSlug}/tags/new`
+            }
+          />
         )}
 
         {!isHistory && (

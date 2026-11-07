@@ -2,10 +2,11 @@ import { EntityRepository } from '@mikro-orm/postgresql';
 import type { FilterQuery } from '@mikro-orm/core';
 import { User } from '@/db/entities/User';
 import { LifeArea } from '@/db/entities/LifeArea';
-import { HabitTag } from '@/db/entities/HabitTag';
-import { HabitHistory } from '@/db/entities/HabitHistory';
+import { FrameworkTag } from '@/db/entities/FrameworkTag';
+import { FrameworkHistory } from '@/db/entities/FrameworkHistory';
+import { FrameworkPractice } from '@/db/entities/FrameworkPractice';
 import { assertOwnedLifeAreas } from '@/features/general/api/repository';
-import type { Habit } from '@/db/entities/Habit';
+import type { Framework } from '@/db/entities/Framework';
 import type {
   CreateFrameworkData,
   UpdateFrameworkData,
@@ -22,50 +23,58 @@ export type {
   UpdateFrameworkTagData,
 };
 
-export function serializeFramework(habit: Habit): FrameworkDto {
-  const historyList = habit.history?.isInitialized?.()
-    ? habit.history.getItems().map((h) => ({
+export function serializeFramework(framework: Framework): FrameworkDto {
+  const historyList = framework.history?.isInitialized?.()
+    ? framework.history.getItems().map((h) => ({
         id: h.id,
         date: h.date,
         isDone: h.isDone,
       }))
     : [];
 
-  const tagTitle = habit.tag && typeof habit.tag === 'object' && 'title' in habit.tag ? habit.tag.title : null;
-  const tagId = habit.tag && typeof habit.tag === 'object' && 'id' in habit.tag ? habit.tag.id : null;
+  const practicesList = framework.practices?.isInitialized?.()
+    ? framework.practices.getItems().map((p) => ({
+        id: p.id,
+        title: p.title,
+      }))
+    : [];
+
+  const tagTitle = framework.tag && typeof framework.tag === 'object' && 'title' in framework.tag ? framework.tag.title : null;
+  const tagId = framework.tag && typeof framework.tag === 'object' && 'id' in framework.tag ? framework.tag.id : null;
 
   return {
-    id: habit.id,
-    title: habit.title,
-    description: habit.description || '',
-    lifeAreaId: habit.lifeArea?.id ?? null,
-    lifeArea: habit.lifeArea
+    id: framework.id,
+    title: framework.title,
+    content: framework.content || '',
+    lifeAreaId: framework.lifeArea?.id ?? null,
+    lifeArea: framework.lifeArea
       ? {
-          id: habit.lifeArea.id,
-          title: habit.lifeArea.title,
+          id: framework.lifeArea.id,
+          title: framework.lifeArea.title,
         }
       : undefined,
     tagId,
     tag: tagTitle,
+    practices: practicesList,
     history: historyList,
     createdAt:
-      habit.createdAt instanceof Date
-        ? habit.createdAt.toISOString()
-        : String(habit.createdAt),
+      framework.createdAt instanceof Date
+        ? framework.createdAt.toISOString()
+        : String(framework.createdAt),
     updatedAt:
-      habit.updatedAt instanceof Date
-        ? habit.updatedAt.toISOString()
-        : String(habit.updatedAt),
+      framework.updatedAt instanceof Date
+        ? framework.updatedAt.toISOString()
+        : String(framework.updatedAt),
     deletedAt:
-      habit.deletedAt instanceof Date
-        ? habit.deletedAt.toISOString()
-        : habit.deletedAt
-          ? String(habit.deletedAt)
+      framework.deletedAt instanceof Date
+        ? framework.deletedAt.toISOString()
+        : framework.deletedAt
+          ? String(framework.deletedAt)
           : null,
   };
 }
 
-export function serializeFrameworkTag(tag: HabitTag): FrameworkTagDto {
+export function serializeFrameworkTag(tag: FrameworkTag): FrameworkTagDto {
   return {
     id: tag.id,
     title: tag.title,
@@ -81,132 +90,182 @@ export function serializeFrameworkTag(tag: HabitTag): FrameworkTagDto {
   };
 }
 
-export class FrameworkRepository extends EntityRepository<Habit> {
+export class FrameworkRepository extends EntityRepository<Framework> {
   async findAllFrameworks(
     userId: number,
     options?: { lifeAreaId?: number | null },
-  ): Promise<Habit[]> {
-    const where: FilterQuery<Habit> = { user: userId, deletedAt: null };
+  ): Promise<Framework[]> {
+    const where: FilterQuery<Framework> = { user: userId, deletedAt: null };
     if (options?.lifeAreaId !== undefined) {
       where.lifeArea = options.lifeAreaId;
     }
 
     return this.find(where, {
-      populate: ['lifeArea', 'tag', 'history'],
+      populate: ['lifeArea', 'tag', 'history', 'practices'],
       orderBy: [{ sortNumber: 'ASC' }, { createdAt: 'DESC' }],
     });
   }
 
-  async findById(id: number, userId: number): Promise<Habit | null> {
-    return this.findOne({ id, user: userId, deletedAt: null }, { populate: ['lifeArea', 'tag', 'history'] });
+  async findById(id: number, userId: number): Promise<Framework | null> {
+    return this.findOne(
+      { id, user: userId, deletedAt: null },
+      { populate: ['lifeArea', 'tag', 'history', 'practices'] },
+    );
   }
 
-  async createFramework(data: CreateFrameworkData, userId: number): Promise<Habit> {
+  async createFramework(data: CreateFrameworkData, userId: number): Promise<Framework> {
     await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
-    let tagEntity: HabitTag | null = null;
+    let tagEntity: FrameworkTag | null = null;
     const rawTagId = data.tagId ?? (typeof data.tag === 'number' ? data.tag : data.tag && !isNaN(Number(data.tag)) ? Number(data.tag) : undefined);
     if (rawTagId) {
-      tagEntity = await this.em.findOne(HabitTag, { id: rawTagId, user: userId }) ?? null;
+      tagEntity = await this.em.findOne(FrameworkTag, { id: rawTagId, user: userId }) ?? null;
     } else if (typeof data.tag === 'string' && data.tag.trim()) {
-      tagEntity = await this.em.findOne(HabitTag, { title: data.tag.trim(), user: userId }) ?? null;
+      tagEntity = await this.em.findOne(FrameworkTag, { title: data.tag.trim(), user: userId }) ?? null;
     }
 
     if (!tagEntity) {
       throw new Error('Tag is required for framework');
     }
 
-    const habit = this.create({
+    const framework = this.create({
       title: data.title.trim(),
-      description: data.description?.trim() || '',
+      content: data.content.trim(),
       tag: tagEntity,
       lifeArea: this.em.getReference(LifeArea, data.lifeAreaId),
       user: this.em.getReference(User, userId),
     });
 
+    if (data.practices && data.practices.length > 0) {
+      for (const p of data.practices) {
+        const pTitle = typeof p === 'string' ? p.trim() : p.title.trim();
+        if (pTitle) {
+          framework.practices.add(
+            this.em.create(FrameworkPractice, {
+              title: pTitle,
+              framework,
+            }),
+          );
+        }
+      }
+    }
+
     await this.em.flush();
-    await this.em.populate(habit, ['lifeArea', 'tag', 'history']);
-    return habit;
+    await this.em.populate(framework, ['lifeArea', 'tag', 'history', 'practices']);
+    return framework;
   }
 
   async updateFramework(
     id: number,
     data: UpdateFrameworkData,
     userId: number,
-  ): Promise<Habit | null> {
-    const habit = await this.findOne({ id, user: userId }, { populate: ['lifeArea', 'tag', 'history'] });
-    if (!habit) {
+  ): Promise<Framework | null> {
+    const framework = await this.findOne(
+      { id, user: userId },
+      { populate: ['lifeArea', 'tag', 'history', 'practices'] },
+    );
+    if (!framework) {
       return null;
     }
 
     if (data.lifeAreaId !== undefined) {
       await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId], {
-        keepInactiveId: habit.lifeArea?.id ?? null,
+        keepInactiveId: framework.lifeArea?.id ?? null,
       });
     }
 
     if (data.title !== undefined) {
-      habit.title = data.title.trim();
+      framework.title = data.title.trim();
     }
-    if (data.description !== undefined) {
-      habit.description = data.description.trim();
+    if (data.content !== undefined) {
+      framework.content = data.content.trim();
     }
 
     const rawTagId = data.tagId ?? (typeof data.tag === 'number' ? data.tag : data.tag && !isNaN(Number(data.tag)) ? Number(data.tag) : undefined);
     if (rawTagId !== undefined) {
-      const foundTag = rawTagId ? (await this.em.findOne(HabitTag, { id: rawTagId, user: userId }) ?? null) : null;
+      const foundTag = rawTagId ? (await this.em.findOne(FrameworkTag, { id: rawTagId, user: userId }) ?? null) : null;
       if (!foundTag) {
         throw new Error('Tag is required for framework');
       }
-      habit.tag = foundTag;
+      framework.tag = foundTag;
     } else if (typeof data.tag === 'string') {
-      const foundTag = data.tag.trim() ? (await this.em.findOne(HabitTag, { title: data.tag.trim(), user: userId }) ?? null) : null;
+      const foundTag = data.tag.trim() ? (await this.em.findOne(FrameworkTag, { title: data.tag.trim(), user: userId }) ?? null) : null;
       if (!foundTag) {
         throw new Error('Tag is required for framework');
       }
-      habit.tag = foundTag;
+      framework.tag = foundTag;
     }
 
     if (data.lifeAreaId !== undefined) {
       if (!data.lifeAreaId || data.lifeAreaId <= 0) {
         throw new Error('Life area is required for framework');
       }
-      habit.lifeArea = this.em.getReference(LifeArea, data.lifeAreaId);
+      framework.lifeArea = this.em.getReference(LifeArea, data.lifeAreaId);
+    }
+
+    if (data.practices !== undefined) {
+      const existingPracticeMap = new Map(framework.practices.getItems().map((p) => [p.id, p]));
+      const newPracticeIds = new Set<number>();
+
+      for (const pData of data.practices) {
+        const pTitle = typeof pData === 'string' ? pData.trim() : pData.title.trim();
+        const pId = typeof pData === 'object' && pData.id ? pData.id : null;
+
+        if (pTitle) {
+          if (pId && existingPracticeMap.has(pId)) {
+            const existing = existingPracticeMap.get(pId)!;
+            existing.title = pTitle;
+            newPracticeIds.add(existing.id);
+          } else {
+            const newPractice = this.em.create(FrameworkPractice, {
+              title: pTitle,
+              framework,
+            });
+            framework.practices.add(newPractice);
+          }
+        }
+      }
+
+      for (const existing of framework.practices.getItems()) {
+        if (existing.id && !newPracticeIds.has(existing.id)) {
+          framework.practices.remove(existing);
+        }
+      }
     }
 
     await this.em.flush();
-    return habit;
+    return framework;
   }
 
   async deleteFramework(id: number, userId: number): Promise<boolean> {
-    const habit = await this.findOne({ id, user: userId });
-    if (!habit) {
+    const framework = await this.findOne({ id, user: userId });
+    if (!framework) {
       return false;
     }
 
-    habit.deletedAt = new Date();
+    framework.deletedAt = new Date();
     await this.em.flush();
     return true;
   }
 
   async restoreFramework(id: number, userId: number): Promise<boolean> {
-    const habit = await this.findOne({ id, user: userId, deletedAt: { $ne: null } });
-    if (!habit) {
+    const framework = await this.findOne({ id, user: userId, deletedAt: { $ne: null } });
+    if (!framework) {
       return false;
     }
 
-    habit.deletedAt = null;
+    framework.deletedAt = null;
     await this.em.flush();
     return true;
   }
 
   async hardDeleteFramework(id: number, userId: number): Promise<boolean> {
-    const habit = await this.findOne({ id, user: userId });
-    if (!habit) {
+    const framework = await this.findOne({ id, user: userId });
+    if (!framework) {
       return false;
     }
 
-    this.em.remove(habit);
+    this.em.remove(framework);
     await this.em.flush();
     return true;
   }
@@ -214,8 +273,8 @@ export class FrameworkRepository extends EntityRepository<Habit> {
   async findHistory(
     userId: number,
     options?: { lifeAreaId?: number | null },
-  ): Promise<Habit[]> {
-    const where: FilterQuery<Habit> = { user: userId, deletedAt: { $ne: null } };
+  ): Promise<Framework[]> {
+    const where: FilterQuery<Framework> = { user: userId, deletedAt: { $ne: null } };
     if (options?.lifeAreaId !== undefined) {
       where.lifeArea = options.lifeAreaId;
     }
@@ -223,26 +282,26 @@ export class FrameworkRepository extends EntityRepository<Habit> {
     return this.find(
       where,
       {
-        populate: ['lifeArea', 'tag', 'history'],
+        populate: ['lifeArea', 'tag', 'history', 'practices'],
         orderBy: [{ deletedAt: 'DESC' }],
       },
     );
   }
 
   async recordHistory(
-    habitId: number,
+    frameworkId: number,
     date: string,
     isDone: boolean,
     userId: number,
-  ): Promise<HabitHistory | null> {
-    const habit = await this.findOne({ id: habitId, user: userId });
-    if (!habit) {
+  ): Promise<FrameworkHistory | null> {
+    const framework = await this.findOne({ id: frameworkId, user: userId });
+    if (!framework) {
       return null;
     }
 
     const dayPrefix = date.slice(0, 10);
-    const existing = await this.em.findOne(HabitHistory, {
-      habit: habit.id,
+    const existing = await this.em.findOne(FrameworkHistory, {
+      framework: framework.id,
       date: { $like: `${dayPrefix}%` },
     });
 
@@ -253,10 +312,10 @@ export class FrameworkRepository extends EntityRepository<Habit> {
       return existing;
     }
 
-    const history = this.em.create(HabitHistory, {
+    const history = this.em.create(FrameworkHistory, {
       date,
       isDone,
-      habit,
+      framework,
     });
 
     await this.em.flush();
@@ -264,11 +323,11 @@ export class FrameworkRepository extends EntityRepository<Habit> {
   }
 }
 
-export class FrameworkTagRepository extends EntityRepository<HabitTag> {
-  async findAllTags(userId: number): Promise<HabitTag[]> {
+export class FrameworkTagRepository extends EntityRepository<FrameworkTag> {
+  async findAllTags(userId: number): Promise<FrameworkTag[]> {
     return this.find({ user: userId }, { orderBy: { createdAt: 'DESC' } });
   }
-  async findByLifeArea(lifeAreaId: number | null, userId: number): Promise<HabitTag[]> {
+  async findByLifeArea(lifeAreaId: number | null, userId: number): Promise<FrameworkTag[]> {
     return this.find(
       { lifeArea: lifeAreaId, user: userId },
       { orderBy: { title: 'ASC' } },
@@ -279,7 +338,7 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
     title: string,
     lifeAreaId: number | null,
     userId: number,
-  ): Promise<HabitTag | null> {
+  ): Promise<FrameworkTag | null> {
     return this.findOne({
       title: title.trim(),
       lifeArea: lifeAreaId,
@@ -287,14 +346,14 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
     });
   }
 
-  async findById(id: number, userId: number): Promise<HabitTag | null> {
+  async findById(id: number, userId: number): Promise<FrameworkTag | null> {
     return this.findOne({ id, user: userId });
   }
 
   async createTag(
     data: CreateFrameworkTagData,
     userId: number,
-  ): Promise<HabitTag> {
+  ): Promise<FrameworkTag> {
     await assertOwnedLifeAreas(this.em, userId, [data.lifeAreaId]);
 
     const tag = this.create({
@@ -310,7 +369,7 @@ export class FrameworkTagRepository extends EntityRepository<HabitTag> {
     id: number,
     data: UpdateFrameworkTagData,
     userId: number,
-  ): Promise<HabitTag | null> {
+  ): Promise<FrameworkTag | null> {
     const tag = await this.findOne({ id, user: userId });
     if (!tag) {
       return null;

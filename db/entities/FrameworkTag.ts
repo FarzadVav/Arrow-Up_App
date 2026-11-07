@@ -4,8 +4,8 @@ import { BaseEntity } from './BaseEntity';
 import { User } from './User';
 import { LifeArea } from './LifeArea';
 
-@Entity({ tableName: 'habit_tags' })
-export class HabitTag extends BaseEntity {
+@Entity({ tableName: 'framework_tags' })
+export class FrameworkTag extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt';
 
   @Property({ type: 'string' })

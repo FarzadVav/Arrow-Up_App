@@ -1,5 +1,3 @@
-export const LIFE_AREA_DEFAULT_DIFFICULTY = 1;
-
 export interface DefaultLifeAreaDefinition {
   key: string;
   nameEn: string;
@@ -9,28 +7,22 @@ export interface DefaultLifeAreaDefinition {
 
 export const DEFAULT_LIFE_AREAS: readonly DefaultLifeAreaDefinition[] = [
   {
+    key: 'career',
+    nameEn: 'Career',
+    nameFa: 'شغل و حرفه',
+    defaultDifficulty: 4,
+  },
+  {
     key: 'lifestyle',
     nameEn: 'Lifestyle',
     nameFa: 'سبک زندگی',
-    defaultDifficulty: 2,
+    defaultDifficulty: 1,
   },
   {
     key: 'health',
     nameEn: 'Health',
     nameFa: 'سلامت',
-    defaultDifficulty: 2,
-  },
-  {
-    key: 'career',
-    nameEn: 'Career',
-    nameFa: 'شغل و حرفه',
-    defaultDifficulty: 2,
-  },
-  {
-    key: 'social-connections',
-    nameEn: 'Social Connections',
-    nameFa: 'روابط اجتماعی',
-    defaultDifficulty: 2,
+    defaultDifficulty: 1,
   },
 ] as const;
 

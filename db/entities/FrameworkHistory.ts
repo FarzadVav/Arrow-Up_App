@@ -1,10 +1,10 @@
 import { OptionalProps, type Rel } from '@mikro-orm/core';
 import { Entity, ManyToOne, Property } from '@mikro-orm/decorators/legacy';
 import { BaseEntity } from './BaseEntity';
-import { Habit } from './Habit';
+import { Framework } from './Framework';
 
-@Entity({ tableName: 'habit_history' })
-export class HabitHistory extends BaseEntity {
+@Entity({ tableName: 'framework_history' })
+export class FrameworkHistory extends BaseEntity {
   [OptionalProps]?: 'createdAt' | 'updatedAt' | 'isDone';
 
   /**
@@ -16,6 +16,6 @@ export class HabitHistory extends BaseEntity {
   @Property({ type: 'boolean', default: true })
   isDone: boolean = true;
 
-  @ManyToOne(() => Habit, { nullable: false, deleteRule: 'cascade' })
-  habit!: Rel<Habit>;
+  @ManyToOne(() => Framework, { nullable: false, deleteRule: 'cascade' })
+  framework!: Rel<Framework>;
 }
